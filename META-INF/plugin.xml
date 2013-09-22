@@ -1,0 +1,88 @@
+<idea-plugin version="2">
+  <id>de.espend.idea.php.annotation</id>
+  <name>PHP Annotations</name>
+  <version>0.1</version>
+  <vendor email="daniel@espendiller.net" url="http://www.espend.de">espend</vendor>
+
+  <description><![CDATA[
+
+<h1>PHP Annotation</h1>
+<a href="https://github.com/Haehnchen/idea-php-annotation-plugin">GitHub</a> | <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues">Issues</a><br>
+<br>
+
+Support php annotations, which is ported of <a href="http://plugins.jetbrains.com/plugin/7219">Symfony2 Plugin</a>.<br>
+Current php doc comments api is very limited, so for now its possible to supported PhpStorm6 and 7. Old version support will be removed soon!
+
+<h2>Installation</h2>
+<ul>
+  <li>Enabled Plugin: "Settings -> PHP -> Annotation"</li>
+  <li>Annotations are registered on file index for this with: "File -> Invalidate Cache"</li>
+<ul>
+
+<h2>Features</h2>
+<ul>
+  <li>Auto alias detection on use statement</li>
+  <li>Filter on targets like method, class, property, ...</li>
+  <li>Goto for doc tags</li>
+  <li>Annotation property values on phpclass properties</li>
+  <li>Index classes with @Annotation inside doc block</li>
+<ul>
+
+<h2>Todo</h2>
+<ul>
+  <li>Missing API: "Optimize Imports" not working</li>
+  <li>Missing API: "@" completion event is blocked, so whitespace before completion start is necessary</li>
+  <li>Better property completion pattern detection</li>
+  <li>Configure custom aliases</li>
+  <li>Extension points like property goto and completion for other plugins eg @Template("file.html.twig")</li>
+<ul>
+
+      ]]>
+  </description>
+
+  <change-notes><![CDATA[
+
+<h2>0.1</h2>
+<ul>
+    <li>Init version support PhpStorm6 and 7</li>
+</ul>
+
+      ]]>
+  </change-notes>
+
+  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
+    <idea-version since-build="129.713"/>
+
+  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <project-components>
+    <!-- Add your project components here -->
+  </project-components>
+
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+
+      <projectService serviceImplementation="de.espend.idea.php.annotation.Settings"/>
+      <fileBasedIndex implementation="de.espend.idea.php.annotation.AnnotationStubIndex"/>
+      <projectConfigurable instance="de.espend.idea.php.annotation.ui.PluginSettingsForm" id="Configurable.Espend.Php.Annotation" displayName="Annotation" parentId="Configurable.PHP"/>
+
+      <gotoDeclarationHandler implementation="de.espend.idea.php.annotation.completion.AnnotationGoToDeclarationHandler"/>
+      <completion.contributor language="PHP" implementationClass="de.espend.idea.php.annotation.completion.AnnotationCompletionContributor"/>
+
+  </extensions>
+
+  <depends>com.jetbrains.php</depends>
+  <depends>com.intellij.modules.platform</depends>
+
+</idea-plugin>
