@@ -20,8 +20,10 @@ class NotBlank extends Constraint {
 ```
 
 ### Annotation Target Detection
-```php
+
 `@Target` is used to attach annotation, if non provided its added to "ALL list"
+
+```php
 /**
  * @Annotation
  * @Target("PROPERTY", "METHOD", "CLASS", "ALL")
