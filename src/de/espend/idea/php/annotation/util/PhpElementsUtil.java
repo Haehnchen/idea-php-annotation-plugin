@@ -1,6 +1,7 @@
 package de.espend.idea.php.annotation.util;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
@@ -49,6 +50,18 @@ public class PhpElementsUtil {
             }
         }
 
+        return null;
+    }
+
+    @Nullable
+    public static <T extends PsiElement> T getPrevSiblingOfPatternMatch(@Nullable PsiElement sibling, ElementPattern<T> pattern) {
+        if (sibling == null) return null;
+        for (PsiElement child = sibling.getPrevSibling(); child != null; child = child.getPrevSibling()) {
+            if (pattern.accepts(child)) {
+                //noinspection unchecked
+                return (T)child;
+            }
+        }
         return null;
     }
 

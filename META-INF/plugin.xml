@@ -80,6 +80,16 @@ Current php doc comments api is very limited, so for now its possible to support
       <gotoDeclarationHandler implementation="de.espend.idea.php.annotation.completion.AnnotationGoToDeclarationHandler"/>
       <completion.contributor language="PHP" implementationClass="de.espend.idea.php.annotation.completion.AnnotationCompletionContributor"/>
 
+
+
+  </extensions>
+
+  <extensionPoints>
+     <extensionPoint name="PhpAnnotationExtension" interface="de.espend.idea.php.annotation.PhpAnnotationExtension"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="de.espend.idea.php.annotation">
+     <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.extension.PhpAnnotationTypeProvider"/>
   </extensions>
 
   <depends>com.jetbrains.php</depends>
