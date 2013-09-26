@@ -23,7 +23,6 @@ import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import de.espend.idea.php.annotation.lookup.PhpAnnotationPropertyLookupElement;
 import de.espend.idea.php.annotation.lookup.PhpClassAnnotationLookupElement;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
-import de.espend.idea.php.annotation.util.AnnotationPatternUtil;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.jetbrains.annotations.NotNull;
@@ -39,12 +38,41 @@ public class AnnotationCompletionContributor extends CompletionContributor {
     public AnnotationCompletionContributor() {
         extend(CompletionType.BASIC, AnnotationPattern.getDocBlockTag(), new PhpDocBlockTagAnnotations());
         extend(CompletionType.BASIC, AnnotationPattern.getDocAttribute(), new PhpDocAttributeList());
-        extend(CompletionType.BASIC, AnnotationPatternUtil.getTextIdentifier(), new PhpDocAttributeValue());
+        extend(CompletionType.BASIC, AnnotationPattern.getTextIdentifier(), new PhpDocAttributeValue());
+        extend(CompletionType.BASIC, AnnotationPattern.getDefaultPropertyValue(), new PhpDocDefaultValue());
     }
 
+    private class PhpDocDefaultValue  extends CompletionProvider<CompletionParameters> {
 
+        @Override
+        protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
 
-    private class PhpDocAttributeValue  extends CompletionProvider<CompletionParameters> {
+            PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PhpDocTag.class);
+            PhpClass phpClass = AnnotationUtil.getAnnotationReference(phpDocTag);
+            if(phpClass == null) {
+                return;
+            }
+
+            AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(parameters.getOriginalPosition(), phpClass, AnnotationPropertyParameter.Type.DEFAULT);
+            providerWalker(parameters, context, result, annotationPropertyParameter);
+
+        }
+    }
+
+    private void providerWalker(CompletionParameters parameters, ProcessingContext context, CompletionResultSet result, AnnotationPropertyParameter annotationPropertyParameter) {
+        CompletionParameter completionParameter = new CompletionParameter(parameters, context, result);
+
+        for(PhpAnnotationExtension phpAnnotationExtension : AnnotationUtil.getProvider()) {
+            Collection<String> stringResults = phpAnnotationExtension.getPropertyValueCompletions(annotationPropertyParameter, completionParameter);
+            if(stringResults != null) {
+                for(String value: stringResults) {
+                    result.addElement(LookupElementBuilder.create(value));
+                }
+            }
+        }
+    }
+
+    private class PhpDocAttributeValue extends CompletionProvider<CompletionParameters> {
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
@@ -61,16 +89,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
             }
 
             AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(parameters.getOriginalPosition(), phpClass, propertyName.getText(), AnnotationPropertyParameter.Type.STRING);
-            CompletionParameter completionParameter = new CompletionParameter(parameters, context, result);
-
-            for(PhpAnnotationExtension phpAnnotationExtension : AnnotationUtil.getProvider()) {
-                Collection<String> stringResults = phpAnnotationExtension.getPropertyValueCompletions(annotationPropertyParameter, completionParameter);
-                if(stringResults != null) {
-                    for(String value: stringResults) {
-                        result.addElement(LookupElementBuilder.create(value));
-                    }
-                }
-            }
+            providerWalker(parameters, context, result, annotationPropertyParameter);
 
         }
     }
@@ -126,7 +145,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                 return;
             }
 
-            if(!AnnotationPatternUtil.getPossibleDocTag().accepts(psiElement)) {
+            if(!AnnotationPattern.getPossibleDocTag().accepts(psiElement)) {
                 return;
             }
 

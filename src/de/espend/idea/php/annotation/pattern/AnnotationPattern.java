@@ -39,4 +39,54 @@ public class AnnotationPattern {
             )
             .withLanguage(PhpLanguage.INSTANCE);
     }
+
+    public static ElementPattern<PsiElement> getPossibleDocTag() {
+        return PlatformPatterns.psiElement()
+            .withSuperParent(1, PhpDocPsiElement.class)
+            .withParent(PhpDocComment.class)
+            .withLanguage(PhpLanguage.INSTANCE);
+    }
+
+    /**
+     * matches "@Callback(property="<value>")"
+     */
+    public static ElementPattern<PsiElement> getTextIdentifier() {
+
+        // @TODO: filter more on EAP
+        return PlatformPatterns
+            .psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).afterLeafSkipping(
+                PlatformPatterns.or(
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText(PlatformPatterns.string().contains("=\""))
+                ),
+                PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
+            )
+            .withParent(PlatformPatterns
+                .psiElement(PhpDocElementTypes.phpDocTagValue)
+                .withParent(PlatformPatterns
+                    .psiElement(PhpDocElementTypes.phpDocTag)
+                )
+            )
+            .withLanguage(PhpLanguage.INSTANCE);
+    }
+
+    /**
+     * matches "@Callback("<value>", foo...)"
+     * TODO: is this also valid "@Callback(key="", "<value>")"?
+     */
+    public static ElementPattern<PsiElement> getDefaultPropertyValue() {
+
+        return PlatformPatterns
+            .psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).afterLeaf(
+                PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText(PlatformPatterns.string().equalTo("\"")).afterLeaf(
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LPAREN)
+                )
+            )
+            .withParent(PlatformPatterns
+                .psiElement(PhpDocElementTypes.phpDocTagValue)
+                .withParent(PlatformPatterns
+                    .psiElement(PhpDocElementTypes.phpDocTag)
+                )
+            )
+            .withLanguage(PhpLanguage.INSTANCE);
+    }
 }
