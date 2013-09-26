@@ -38,7 +38,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
     public AnnotationCompletionContributor() {
         extend(CompletionType.BASIC, AnnotationPattern.getDocBlockTag(), new PhpDocBlockTagAnnotations());
-        extend(CompletionType.BASIC, AnnotationPattern.getInsideDocAttributeList(), new PhpDocAttributeList());
+        extend(CompletionType.BASIC, AnnotationPattern.getDocAttribute(), new PhpDocAttributeList());
         extend(CompletionType.BASIC, AnnotationPatternUtil.getTextIdentifier(), new PhpDocAttributeValue());
     }
 

@@ -3,6 +3,7 @@ package de.espend.idea.php.annotation.pattern;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
@@ -18,10 +19,21 @@ public class AnnotationPattern {
             .withLanguage(PhpLanguage.INSTANCE);
     }
 
-    public static ElementPattern<PsiElement> getInsideDocAttributeList() {
+    /**
+     * fire on: @Callback(<completion>), @Callback("", <completion>)
+     */
+    public static ElementPattern<PsiElement> getDocAttribute() {
         // @TODO: use eap psi
-        return PlatformPatterns
-            .psiElement()
+        // @TODO: multiline parser failure: check on eap
+        return PlatformPatterns.psiElement()
+            .afterLeafSkipping(
+                PlatformPatterns.psiElement(PsiWhiteSpace.class),
+                PlatformPatterns.or(
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_COMMA),
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LPAREN)
+                )
+
+            )
             .inside(PlatformPatterns
                 .psiElement(PhpDocElementTypes.phpDocTag)
             )
