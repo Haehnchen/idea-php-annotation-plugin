@@ -26,7 +26,7 @@ public class AnnotationPattern {
     public static ElementPattern<PsiElement> getDocAttribute() {
         // @TODO: use eap psi
         // @TODO: multiline parser failure: check on eap
-        return PlatformPatterns.psiElement()
+        return PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
             .afterLeafSkipping(
                 PlatformPatterns.psiElement(PsiWhiteSpace.class),
                 PlatformPatterns.or(
