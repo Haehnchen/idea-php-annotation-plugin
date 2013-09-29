@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>0.1</version>
+  <version>0.2</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">espend</vendor>
 
   <description><![CDATA[
@@ -11,36 +11,41 @@
 <br>
 
 Support php annotations, which is ported from <a href="http://plugins.jetbrains.com/plugin/7219">Symfony2 Plugin</a>.<br>
-Current php doc comments api is very limited, so for now its possible to supported PhpStorm6 and 7. Old version support will be removed soon!
+Current php doc comments api is very limited, so for now its possible to support PhpStorm6 and 7. Old version support will be removed soon!
 
 <h2>Installation</h2>
 <ul>
   <li>Enabled Plugin: "Settings -> PHP -> Annotation"</li>
-  <li>Annotations are registered on file index for this with: "File -> Invalidate Cache"</li>
+  <li>Force file reindex if necessary with: "File -> Invalidate Cache"</li>
 </ul>
 
 <h2>Features</h2>
 <ul>
   <li>Auto alias detection on use statement</li>
-  <li>Filter on targets like method, class, property, ...</li>
-  <li>Goto for doc tags</li>
-  <li>Annotation property values on phpclass properties</li>
+  <li>Filter annotation classes on targets like method, class, property, ...</li>
+  <li>Goto for doc tags and property names</li>
+  <li>Detect annotation property values on phpclass property name including types</li>
   <li>Index classes with @Annotation inside doc block</li>
+  <li>Plugin extension point</li>
 </ul>
 
 <h2>Todo</h2>
 <ul>
-  <li>Missing API: "Optimize Imports" not working</li>
-  <li>Missing API: "@" completion event is blocked, so whitespace before completion start is necessary</li>
-  <li>Better property completion pattern detection</li>
+  <li>Missing API (<a href="http://youtrack.jetbrains.com/issue/WI-20271">WI-20271</a>): "Optimize Imports" and "Never usage detection" not working</li>
+  <li>Missing API (<a href="http://youtrack.jetbrains.com/issue/WI-20265">WI-20265</a>): "@" completion event is blocked, so a whitespace before completion start event is necessary</li>
   <li>Configure custom aliases</li>
-  <li>Extension points like property goto and completion for other plugins eg @Template("file.html.twig")</li>
 </ul>
-
       ]]>
   </description>
 
   <change-notes><![CDATA[
+
+<h2>0.2</h2>
+<ul>
+    <li>Better property completion pattern and type detection</li>
+    <li>Optimize property value insert handler</li>
+    <li>Extension points for property goto and completion eg @Template("file.html.twig")</li>
+</ul>
 
 <h2>0.1</h2>
 <ul>
