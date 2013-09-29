@@ -18,8 +18,10 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
         // reuse jetbrains us importer: this is private only so we need some workaround
         // to not implement your own algo for that
         PhpReferenceInsertHandler.getInstance().handleInsert(context, lookupElement);
-        PhpInsertHandlerUtil.insertStringAtCaret(context.getEditor(), "()");
-        context.getEditor().getCaretModel().moveCaretRelatively(-1, 0, false, false, true);
+        if(!PhpInsertHandlerUtil.isStringAtCaret(context.getEditor(), "(")) {
+            PhpInsertHandlerUtil.insertStringAtCaret(context.getEditor(), "()");
+            context.getEditor().getCaretModel().moveCaretRelatively(-1, 0, false, false, true);
+        }
 
         // "@" is not provide by lookup element because its remove by auto import so attach it if necessary
         PsiElement element = PsiUtilCore.getElementAtOffset(context.getFile(), context.getStartOffset());
