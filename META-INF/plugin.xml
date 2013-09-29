@@ -80,6 +80,8 @@ Current php doc comments api is very limited, so for now its possible to support
       <gotoDeclarationHandler implementation="de.espend.idea.php.annotation.completion.AnnotationGoToDeclarationHandler"/>
       <completion.contributor language="PHP" implementationClass="de.espend.idea.php.annotation.completion.AnnotationCompletionContributor"/>
 
+      <psi.referenceContributor implementation="de.espend.idea.php.annotation.reference.AnnotationPropertyValueReferenceContributor"/>
+
       <!--
       disabled until is working
       <psi.referenceContributor implementation="de.espend.idea.php.annotation.reference.DocTagNameAnnotationReferenceContributor"/>

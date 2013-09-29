@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocPsiElement;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 
 public class AnnotationPattern {
     public static ElementPattern<PsiElement> getDocBlockTag() {
@@ -89,4 +90,42 @@ public class AnnotationPattern {
             )
             .withLanguage(PhpLanguage.INSTANCE);
     }
+
+    /**
+     * only usable up to phpstorm 7
+     */
+    public static ElementPattern<StringLiteralExpression> getDefaultPropertyValueString() {
+
+        return PlatformPatterns
+             .psiElement(StringLiteralExpression.class).afterLeaf(
+                 PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LPAREN)
+             )
+             .withParent(PlatformPatterns
+                 .psiElement(PhpDocElementTypes.phpDocAttributeList)
+                     .withParent(PlatformPatterns
+                         .psiElement(PhpDocElementTypes.phpDocTag)
+                     )
+                )
+             .withLanguage(PhpLanguage.INSTANCE);
+    }
+
+    /**
+     * only usable up to phpstorm 7
+     */
+    public static ElementPattern<StringLiteralExpression> getPropertyValueString() {
+
+        return PlatformPatterns
+                .psiElement(StringLiteralExpression.class).afterLeaf(
+                        PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText("=")
+                )
+                .withParent(PlatformPatterns
+                        .psiElement(PhpDocElementTypes.phpDocAttributeList)
+                        .withParent(PlatformPatterns
+                                .psiElement(PhpDocElementTypes.phpDocTag)
+                        )
+                )
+                .withLanguage(PhpLanguage.INSTANCE);
+
+    }
+
 }
