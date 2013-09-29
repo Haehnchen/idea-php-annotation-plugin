@@ -45,7 +45,7 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
             this.addPropertyGoto(psiElement, psiElements);
         }
 
-        if (!PlatformPatterns.psiElement(PhpDocElementTypes.DOC_TAG_NAME).withText(StandardPatterns.string().startsWith("@")).withLanguage(PhpLanguage.INSTANCE).accepts(psiElement)) {
+        if (PlatformPatterns.psiElement(PhpDocElementTypes.DOC_TAG_NAME).withText(StandardPatterns.string().startsWith("@")).withLanguage(PhpLanguage.INSTANCE).accepts(psiElement)) {
             this.addDocTagNameGoto(psiElement, psiElements);
         }
 
