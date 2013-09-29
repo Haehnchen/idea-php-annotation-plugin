@@ -13,6 +13,17 @@ public class AnnotationPropertyInsertHandler implements InsertHandler<LookupElem
     private static final AnnotationPropertyInsertHandler instance = new AnnotationPropertyInsertHandler();
 
     public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement lookupElement) {
+
+        // value completion should not fire when already presented:
+        // eng| = "value"
+        // eng|="value"
+        if(PhpInsertHandlerUtil.isStringAtCaret(context.getEditor(), "=") || PhpInsertHandlerUtil.isStringAtCaret(context.getEditor(), " =")) {
+           return;
+        }
+
+        // append completion text depend on value:
+        // engine="|"
+        // engine={|}
         if(lookupElement.getObject() instanceof AnnotationProperty) {
             String addText = "=\"\"";
 
