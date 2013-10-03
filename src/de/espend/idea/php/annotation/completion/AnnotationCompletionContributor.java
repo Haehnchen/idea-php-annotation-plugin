@@ -27,6 +27,7 @@ import de.espend.idea.php.annotation.lookup.PhpClassAnnotationLookupElement;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
+import de.espend.idea.php.annotation.util.PluginUtil;
 import de.espend.idea.php.annotation.util.WorkaroundUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,6 +50,11 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
+
+            PsiElement psiElement = parameters.getOriginalPosition();
+            if(psiElement == null | !PluginUtil.isEnabled(psiElement)) {
+                return;
+            }
 
             PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PhpDocTag.class);
             PhpClass phpClass = AnnotationUtil.getAnnotationReference(phpDocTag);
@@ -81,6 +87,9 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
 
             PsiElement psiElement = parameters.getOriginalPosition();
+            if(psiElement == null | !PluginUtil.isEnabled(psiElement)) {
+                return;
+            }
 
             // eap: provide psi element wrapped into phpDocString
             if(WorkaroundUtil.isClassFieldName("com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes", "phpDocString")) {
@@ -114,7 +123,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         protected void addCompletions(@NotNull CompletionParameters completionParameters, ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
             PsiElement psiElement = completionParameters.getOriginalPosition();
 
-            if(psiElement == null || !Settings.getInstance(psiElement.getProject()).pluginEnabled) {
+            if(psiElement == null || !PluginUtil.isEnabled(psiElement)) {
                 return;
             }
 
@@ -155,7 +164,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
             PsiElement psiElement = completionParameters.getOriginalPosition();
 
-            if(psiElement == null || !Settings.getInstance(psiElement.getProject()).pluginEnabled) {
+            if(psiElement == null || !PluginUtil.isEnabled(psiElement)) {
                 return;
             }
 

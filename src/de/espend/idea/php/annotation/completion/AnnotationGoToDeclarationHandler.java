@@ -23,6 +23,7 @@ import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
+import de.espend.idea.php.annotation.util.PluginUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
     @Override
     public PsiElement[] getGotoDeclarationTargets(PsiElement psiElement, int i, Editor editor) {
 
-        if(!Settings.getInstance(psiElement.getProject()).pluginEnabled) {
+        if(!PluginUtil.isEnabled(psiElement)) {
             return null;
         }
 

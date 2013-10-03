@@ -1,0 +1,18 @@
+package de.espend.idea.php.annotation.util;
+
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
+import de.espend.idea.php.annotation.Settings;
+import org.jetbrains.annotations.Nullable;
+
+public class PluginUtil {
+
+    public static boolean isEnabled(Project project) {
+        return Settings.getInstance(project).pluginEnabled;
+    }
+
+    public static boolean isEnabled(@Nullable PsiElement psiElement) {
+        return psiElement != null && isEnabled(psiElement.getProject());
+    }
+
+}

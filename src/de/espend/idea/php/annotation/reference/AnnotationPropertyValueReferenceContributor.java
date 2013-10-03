@@ -11,6 +11,7 @@ import de.espend.idea.php.annotation.Settings;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.reference.parameter.ReferencesByElementParameter;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
+import de.espend.idea.php.annotation.util.PluginUtil;
 import de.espend.idea.php.annotation.util.WorkaroundUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,7 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
         @Override
         public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
 
-            if(!Settings.getInstance(psiElement.getProject()).pluginEnabled) {
+            if(!PluginUtil.isEnabled(psiElement)) {
                 return new PsiReference[0];
             }
 
@@ -55,7 +56,7 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
         @Override
         public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
 
-            if(!Settings.getInstance(psiElement.getProject()).pluginEnabled) {
+            if(!PluginUtil.isEnabled(psiElement)) {
                 return new PsiReference[0];
             }
 
