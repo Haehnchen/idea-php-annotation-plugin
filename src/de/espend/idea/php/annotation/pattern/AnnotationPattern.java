@@ -10,14 +10,31 @@ import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import de.espend.idea.php.annotation.util.WorkaroundUtil;
 
 public class AnnotationPattern {
     public static ElementPattern<PsiElement> getDocBlockTag() {
-        return PlatformPatterns
-            .psiElement()
-                .withSuperParent(1, PhpDocPsiElement.class)
-                     .withParent(PhpDocComment.class)
-            .withLanguage(PhpLanguage.INSTANCE);
+        return
+            PlatformPatterns.or(
+                PlatformPatterns.psiElement()
+                    .withSuperParent(1, PhpDocPsiElement.class)
+                         .withParent(PhpDocComment.class)
+                .withLanguage(PhpLanguage.INSTANCE)
+            ,
+                // eap:
+                // * @<completion>
+                //
+                // "@" char is not detected on lexer, so provider additional asterisk check for more secured pattern filter
+                PlatformPatterns.psiElement()
+                    .afterLeafSkipping(
+                        PlatformPatterns.or(
+                            PlatformPatterns.psiElement(PsiWhiteSpace.class)
+                        ),
+                        PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LEADING_ASTERISK)
+
+                    ).withSuperParent(1, PhpDocPsiElement.class)
+                .withLanguage(PhpLanguage.INSTANCE)
+            );
     }
 
     /**
@@ -52,6 +69,20 @@ public class AnnotationPattern {
      * matches "@Callback(property="<value>")"
      */
     public static ElementPattern<PsiElement> getTextIdentifier() {
+        if(WorkaroundUtil.isClassFieldName("com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes", "phpDocAttributeList")) {
+            return PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STRING)
+                .withParent(PlatformPatterns.psiElement(StringLiteralExpression.class)
+                .afterLeafSkipping(
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText(PlatformPatterns.string().contains("=")),
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
+                )
+                .withParent(PlatformPatterns
+                    .psiElement(PhpDocElementTypes.phpDocAttributeList)
+                    .withParent(PlatformPatterns
+                        .psiElement(PhpDocElementTypes.phpDocTag)
+                    )
+                ));
+        }
 
         // @TODO: filter more on EAP
         return PlatformPatterns
@@ -102,10 +133,10 @@ public class AnnotationPattern {
              )
              .withParent(PlatformPatterns
                  .psiElement(PhpDocElementTypes.phpDocAttributeList)
-                     .withParent(PlatformPatterns
-                         .psiElement(PhpDocElementTypes.phpDocTag)
-                     )
-                )
+                 .withParent(PlatformPatterns
+                     .psiElement(PhpDocElementTypes.phpDocTag)
+                 )
+             )
              .withLanguage(PhpLanguage.INSTANCE);
     }
 

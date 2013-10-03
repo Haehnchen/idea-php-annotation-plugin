@@ -10,21 +10,24 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
+import com.jetbrains.php.lang.psi.elements.Field;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.AnnotationPropertyParameter;
 import de.espend.idea.php.annotation.PhpAnnotationExtension;
 import de.espend.idea.php.annotation.Settings;
 import de.espend.idea.php.annotation.completion.insert.AnnotationTagInsertHandler;
 import de.espend.idea.php.annotation.completion.parameter.CompletionParameter;
 import de.espend.idea.php.annotation.dict.AnnotationProperty;
-import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import de.espend.idea.php.annotation.dict.AnnotationPropertyEnum;
+import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import de.espend.idea.php.annotation.lookup.PhpAnnotationPropertyLookupElement;
 import de.espend.idea.php.annotation.lookup.PhpClassAnnotationLookupElement;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
+import de.espend.idea.php.annotation.util.WorkaroundUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -77,7 +80,18 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
 
-            PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(parameters.getOriginalPosition(), PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER));
+            PsiElement psiElement = parameters.getOriginalPosition();
+
+            // eap: provide psi element wrapped into phpDocString
+            if(WorkaroundUtil.isClassFieldName("com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes", "phpDocString")) {
+                psiElement = parameters.getOriginalPosition().getContext();
+            }
+
+            if(psiElement == null) {
+                return;
+            }
+
+            PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(psiElement, PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER));
             if(propertyName == null) {
                 return;
             }
