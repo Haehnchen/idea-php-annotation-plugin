@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>0.2</version>
+  <version>0.3</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">espend</vendor>
 
   <description><![CDATA[
@@ -31,14 +31,20 @@ Current php doc comments api is very limited, so for now its possible to support
 
 <h2>Todo</h2>
 <ul>
-  <li>Missing API (<a href="http://youtrack.jetbrains.com/issue/WI-20271">WI-20271</a>): "Optimize Imports" and "Never usage detection" not working</li>
-  <li>Missing API (<a href="http://youtrack.jetbrains.com/issue/WI-20265">WI-20265</a>): "@" completion event is blocked, so a whitespace before completion start event is necessary</li>
+  <li>Missing API (<a href="http://youtrack.jetbrains.com/issue/WI-20271">WI-20271</a>, <a href="http://youtrack.jetbrains.com/issue/WI-20346">WI-20346</a>): "Optimize Imports" and "Never usage detection" not working</li>
   <li>Configure custom aliases</li>
 </ul>
       ]]>
   </description>
 
   <change-notes><![CDATA[
+
+<h2>0.3</h2>
+<ul>
+    <li>Pattern fix to support eap 131.235</li>
+    <li>Support "@" completion WI-20265</li>
+    <li>Optimize doc tag name insert handler</li>
+</ul>
 
 <h2>0.2</h2>
 <ul>
