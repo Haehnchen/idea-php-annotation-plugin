@@ -14,12 +14,10 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
     @Override
     public void registerReferenceProviders(PsiReferenceRegistrar psiReferenceRegistrar) {
 
-        // both dont get called on @Template
-        // PlatformPatterns.psiElement()
-        // PlatformPatterns.psiElement().withElementType(PhpDocElementTypes.DOC_TAG_NAME)
+        // now we get a call now, but also an error "Cannot find manipulator for PhpDocTag"
 
         psiReferenceRegistrar.registerReferenceProvider(
-            PlatformPatterns.psiElement().withElementType(PhpDocElementTypes.DOC_TAG_NAME),
+            PlatformPatterns.psiElement(PhpDocTag.class),
             new PsiReferenceProvider() {
                 @NotNull
                 @Override
@@ -30,7 +28,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                     }
 
                     return new PsiReference[] {
-                        new PhpDocTagReference((PhpDocTag) element)
+                        new PhpDocTagReference(element)
                     };
                 }
             }
@@ -39,12 +37,13 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
 
     }
 
-    public class PhpDocTagReference extends PsiPolyVariantReferenceBase<PhpDocTag> {
+    public class PhpDocTagReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
-        public PhpDocTagReference(PhpDocTag psiElement) {
+        public PhpDocTagReference(PsiElement psiElement) {
             super(psiElement);
         }
 
+        /*
         @Override
         public boolean isReferenceTo(PsiElement element) {
 
@@ -58,15 +57,20 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                     }
                 }
             }
-            */
+
 
             return false;
-        }
+        } */
 
         @NotNull
         @Override
         public ResolveResult[] multiResolve(boolean b) {
-            PhpClass phpClass = AnnotationUtil.getAnnotationReference(getElement());
+
+            if(!(getElement() instanceof PhpDocTag)) {
+                return new ResolveResult[0];
+            }
+
+            PhpClass phpClass = AnnotationUtil.getAnnotationReference((PhpDocTag) getElement());
             if(phpClass == null) {
                 return new ResolveResult[0];
             }
