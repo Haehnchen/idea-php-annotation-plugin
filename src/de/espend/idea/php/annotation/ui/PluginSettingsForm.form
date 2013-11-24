@@ -14,7 +14,7 @@
         </constraints>
         <properties>
           <selected value="false"/>
-          <text value="Enable Plugin (change need restart and reindex &quot;File -&gt; Invalidate Caches&quot;)"/>
+          <text value="Enable Plugin (change need restart and if necessary reindex &quot;File -&gt; Invalidate Caches&quot;)"/>
         </properties>
       </component>
       <vspacer id="2356d">

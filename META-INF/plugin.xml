@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>0.3</version>
+  <version>0.4</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">espend</vendor>
 
   <description><![CDATA[
@@ -39,6 +39,12 @@ Current php doc comments api is very limited, so for now its possible to support
 
   <change-notes><![CDATA[
 
+<h2>0.4</h2>
+<ul>
+    <li>Only support PhpStorm > 7</li>
+    <li>Activate annotation class reference provider and use it where possible</li>
+</ul>
+
 <h2>0.3</h2>
 <ul>
     <li>Pattern fix to support eap 131.235</li>
@@ -62,7 +68,7 @@ Current php doc comments api is very limited, so for now its possible to support
   </change-notes>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="129.713"/>
+    <idea-version since-build="130.1"/>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
@@ -92,11 +98,7 @@ Current php doc comments api is very limited, so for now its possible to support
       <completion.contributor language="PHP" implementationClass="de.espend.idea.php.annotation.completion.AnnotationCompletionContributor"/>
 
       <psi.referenceContributor implementation="de.espend.idea.php.annotation.reference.AnnotationPropertyValueReferenceContributor"/>
-
-      <!--
-      disabled until is working
       <psi.referenceContributor implementation="de.espend.idea.php.annotation.reference.DocTagNameAnnotationReferenceContributor"/>
-      -->
 
   </extensions>
 
