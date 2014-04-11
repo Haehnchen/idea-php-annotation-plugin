@@ -168,10 +168,6 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                 return;
             }
 
-            if(!AnnotationPattern.getPossibleDocTag().accepts(psiElement)) {
-                return;
-            }
-
             AnnotationTarget annotationTarget = PhpElementsUtil.findAnnotationTarget(PsiTreeUtil.getParentOfType(psiElement, PhpDocComment.class));
             if(annotationTarget == null) {
                 return;
