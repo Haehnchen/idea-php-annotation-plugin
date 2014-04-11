@@ -1,18 +1,19 @@
 package de.espend.idea.php.annotation.reference;
 
+import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
+import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.AnnotationPropertyParameter;
 import de.espend.idea.php.annotation.PhpAnnotationExtension;
-import de.espend.idea.php.annotation.Settings;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.reference.parameter.ReferencesByElementParameter;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
+import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import de.espend.idea.php.annotation.util.PluginUtil;
-import de.espend.idea.php.annotation.util.WorkaroundUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,10 +24,8 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
 
     @Override
     public void registerReferenceProviders(PsiReferenceRegistrar psiReferenceRegistrar) {
-        if(WorkaroundUtil.isClassFieldName("com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes", "phpDocAttributeList")) {
-            psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getDefaultPropertyValueString(), new PropertyValueDefaultReferences());
-            psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getPropertyValueString(), new PropertyValueReferences());
-        }
+        psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getDefaultPropertyValueString(), new PropertyValueDefaultReferences());
+        psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getPropertyValueString(), new PropertyValueReferences());
     }
 
     private class PropertyValueDefaultReferences extends PsiReferenceProvider {
@@ -65,7 +64,12 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
                 return new PsiReference[0];
             }
 
-            AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(psiElement, phpClass, AnnotationPropertyParameter.Type.ARRAY);
+            PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(psiElement, PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER));
+            if(propertyName == null) {
+                return new PsiReference[0];
+            }
+
+            AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(psiElement, phpClass, propertyName.getText(), AnnotationPropertyParameter.Type.STRING);
             return addPsiReferences(psiElement, processingContext, annotationPropertyParameter);
 
         }
