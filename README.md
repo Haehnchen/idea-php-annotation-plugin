@@ -13,6 +13,7 @@ Provides php annotation support for PhpStorm and IntelliJ
 * Every class with `@Annotation` inside class doc block is detected on file indexing
 * Annotation Properties on property names
 * Property value types
+* @ENUM Tags
 
 ```php
 /**
@@ -26,6 +27,12 @@ class NotBlank extends Constraint {
      * @var Boolean
      */
     public $option = false;
+
+    /**
+     *
+     * @Enum({"AUTO", "SEQUENCE", "TABLE", "IDENTITY", "NONE", "UUID", "CUSTOM"})
+     */
+    public $strategy = 'AUTO';
 
 }
 ```
@@ -59,3 +66,7 @@ Example for extension points.
   <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.extension.PhpAnnotationTypeProvider"/>
 </extensions>
 ```
+
+### Other
+* Doctrine repositoryName
+* Completion confidence to auto popup completion in docblocks

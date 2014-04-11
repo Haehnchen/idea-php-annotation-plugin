@@ -41,6 +41,7 @@ public class PhpAnnotationTypeProvider implements PhpAnnotationExtension {
                     values.addAll(Arrays.asList("false", "true"));
                 }
 
+                // @Enum({"AUTO", "SEQUENCE"})
                 PhpDocComment docComment = field.getDocComment();
                 if(docComment != null) {
                     PhpDocTag[] phpDocTags = docComment.getTagElementsByName("@Enum");
