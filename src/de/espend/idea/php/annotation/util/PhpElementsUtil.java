@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -63,6 +64,18 @@ public class PhpElementsUtil {
             }
         }
         return null;
+    }
+
+    @Nullable
+    static public PhpClass getClassInterface(Project project, @NotNull String className) {
+
+        // api workaround for at least interfaces
+        if(!className.startsWith("\\")) {
+            className = "\\" + className;
+        }
+
+        Collection<PhpClass> phpClasses = PhpIndex.getInstance(project).getAnyByFQN(className);
+        return phpClasses.size() == 0 ? null : phpClasses.iterator().next();
     }
 
 }
