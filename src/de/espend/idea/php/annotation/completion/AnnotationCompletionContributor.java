@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import de.espend.idea.php.annotation.AnnotationPropertyParameter;
 import de.espend.idea.php.annotation.PhpAnnotationExtension;
 import de.espend.idea.php.annotation.Settings;
@@ -29,6 +30,7 @@ import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import de.espend.idea.php.annotation.util.PluginUtil;
 import de.espend.idea.php.annotation.util.WorkaroundUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -117,7 +119,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         }
     }
 
-    private class PhpDocAttributeList  extends CompletionProvider<CompletionParameters> {
+    private class PhpDocAttributeList extends CompletionProvider<CompletionParameters> {
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters completionParameters, ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
@@ -137,25 +139,45 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                 return;
             }
 
-
             for(Field field: phpClass.getFields()) {
-                if(!field.isConstant()) {
-                    String propertyName = field.getName();
-
-                    if(field.getDefaultValue() instanceof ArrayCreationExpression) {
-                        completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.ARRAY)));
-                    } else {
-                        completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.STRING)));
-                    }
-
-                }
-
+                attachLookupElement(completionResultSet, field);
             }
 
-
         }
-    }
 
+        private void attachLookupElement(CompletionResultSet completionResultSet, Field field) {
+            if(field.isConstant()) {
+               return;
+            }
+
+            String propertyName = field.getName();
+
+            // @var array<string>
+            PhpDocComment docComment = field.getDocComment();
+            if(docComment != null) {
+                for(PhpDocTag varDocTag: docComment.getTagElementsByName("@var")) {
+                    PhpPsiElement phpPsiElement = varDocTag.getFirstPsiChild();
+                    if(phpPsiElement != null) {
+                        String typeText = phpPsiElement.getText();
+                        if(!StringUtils.isBlank(typeText) && typeText.toLowerCase().startsWith("array")) {
+                            completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.ARRAY)));
+                            return;
+                        }
+                    }
+                }
+            }
+
+            // public $var = array();
+            if(field.getDefaultValue() instanceof ArrayCreationExpression) {
+                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.ARRAY)));
+                return;
+            }
+
+            // fallback
+            completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.STRING)));
+        }
+
+    }
 
     private class PhpDocBlockTagAnnotations  extends CompletionProvider<CompletionParameters> {
 
