@@ -37,7 +37,8 @@ public class PhpAnnotationTypeProvider implements PhpAnnotationExtension {
         for(Field field: annotationPropertyParameter.getPhpClass().getFields()) {
             if(field.getName().equals(propertyName)) {
 
-                if(field.getType().toString().equals("bool")) {
+                String typeName = field.getType().toString();
+                if(typeName.equals("bool") || typeName.equals("boolean")) {
                     values.addAll(Arrays.asList("false", "true"));
                 }
 
