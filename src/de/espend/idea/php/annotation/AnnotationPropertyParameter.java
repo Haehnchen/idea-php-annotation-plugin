@@ -1,15 +1,18 @@
 package de.espend.idea.php.annotation;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.Nullable;
 
 public class AnnotationPropertyParameter {
 
-    private PsiElement element;
-    private PhpClass phpClass;
+    final private PsiElement element;
+    final private PhpClass phpClass;
+    final private Type type;
+
+    final private Project project;
     private String propertyName;
-    private Type type;
 
     public AnnotationPropertyParameter(PsiElement element, PhpClass phpClass, String propertyName, Type type) {
         this(element, phpClass, type);
@@ -20,6 +23,7 @@ public class AnnotationPropertyParameter {
         this.element = psiElement;
         this.phpClass = phpClass;
         this.type = type;
+        this.project = phpClass.getProject();
     }
 
     public Type getType() {
@@ -39,8 +43,12 @@ public class AnnotationPropertyParameter {
         return propertyName;
     }
 
+    public Project getProject() {
+        return project;
+    }
+
     public static enum Type {
-        DEFAULT, STRING, ARRAY
+        DEFAULT, STRING, ARRAY, INTEGER
     }
 
 }

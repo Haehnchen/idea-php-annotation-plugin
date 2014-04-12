@@ -6,7 +6,6 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.jetbrains.php.PhpIcons;
 import de.espend.idea.php.annotation.completion.insert.AnnotationPropertyInsertHandler;
 import de.espend.idea.php.annotation.dict.AnnotationProperty;
-import de.espend.idea.php.annotation.dict.AnnotationPropertyEnum;
 import org.jetbrains.annotations.NotNull;
 
 public class PhpAnnotationPropertyLookupElement extends LookupElement {
@@ -26,18 +25,17 @@ public class PhpAnnotationPropertyLookupElement extends LookupElement {
 
     public void renderElement(LookupElementPresentation presentation) {
         presentation.setItemText(getLookupString());
-        presentation.setTypeText(this.annotationProperty.getAnnotationPropertyEnum().toString());
+        presentation.setTypeText(ucfirst(this.annotationProperty.getAnnotationPropertyEnum().toString()));
         presentation.setTypeGrayed(true);
-        if(this.annotationProperty.getAnnotationPropertyEnum() == AnnotationPropertyEnum.ARRAY) {
-            presentation.setIcon(PhpIcons.METHOD_ICON);
-        } else {
-            presentation.setIcon(PhpIcons.FIELD_ICON);
-        }
-
+        presentation.setIcon(PhpIcons.FIELD_ICON);
     }
 
     public void handleInsert(InsertionContext context) {
         AnnotationPropertyInsertHandler.getInstance().handleInsert(context, this);
+    }
+
+    private String ucfirst(String chaine){
+        return chaine.substring(0, 1).toUpperCase()+ chaine.substring(1).toLowerCase();
     }
 
     @NotNull

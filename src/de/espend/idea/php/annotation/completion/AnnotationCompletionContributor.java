@@ -145,16 +145,30 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
             String propertyName = field.getName();
 
-            // @var array<string>
             PhpDocComment docComment = field.getDocComment();
             if(docComment != null) {
                 for(PhpDocTag varDocTag: docComment.getTagElementsByName("@var")) {
                     PhpPsiElement phpPsiElement = varDocTag.getFirstPsiChild();
                     if(phpPsiElement != null) {
-                        String typeText = phpPsiElement.getText();
-                        if(!StringUtils.isBlank(typeText) && typeText.toLowerCase().startsWith("array")) {
-                            completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.ARRAY)));
-                            return;
+                        String typeText = phpPsiElement.getText().toLowerCase();
+                        if(!StringUtils.isBlank(typeText)) {
+
+                            // @var array<string>
+                            if(typeText.startsWith("array")) {
+                                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.ARRAY)));
+                                return;
+                            }
+
+                            if(typeText.equals("integer") || typeText.equals("int")) {
+                                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.INTEGER)));
+                                return;
+                            }
+
+                            if(typeText.equals("boolean") || typeText.equals("bool")) {
+                                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.BOOLEAN)));
+                                return;
+                            }
+
                         }
                     }
                 }

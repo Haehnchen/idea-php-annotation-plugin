@@ -21,22 +21,36 @@ public class AnnotationPropertyInsertHandler implements InsertHandler<LookupElem
            return;
         }
 
+        // move caret back
+        int i = -1;
+
         // append completion text depend on value:
         // engine="|"
         // engine={|}
+        // engine=<boolean|integer>
         if(lookupElement.getObject() instanceof AnnotationProperty) {
             String addText = "=\"\"";
 
             if(((AnnotationProperty) lookupElement.getObject()).getAnnotationPropertyEnum() == AnnotationPropertyEnum.ARRAY) {
                 addText = "={}";
             }
+
+            if(((AnnotationProperty) lookupElement.getObject()).getAnnotationPropertyEnum() == AnnotationPropertyEnum.INTEGER || ((AnnotationProperty) lookupElement.getObject()).getAnnotationPropertyEnum() == AnnotationPropertyEnum.BOOLEAN) {
+                addText = "=";
+                i = 0;
+            }
+
             PhpInsertHandlerUtil.insertStringAtCaret(context.getEditor(), addText);
+
 
         } else {
             PhpInsertHandlerUtil.insertStringAtCaret(context.getEditor(), "=\"\"");
         }
 
-        context.getEditor().getCaretModel().moveCaretRelatively(-1, 0, false, false, true);
+        if(i != 0) {
+            context.getEditor().getCaretModel().moveCaretRelatively(i, 0, false, false, true);
+        }
+
     }
 
     public static AnnotationPropertyInsertHandler getInstance(){
