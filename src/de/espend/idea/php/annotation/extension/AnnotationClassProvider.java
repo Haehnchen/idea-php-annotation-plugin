@@ -1,15 +1,7 @@
 package de.espend.idea.php.annotation.extension;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.PhpIcons;
-import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.lang.PhpLangUtil;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import de.espend.idea.php.annotation.AnnotationPropertyParameter;
 import de.espend.idea.php.annotation.PhpAnnotationExtension;
@@ -22,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 
 public class AnnotationClassProvider implements PhpAnnotationExtension {
@@ -60,7 +51,7 @@ public class AnnotationClassProvider implements PhpAnnotationExtension {
         @Override
         public ResolveResult[] multiResolve(boolean b) {
 
-            PhpClass phpClass = DoctrineAnnotationTypeProvider.getAnnotationRepositoryClass((StringLiteralExpression) getElement(), content);
+            PhpClass phpClass = PhpElementsUtil.getClassInsideAnnotation((StringLiteralExpression) getElement(), content);
             if(phpClass == null) {
                 return new ResolveResult[0];
             }

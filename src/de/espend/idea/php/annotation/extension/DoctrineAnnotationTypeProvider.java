@@ -69,7 +69,7 @@ public class DoctrineAnnotationTypeProvider implements PhpAnnotationExtension {
         @Override
         public ResolveResult[] multiResolve(boolean b) {
 
-            PhpClass phpClass = getAnnotationRepositoryClass((StringLiteralExpression) getElement(), content);
+            PhpClass phpClass = PhpElementsUtil.getClassInsideAnnotation((StringLiteralExpression) getElement(), content);
             if(phpClass == null) {
                 return new ResolveResult[0];
             }
@@ -96,39 +96,4 @@ public class DoctrineAnnotationTypeProvider implements PhpAnnotationExtension {
         }
     }
 
-    public static PhpClass getAnnotationRepositoryClass(StringLiteralExpression phpDocString, String modelName) {
-
-        // \ns\Class fine we dont need to resolve classname we are in global context
-        if(modelName.startsWith("\\")) {
-            return PhpElementsUtil.getClassInterface(phpDocString.getProject(), modelName);
-        }
-
-        // try class shortcut: ns\Class
-        PhpClass phpClass = PhpElementsUtil.getClassInterface(phpDocString.getProject(), modelName);
-        if(phpClass != null) {
-            return phpClass;
-        }
-
-        PhpDocComment inClass = PsiTreeUtil.getParentOfType(phpDocString, PhpDocComment.class);
-        if(inClass == null) {
-            return null;
-        }
-
-        // doc before class
-        PhpPsiElement phpClassElement = inClass.getNextPsiSibling();
-        if(phpClassElement instanceof PhpClass) {
-            String className = ((PhpClass) phpClassElement).getNamespaceName() + modelName;
-            return PhpElementsUtil.getClassInterface(phpDocString.getProject(), className);
-        }
-
-        // eg property, method
-        PhpClass insidePhpClass = PsiTreeUtil.getParentOfType(phpClassElement, PhpClass.class);
-        if(insidePhpClass != null) {
-            String className = insidePhpClass.getNamespaceName() + modelName;
-            return PhpElementsUtil.getClassInterface(phpDocString.getProject(), className);
-        }
-
-        return null;
-
-    }
 }
