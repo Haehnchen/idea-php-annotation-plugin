@@ -111,7 +111,8 @@ Current php doc comments api is very limited, so for now its possible to support
 
   <extensions defaultExtensionNs="de.espend.idea.php.annotation">
      <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.extension.PhpAnnotationTypeProvider"/>
-      <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.extension.DoctrineAnnotationTypeProvider"/>
+     <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.extension.DoctrineAnnotationTypeProvider"/>
+     <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.extension.AnnotationClassProvider"/>
   </extensions>
 
   <depends>com.jetbrains.php</depends>

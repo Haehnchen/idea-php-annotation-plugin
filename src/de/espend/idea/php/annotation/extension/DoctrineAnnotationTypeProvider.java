@@ -114,13 +114,21 @@ public class DoctrineAnnotationTypeProvider implements PhpAnnotationExtension {
             return null;
         }
 
+        // doc before class
         PhpPsiElement phpClassElement = inClass.getNextPsiSibling();
-        if(!(phpClassElement instanceof PhpClass)) {
-            return null;
+        if(phpClassElement instanceof PhpClass) {
+            String className = ((PhpClass) phpClassElement).getNamespaceName() + modelName;
+            return PhpElementsUtil.getClassInterface(phpDocString.getProject(), className);
         }
 
-        String className = ((PhpClass) phpClassElement).getNamespaceName() + modelName;
-        return PhpElementsUtil.getClassInterface(phpDocString.getProject(), className);
+        // eg property, method
+        PhpClass insidePhpClass = PsiTreeUtil.getParentOfType(phpClassElement, PhpClass.class);
+        if(insidePhpClass != null) {
+            String className = insidePhpClass.getNamespaceName() + modelName;
+            return PhpElementsUtil.getClassInterface(phpDocString.getProject(), className);
+        }
+
+        return null;
 
     }
 }
