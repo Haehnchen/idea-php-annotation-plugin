@@ -39,16 +39,18 @@ public class AnnotationPattern {
 
     /**
      * fire on: @Callback(<completion>), @Callback("", <completion>)
+     * * @ORM\Column(
+     *      <completion>,
+     * )
      */
     public static ElementPattern<PsiElement> getDocAttribute() {
-        // @TODO: use eap psi
-        // @TODO: multiline parser failure: check on eap
         return PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
             .afterLeafSkipping(
                 PlatformPatterns.psiElement(PsiWhiteSpace.class),
                 PlatformPatterns.or(
                     PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_COMMA),
-                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LPAREN)
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LPAREN),
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LEADING_ASTERISK)
                 )
 
             )
