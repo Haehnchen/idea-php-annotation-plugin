@@ -71,9 +71,8 @@ public class AnnotationPattern {
      * matches "@Callback(property="<value>")"
      */
     public static ElementPattern<PsiElement> getTextIdentifier() {
-        if(WorkaroundUtil.isClassFieldName("com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes", "phpDocAttributeList")) {
-            return PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STRING)
-                .withParent(PlatformPatterns.psiElement(StringLiteralExpression.class)
+        return PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STRING)
+            .withParent(PlatformPatterns.psiElement(StringLiteralExpression.class)
                 .afterLeafSkipping(
                     PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText(PlatformPatterns.string().contains("=")),
                     PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
@@ -83,24 +82,8 @@ public class AnnotationPattern {
                     .withParent(PlatformPatterns
                         .psiElement(PhpDocElementTypes.phpDocTag)
                     )
-                ));
-        }
-
-        // @TODO: filter more on EAP
-        return PlatformPatterns
-            .psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).afterLeafSkipping(
-                PlatformPatterns.or(
-                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText(PlatformPatterns.string().contains("=\""))
-                ),
-                PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
-            )
-            .withParent(PlatformPatterns
-                .psiElement(PhpDocElementTypes.phpDocTagValue)
-                .withParent(PlatformPatterns
-                    .psiElement(PhpDocElementTypes.phpDocTag)
                 )
-            )
-            .withLanguage(PhpLanguage.INSTANCE);
+            );
     }
 
     /**

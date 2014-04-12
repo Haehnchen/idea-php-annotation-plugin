@@ -10,10 +10,7 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
-import com.jetbrains.php.lang.psi.elements.Field;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.psi.elements.*;
 import de.espend.idea.php.annotation.AnnotationPropertyParameter;
 import de.espend.idea.php.annotation.PhpAnnotationExtension;
 import de.espend.idea.php.annotation.Settings;
@@ -93,16 +90,12 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                 return;
             }
 
-            // eap: provide psi element wrapped into phpDocString
-            if(WorkaroundUtil.isClassFieldName("com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes", "phpDocString")) {
-                psiElement = parameters.getOriginalPosition().getContext();
-            }
-
-            if(psiElement == null) {
+            PsiElement phpDocString = psiElement.getContext();
+            if(!(phpDocString instanceof StringLiteralExpression)) {
                 return;
             }
 
-            PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(psiElement, PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER));
+            PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(phpDocString, PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER));
             if(propertyName == null) {
                 return;
             }
