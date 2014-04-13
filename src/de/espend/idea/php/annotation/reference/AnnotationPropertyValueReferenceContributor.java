@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.AnnotationPropertyParameter;
-import de.espend.idea.php.annotation.PhpAnnotationExtension;
+import de.espend.idea.php.annotation.PhpAnnotationReferencesProvider;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.reference.parameter.ReferencesByElementParameter;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 
 public class AnnotationPropertyValueReferenceContributor extends PsiReferenceContributor {
 
@@ -90,10 +90,10 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
 
         ReferencesByElementParameter referencesByElementParameter = new ReferencesByElementParameter(psiElement, processingContext);
 
-        for(PhpAnnotationExtension phpAnnotationExtension : AnnotationUtil.getProvider()) {
-            Collection<PsiReference> providerReferences = phpAnnotationExtension.getPropertyReferences(annotationPropertyParameter, referencesByElementParameter);
-            if(providerReferences != null) {
-                psiReferences.addAll(providerReferences);
+        for(PhpAnnotationReferencesProvider phpAnnotationExtension : AnnotationUtil.EXTENSION_POINT_REFERENCES.getExtensions()) {
+            PsiReference[] references = phpAnnotationExtension.getPropertyReferences(annotationPropertyParameter, referencesByElementParameter);
+            if(references != null && references.length > 0) {
+                psiReferences.addAll(Arrays.asList(references));
             }
         }
 

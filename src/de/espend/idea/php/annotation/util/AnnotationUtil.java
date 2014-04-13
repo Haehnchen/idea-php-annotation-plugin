@@ -10,9 +10,10 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import de.espend.idea.php.annotation.AnnotationStubIndex;
+import de.espend.idea.php.annotation.PhpAnnotationCompletionProvider;
+import de.espend.idea.php.annotation.PhpAnnotationReferencesProvider;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import de.espend.idea.php.annotation.dict.PhpAnnotation;
-import de.espend.idea.php.annotation.PhpAnnotationExtension;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -23,12 +24,8 @@ import java.util.regex.Pattern;
 
 public class AnnotationUtil {
 
-    private static final ExtensionPointName<PhpAnnotationExtension> EXTENSION_POINT = new ExtensionPointName("de.espend.idea.php.annotation.PhpAnnotationExtension");
-
-
-    public static PhpAnnotationExtension[] getProvider() {
-        return EXTENSION_POINT.getExtensions();
-    }
+    public static final ExtensionPointName<PhpAnnotationCompletionProvider> EXTENSION_POINT_COMPLETION = new ExtensionPointName<PhpAnnotationCompletionProvider>("de.espend.idea.php.annotation.PhpAnnotationCompletionProvider");
+    public static final ExtensionPointName<PhpAnnotationReferencesProvider> EXTENSION_POINT_REFERENCES = new ExtensionPointName<PhpAnnotationReferencesProvider>("de.espend.idea.php.annotation.PhpAnnotationReferencesProvider");
 
     public static boolean isAnnotationClass(PhpClass phpClass) {
         PhpDocComment phpDocComment = phpClass.getDocComment();

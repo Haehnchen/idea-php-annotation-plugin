@@ -11,9 +11,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
-import de.espend.idea.php.annotation.AnnotationPropertyParameter;
-import de.espend.idea.php.annotation.PhpAnnotationExtension;
-import de.espend.idea.php.annotation.Settings;
+import de.espend.idea.php.annotation.*;
 import de.espend.idea.php.annotation.completion.insert.AnnotationTagInsertHandler;
 import de.espend.idea.php.annotation.completion.parameter.CompletionParameter;
 import de.espend.idea.php.annotation.dict.AnnotationProperty;
@@ -70,13 +68,8 @@ public class AnnotationCompletionContributor extends CompletionContributor {
     private void providerWalker(CompletionParameters parameters, ProcessingContext context, CompletionResultSet result, AnnotationPropertyParameter annotationPropertyParameter) {
         CompletionParameter completionParameter = new CompletionParameter(parameters, context, result);
 
-        for(PhpAnnotationExtension phpAnnotationExtension : AnnotationUtil.getProvider()) {
-            Collection<String> stringResults = phpAnnotationExtension.getPropertyValueCompletions(annotationPropertyParameter, completionParameter);
-            if(stringResults != null) {
-                for(String value: stringResults) {
-                    result.addElement(LookupElementBuilder.create(value));
-                }
-            }
+        for(PhpAnnotationCompletionProvider phpAnnotationExtension : AnnotationUtil.EXTENSION_POINT_COMPLETION.getExtensions()) {
+            phpAnnotationExtension.getPropertyValueCompletions(annotationPropertyParameter, completionParameter);
         }
     }
 

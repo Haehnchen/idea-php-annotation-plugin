@@ -1,36 +1,30 @@
 package de.espend.idea.php.annotation.extension;
 
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import de.espend.idea.php.annotation.AnnotationPropertyParameter;
-import de.espend.idea.php.annotation.PhpAnnotationExtension;
+import de.espend.idea.php.annotation.PhpAnnotationCompletionProvider;
 import de.espend.idea.php.annotation.completion.parameter.CompletionParameter;
-import de.espend.idea.php.annotation.dict.AnnotationTarget;
-import de.espend.idea.php.annotation.reference.parameter.ReferencesByElementParameter;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class PhpAnnotationTypeProvider implements PhpAnnotationExtension {
+public class PhpAnnotationTypeProvider implements PhpAnnotationCompletionProvider {
 
-    @Nullable
     @Override
-    public Collection<String> getPropertyValueCompletions(AnnotationPropertyParameter annotationPropertyParameter, CompletionParameter completionParameter) {
+    public void getPropertyValueCompletions(AnnotationPropertyParameter annotationPropertyParameter, CompletionParameter completionParameter) {
 
         String propertyName = annotationPropertyParameter.getPropertyName();
 
         if(!annotationPropertyParameter.getType().equals(AnnotationPropertyParameter.Type.STRING) && propertyName == null) {
-            return null;
+            return;
         }
 
         Set<String> values = new HashSet<String>();
@@ -65,12 +59,10 @@ public class PhpAnnotationTypeProvider implements PhpAnnotationExtension {
             }
         }
 
-        return values;
+        for(String s: values) {
+            completionParameter.getResult().addElement(LookupElementBuilder.create(s));
+        }
+
     }
 
-    @Nullable
-    @Override
-    public Collection<PsiReference> getPropertyReferences(AnnotationPropertyParameter annotationPropertyParameter, ReferencesByElementParameter referencesByElementParameter) {
-        return null;
-    }
 }

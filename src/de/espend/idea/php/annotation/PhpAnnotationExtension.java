@@ -9,8 +9,7 @@ import java.util.Collection;
 
 public interface PhpAnnotationExtension {
 
-    @Nullable
-    public Collection<String> getPropertyValueCompletions(AnnotationPropertyParameter annotationPropertyParameter, CompletionParameter completionParameter);
+    public void getPropertyValueCompletions(AnnotationPropertyParameter annotationPropertyParameter, CompletionParameter completionParameter);
 
     @Nullable
     public Collection<PsiReference> getPropertyReferences(AnnotationPropertyParameter annotationPropertyParameter, ReferencesByElementParameter referencesByElementParameter);

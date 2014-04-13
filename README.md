@@ -34,6 +34,11 @@ class NotBlank extends Constraint {
      */
     public $strategy = 'AUTO';
 
+    /**
+     * @var array<string>
+     */
+    public $cascade;
+
 }
 ```
 
@@ -59,7 +64,8 @@ Example for extension points.
 
 ```java
 <extensionPoints>
-  <extensionPoint name="PhpAnnotationExtension" interface="de.espend.idea.php.annotation.PhpAnnotationExtension"/>
+      <extensionPoint name="PhpAnnotationCompletionProvider" interface="de.espend.idea.php.annotation.PhpAnnotationCompletionProvider"/>
+      <extensionPoint name="PhpAnnotationReferencesProvider" interface="de.espend.idea.php.annotation.PhpAnnotationReferencesProvider"/>
 </extensionPoints>
 
 <extensions defaultExtensionNs="de.espend.idea.php.annotation">
