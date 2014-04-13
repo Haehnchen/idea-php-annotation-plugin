@@ -1,13 +1,13 @@
-package de.espend.idea.php.annotation.extension;
+package de.espend.idea.php.annotation.completion;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
-import de.espend.idea.php.annotation.AnnotationPropertyParameter;
-import de.espend.idea.php.annotation.PhpAnnotationCompletionProvider;
-import de.espend.idea.php.annotation.completion.parameter.CompletionParameter;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationCompletionProviderParameter;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
+import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,10 +16,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class PhpAnnotationTypeProvider implements PhpAnnotationCompletionProvider {
+public class PhpAnnotationTypeCompletionProvider implements PhpAnnotationCompletionProvider {
 
     @Override
-    public void getPropertyValueCompletions(AnnotationPropertyParameter annotationPropertyParameter, CompletionParameter completionParameter) {
+    public void getPropertyValueCompletions(AnnotationPropertyParameter annotationPropertyParameter, AnnotationCompletionProviderParameter completionParameter) {
 
         String propertyName = annotationPropertyParameter.getPropertyName();
 

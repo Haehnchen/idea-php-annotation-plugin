@@ -1,4 +1,4 @@
-package de.espend.idea.php.annotation.extension.references;
+package de.espend.idea.php.annotation.doctrine.reference.references;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PhpClassFieldReference extends PsiPolyVariantReferenceBase<PsiElement> {
+public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     final PhpClass phpClass;
     final String content;
 
-    public PhpClassFieldReference(StringLiteralExpression psiElement, PhpClass phpClass) {
+    public DoctrinePhpClassFieldReference(StringLiteralExpression psiElement, PhpClass phpClass) {
         super(psiElement);
         this.phpClass = phpClass;
         this.content = psiElement.getContents();

@@ -1,4 +1,4 @@
-package de.espend.idea.php.annotation.completion;
+package de.espend.idea.php.annotation.navigation;
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -12,8 +12,8 @@ import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import de.espend.idea.php.annotation.PhpAnnotationDocTagGotoHandler;
-import de.espend.idea.php.annotation.navigation.AnnotationDocTagGotoHandlerParameter;
+import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationDocTagGotoHandlerParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PluginUtil;

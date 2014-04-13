@@ -1,4 +1,4 @@
-package de.espend.idea.php.annotation.completion.parameter;
+package de.espend.idea.php.annotation.extension.parameter;
 
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
@@ -6,13 +6,13 @@ import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
 
-public class CompletionParameter {
+public class AnnotationCompletionProviderParameter {
 
     private CompletionParameters parameters;
     private ProcessingContext context;
     private CompletionResultSet result;
 
-    public CompletionParameter(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
+    public AnnotationCompletionProviderParameter(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
         this.parameters = parameters;
         this.context = context;
         this.result = result;

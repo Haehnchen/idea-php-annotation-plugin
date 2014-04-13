@@ -1,4 +1,4 @@
-package de.espend.idea.php.annotation.navigation;
+package de.espend.idea.php.annotation.extension.parameter;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;

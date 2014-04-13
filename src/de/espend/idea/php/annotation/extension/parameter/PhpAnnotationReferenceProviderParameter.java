@@ -1,15 +1,15 @@
-package de.espend.idea.php.annotation.reference.parameter;
+package de.espend.idea.php.annotation.extension.parameter;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
-public class ReferencesByElementParameter {
+public class PhpAnnotationReferenceProviderParameter {
 
     private PsiElement psiElement;
     private ProcessingContext processingContext;
 
-    public ReferencesByElementParameter(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
+    public PhpAnnotationReferenceProviderParameter(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
         this.psiElement = psiElement;
         this.processingContext = processingContext;
     }

@@ -1,6 +1,6 @@
-package de.espend.idea.php.annotation;
+package de.espend.idea.php.annotation.extension;
 
-import de.espend.idea.php.annotation.navigation.AnnotationDocTagGotoHandlerParameter;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationDocTagGotoHandlerParameter;
 
 public interface PhpAnnotationDocTagGotoHandler {
     public void getGotoDeclarationTargets(AnnotationDocTagGotoHandlerParameter parameter);

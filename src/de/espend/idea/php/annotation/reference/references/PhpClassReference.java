@@ -1,4 +1,4 @@
-package de.espend.idea.php.annotation.extension.references;
+package de.espend.idea.php.annotation.reference.references;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;

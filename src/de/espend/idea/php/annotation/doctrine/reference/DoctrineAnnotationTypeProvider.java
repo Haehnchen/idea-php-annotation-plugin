@@ -1,20 +1,20 @@
-package de.espend.idea.php.annotation.extension;
+package de.espend.idea.php.annotation.doctrine.reference;
 
 import com.intellij.psi.*;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import de.espend.idea.php.annotation.AnnotationPropertyParameter;
-import de.espend.idea.php.annotation.PhpAnnotationReferencesProvider;
-import de.espend.idea.php.annotation.extension.references.DoctrineRepositoryReference;
-import de.espend.idea.php.annotation.reference.parameter.ReferencesByElementParameter;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
+import de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider;
+import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationReferenceProviderParameter;
+import de.espend.idea.php.annotation.doctrine.reference.references.DoctrineRepositoryReference;
 import org.jetbrains.annotations.Nullable;
 
 
-public class DoctrineAnnotationTypeProvider implements PhpAnnotationReferencesProvider {
+public class DoctrineAnnotationTypeProvider implements PhpAnnotationReferenceProvider {
 
     @Nullable
     @Override
-    public PsiReference[] getPropertyReferences(AnnotationPropertyParameter annotationPropertyParameter, ReferencesByElementParameter referencesByElementParameter) {
+    public PsiReference[] getPropertyReferences(AnnotationPropertyParameter annotationPropertyParameter, PhpAnnotationReferenceProviderParameter referencesByElementParameter) {
 
         if(annotationPropertyParameter.getType() != AnnotationPropertyParameter.Type.PROPERTY_VALUE) {
             return null;

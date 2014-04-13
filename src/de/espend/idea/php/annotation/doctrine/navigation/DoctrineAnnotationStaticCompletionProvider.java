@@ -1,18 +1,18 @@
-package de.espend.idea.php.annotation.extension;
+package de.espend.idea.php.annotation.doctrine.navigation;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.jetbrains.php.lang.PhpLangUtil;
-import de.espend.idea.php.annotation.AnnotationPropertyParameter;
-import de.espend.idea.php.annotation.PhpAnnotationCompletionProvider;
-import de.espend.idea.php.annotation.completion.parameter.CompletionParameter;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationCompletionProviderParameter;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
+import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
 
 import java.util.Arrays;
 
 
-public class DoctrineAnnotationStaticProvider implements PhpAnnotationCompletionProvider {
+public class DoctrineAnnotationStaticCompletionProvider implements PhpAnnotationCompletionProvider {
 
     @Override
-    public void getPropertyValueCompletions(AnnotationPropertyParameter annotationPropertyParameter, CompletionParameter completionParameter) {
+    public void getPropertyValueCompletions(AnnotationPropertyParameter annotationPropertyParameter, AnnotationCompletionProviderParameter completionParameter) {
 
         String propertyName = annotationPropertyParameter.getPropertyName();
         if(propertyName == null) {

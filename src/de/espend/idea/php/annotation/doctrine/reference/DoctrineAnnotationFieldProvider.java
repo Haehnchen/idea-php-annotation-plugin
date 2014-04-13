@@ -1,23 +1,23 @@
-package de.espend.idea.php.annotation.extension;
+package de.espend.idea.php.annotation.doctrine.reference;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import de.espend.idea.php.annotation.AnnotationPropertyParameter;
-import de.espend.idea.php.annotation.PhpAnnotationReferencesProvider;
-import de.espend.idea.php.annotation.extension.references.PhpClassFieldReference;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
+import de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider;
+import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationReferenceProviderParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
-import de.espend.idea.php.annotation.reference.parameter.ReferencesByElementParameter;
+import de.espend.idea.php.annotation.doctrine.reference.references.DoctrinePhpClassFieldReference;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.jetbrains.annotations.Nullable;
 
 
-public class DoctrineAnnotationFieldProvider implements PhpAnnotationReferencesProvider {
+public class DoctrineAnnotationFieldProvider implements PhpAnnotationReferenceProvider {
 
     @Nullable
     @Override
-    public PsiReference[] getPropertyReferences(AnnotationPropertyParameter annotationPropertyParameter, ReferencesByElementParameter referencesByElementParameter) {
+    public PsiReference[] getPropertyReferences(AnnotationPropertyParameter annotationPropertyParameter, PhpAnnotationReferenceProviderParameter referencesByElementParameter) {
 
         if(annotationPropertyParameter.getType() != AnnotationPropertyParameter.Type.PROPERTY_VALUE) {
             return null;
@@ -41,7 +41,7 @@ public class DoctrineAnnotationFieldProvider implements PhpAnnotationReferencesP
         }
 
         return new PsiReference[] {
-            new PhpClassFieldReference((StringLiteralExpression) annotationPropertyParameter.getElement(), phpClass)
+            new DoctrinePhpClassFieldReference((StringLiteralExpression) annotationPropertyParameter.getElement(), phpClass)
         };
 
     }

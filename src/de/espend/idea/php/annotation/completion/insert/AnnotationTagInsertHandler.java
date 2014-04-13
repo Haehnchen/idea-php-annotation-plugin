@@ -23,7 +23,7 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
             context.getEditor().getCaretModel().moveCaretRelatively(-1, 0, false, false, true);
         }
 
-        // "@" is not provide by lookup element because its remove by auto import so attach it if necessary
+        // "@" is not provide by lookupelements element because its remove by auto import so attach it if necessary
         PsiElement element = PsiUtilCore.getElementAtOffset(context.getFile(), context.getStartOffset());
         if(!element.getText().startsWith("@")) {
             StringBuilder textToInsertBuilder = new StringBuilder();

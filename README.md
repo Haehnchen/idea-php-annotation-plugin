@@ -64,12 +64,13 @@ Example for extension points.
 
 ```java
 <extensionPoints>
-      <extensionPoint name="PhpAnnotationCompletionProvider" interface="de.espend.idea.php.annotation.PhpAnnotationCompletionProvider"/>
-      <extensionPoint name="PhpAnnotationReferencesProvider" interface="de.espend.idea.php.annotation.PhpAnnotationReferencesProvider"/>
+      <extensionPoint name="PhpAnnotationCompletionProvider" interface="de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider"/>
+      <extensionPoint name="PhpAnnotationReferencesProvider" interface="de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider"/>
+      <extensionPoint name="PhpAnnotationDocTagGotoHandler" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler"/>
 </extensionPoints>
 
 <extensions defaultExtensionNs="de.espend.idea.php.annotation">
-  <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.extension.PhpAnnotationTypeProvider"/>
+  <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.completion.PhpAnnotationTypeCompletionProvider"/>
 </extensions>
 ```
 

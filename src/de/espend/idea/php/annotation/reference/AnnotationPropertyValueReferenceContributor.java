@@ -7,10 +7,10 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import de.espend.idea.php.annotation.AnnotationPropertyParameter;
-import de.espend.idea.php.annotation.PhpAnnotationReferencesProvider;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
+import de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider;
+import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationReferenceProviderParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
-import de.espend.idea.php.annotation.reference.parameter.ReferencesByElementParameter;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import de.espend.idea.php.annotation.util.PluginUtil;
@@ -95,9 +95,9 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
     private PsiReference[] addPsiReferences(PsiElement psiElement, ProcessingContext processingContext, AnnotationPropertyParameter annotationPropertyParameter) {
         ArrayList<PsiReference> psiReferences = new ArrayList<PsiReference>();
 
-        ReferencesByElementParameter referencesByElementParameter = new ReferencesByElementParameter(psiElement, processingContext);
+        PhpAnnotationReferenceProviderParameter referencesByElementParameter = new PhpAnnotationReferenceProviderParameter(psiElement, processingContext);
 
-        for(PhpAnnotationReferencesProvider phpAnnotationExtension : AnnotationUtil.EXTENSION_POINT_REFERENCES.getExtensions()) {
+        for(PhpAnnotationReferenceProvider phpAnnotationExtension : AnnotationUtil.EXTENSION_POINT_REFERENCES.getExtensions()) {
             PsiReference[] references = phpAnnotationExtension.getPropertyReferences(annotationPropertyParameter, referencesByElementParameter);
             if(references != null && references.length > 0) {
                 psiReferences.addAll(Arrays.asList(references));

@@ -1,4 +1,4 @@
-package de.espend.idea.php.annotation.lookup;
+package de.espend.idea.php.annotation.completion.lookupelements;
 
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
