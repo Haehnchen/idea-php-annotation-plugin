@@ -144,6 +144,12 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                 return;
             }
 
+            // private $isNillable = array();
+            if(type.toString().equals("array")) {
+                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.ARRAY)));
+                return;
+            }
+
             PhpDocComment docComment = field.getDocComment();
             if(docComment != null) {
                 for(PhpDocTag varDocTag: docComment.getTagElementsByName("@var")) {
