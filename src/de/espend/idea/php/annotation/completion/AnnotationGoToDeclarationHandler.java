@@ -6,30 +6,20 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementResolveResult;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
-import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpUse;
-import de.espend.idea.php.annotation.Settings;
-import de.espend.idea.php.annotation.dict.AnnotationTarget;
-import de.espend.idea.php.annotation.dict.PhpAnnotation;
+import de.espend.idea.php.annotation.PhpAnnotationDocTagGotoHandler;
+import de.espend.idea.php.annotation.navigation.AnnotationDocTagGotoHandlerParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
-import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import de.espend.idea.php.annotation.util.PluginUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler {
 
@@ -41,11 +31,14 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
             return null;
         }
 
+        // @Test(<foo>=)
         List<PsiElement> psiElements = new ArrayList<PsiElement>();
         if(AnnotationPattern.getDocAttribute().accepts(psiElement)) {
             this.addPropertyGoto(psiElement, psiElements);
         }
 
+        // <@Test>
+        // <@Test\Test>
         if (PlatformPatterns.psiElement(PhpDocElementTypes.DOC_TAG_NAME).withText(StandardPatterns.string().startsWith("@")).withLanguage(PhpLanguage.INSTANCE).accepts(psiElement)) {
             this.addDocTagNameGoto(psiElement, psiElements);
         }
@@ -54,9 +47,12 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
     }
 
     /**
-     * TODO: should be removed if psi.reference is working in eap
+     * Add goto for DocTag itself which should be the PhpClass and provide Extension
+     *
+     * @param psiElement origin DOC_TAG_NAME psi element
+     * @param targets Goto targets
      */
-    private void addDocTagNameGoto(PsiElement psiElement, List<PsiElement> psiElements) {
+    private void addDocTagNameGoto(PsiElement psiElement, List<PsiElement> targets) {
 
         PsiElement phpDocTagValue = psiElement.getContext();
         if(!(phpDocTagValue instanceof PhpDocTag)) {
@@ -68,10 +64,22 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
             return;
         }
 
-        psiElements.add(phpClass);
+        targets.add(phpClass);
+
+        AnnotationDocTagGotoHandlerParameter parameter = new AnnotationDocTagGotoHandlerParameter((PhpDocTag) phpDocTagValue, phpClass, targets);
+        for(PhpAnnotationDocTagGotoHandler phpAnnotationExtension : AnnotationUtil.EP_DOC_TAG_GOTO.getExtensions()) {
+            phpAnnotationExtension.getGotoDeclarationTargets(parameter);
+        }
+
     }
 
-    private void addPropertyGoto(PsiElement psiElement, List<PsiElement> psiElements) {
+    /**
+     * Add goto for property value which are Fields inside PhpClass
+     *
+     * @param psiElement origin DOC_IDENTIFIER psi element
+     * @param targets Goto targets
+     */
+    private void addPropertyGoto(PsiElement psiElement, List<PsiElement> targets) {
 
         PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(psiElement, PhpDocTag.class);
         if(phpDocTag == null) {
@@ -85,7 +93,7 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
 
         for(Field field: phpClass.getFields()) {
             if(field.getName().equals(psiElement.getText())) {
-                psiElements.add(field);
+                targets.add(field);
                 return;
             }
         }

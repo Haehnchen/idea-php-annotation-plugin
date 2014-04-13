@@ -106,15 +106,17 @@ Current php doc comments api is very limited, so for now its possible to support
   </extensions>
 
   <extensionPoints>
-     <extensionPoint name="PhpAnnotationExtension" interface="de.espend.idea.php.annotation.PhpAnnotationExtension"/>
+      <extensionPoint name="PhpAnnotationCompletionProvider" interface="de.espend.idea.php.annotation.PhpAnnotationCompletionProvider"/>
+      <extensionPoint name="PhpAnnotationReferencesProvider" interface="de.espend.idea.php.annotation.PhpAnnotationReferencesProvider"/>
+      <extensionPoint name="PhpAnnotationDocTagGotoHandler" interface="de.espend.idea.php.annotation.PhpAnnotationDocTagGotoHandler"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="de.espend.idea.php.annotation">
-     <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.extension.PhpAnnotationTypeProvider"/>
-     <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.extension.DoctrineAnnotationTypeProvider"/>
-     <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.extension.AnnotationClassProvider"/>
-     <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.extension.DoctrineAnnotationFieldProvider"/>
-     <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.extension.DoctrineAnnotationStaticProvider"/>
+     <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.extension.PhpAnnotationTypeProvider"/>
+     <PhpAnnotationReferencesProvider implementation="de.espend.idea.php.annotation.extension.DoctrineAnnotationTypeProvider"/>
+     <PhpAnnotationReferencesProvider implementation="de.espend.idea.php.annotation.extension.AnnotationClassProvider"/>
+     <PhpAnnotationReferencesProvider implementation="de.espend.idea.php.annotation.extension.DoctrineAnnotationFieldProvider"/>
+     <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.extension.DoctrineAnnotationStaticProvider"/>
   </extensions>
 
   <depends>com.jetbrains.php</depends>

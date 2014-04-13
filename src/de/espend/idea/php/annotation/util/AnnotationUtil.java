@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import de.espend.idea.php.annotation.AnnotationStubIndex;
 import de.espend.idea.php.annotation.PhpAnnotationCompletionProvider;
+import de.espend.idea.php.annotation.PhpAnnotationDocTagGotoHandler;
 import de.espend.idea.php.annotation.PhpAnnotationReferencesProvider;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import de.espend.idea.php.annotation.dict.PhpAnnotation;
@@ -26,6 +27,8 @@ public class AnnotationUtil {
 
     public static final ExtensionPointName<PhpAnnotationCompletionProvider> EXTENSION_POINT_COMPLETION = new ExtensionPointName<PhpAnnotationCompletionProvider>("de.espend.idea.php.annotation.PhpAnnotationCompletionProvider");
     public static final ExtensionPointName<PhpAnnotationReferencesProvider> EXTENSION_POINT_REFERENCES = new ExtensionPointName<PhpAnnotationReferencesProvider>("de.espend.idea.php.annotation.PhpAnnotationReferencesProvider");
+
+    public static final ExtensionPointName<PhpAnnotationDocTagGotoHandler> EP_DOC_TAG_GOTO = new ExtensionPointName<PhpAnnotationDocTagGotoHandler>("de.espend.idea.php.annotation.PhpAnnotationDocTagGotoHandler");
 
     public static boolean isAnnotationClass(PhpClass phpClass) {
         PhpDocComment phpDocComment = phpClass.getDocComment();

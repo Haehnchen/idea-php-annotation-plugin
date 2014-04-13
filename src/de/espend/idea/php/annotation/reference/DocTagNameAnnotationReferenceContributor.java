@@ -16,9 +16,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
     @Override
     public void registerReferenceProviders(PsiReferenceRegistrar psiReferenceRegistrar) {
 
-        // "@Template()" < OK
-        // "@ORM\PostPersist()" < no call, at least on hover click, so we need goto handler also
-
+        // "@Template()", "@ORM\PostPersist()"
         psiReferenceRegistrar.registerReferenceProvider(
             PlatformPatterns.psiElement(PhpDocTag.class),
             new PsiReferenceProvider() {
