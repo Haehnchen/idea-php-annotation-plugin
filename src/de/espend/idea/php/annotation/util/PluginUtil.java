@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 public class PluginUtil {
 
     public static boolean isEnabled(Project project) {
-        return Settings.getInstance(project).pluginEnabled;
+        return true;
     }
 
     public static boolean isEnabled(@Nullable PsiElement psiElement) {
