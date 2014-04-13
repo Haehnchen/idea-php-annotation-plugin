@@ -4,7 +4,11 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.Processor;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileBasedIndexImpl;
+import com.intellij.util.indexing.ID;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
@@ -17,9 +21,7 @@ import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,8 +47,10 @@ public class AnnotationUtil {
     public static PhpClass[] getAnnotationsClasses(Project project) {
         ArrayList<PhpClass> phpClasses = new ArrayList<PhpClass>();
 
-        Collection<String> phpNamedClasses = FileBasedIndexImpl.getInstance().getAllKeys(AnnotationStubIndex.KEY, project);
-        for(String phpClassName: phpNamedClasses) {
+        CollectProjectUniqueKeys ymlProjectProcessor = new CollectProjectUniqueKeys(project, AnnotationStubIndex.KEY);
+        FileBasedIndex.getInstance().processAllKeys(AnnotationStubIndex.KEY, ymlProjectProcessor, project);
+
+        for(String phpClassName: ymlProjectProcessor.getResult()) {
             PhpClass phpClass = PhpElementsUtil.getClass(project, phpClassName);
             if(phpClass != null) {
                 phpClasses.add(phpClass);
@@ -181,6 +185,42 @@ public class AnnotationUtil {
         String resolvedClassName = useImports.get(className) + subNamespaceName;
 
         return PhpElementsUtil.getClass(phpDocTag.getProject(), resolvedClassName);
+
+    }
+
+    public static class CollectProjectUniqueKeys implements Processor<String> {
+
+        final Project project;
+        final ID id;
+
+        final Set<String> stringSet;
+
+        public CollectProjectUniqueKeys(Project project, ID id) {
+            this.project = project;
+            this.id = id;
+            this.stringSet = new HashSet<String>();
+        }
+
+        @Override
+        public boolean process(String s) {
+            this.stringSet.add(s);
+            return true;
+        }
+
+        public Set<String> getResult() {
+            Set<String> set = new HashSet<String>();
+
+            for (String key : stringSet) {
+                Collection fileCollection = FileBasedIndex.getInstance().getContainingFiles(id, key, GlobalSearchScope.projectScope(project));
+
+                if (fileCollection.size() > 0) {
+                    set.add(key);
+                }
+
+            }
+
+            return set;
+        }
 
     }
 

@@ -11,7 +11,6 @@ import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import de.espend.idea.php.annotation.util.WorkaroundUtil;
 
 public class AnnotationPattern {
     public static ElementPattern<PsiElement> getDocBlockTag() {
