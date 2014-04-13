@@ -8,6 +8,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileBasedIndexImpl;
@@ -17,6 +18,8 @@ import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
+import com.jetbrains.php.lang.psi.elements.PhpNamespace;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import de.espend.idea.php.annotation.AnnotationStubIndex;
 import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
@@ -43,6 +46,7 @@ public class AnnotationUtil {
         addAll(Arrays.asList(PhpDocUtil.ALL_TAGS));
         add("@Annotation");
         add("@inheritDoc");
+        add("@Enum");
         add("@inheritdoc");
         add("@Target");
     }};
@@ -193,6 +197,22 @@ public class AnnotationUtil {
             return null;
         }
 
+        // check annoation in current namespace
+        String tagName = phpDocTag.getName();
+        if(tagName.startsWith("@")) {
+            tagName = tagName.substring(1);
+        }
+
+        PhpNamespace phpNamespace = PsiTreeUtil.getParentOfType(phpDocTag, PhpNamespace.class);
+        if(phpNamespace != null) {
+            String currentNsClass = phpNamespace.getFQN() + "\\" + tagName;
+            PhpClass phpClass = PhpElementsUtil.getClass(phpDocTag.getProject(), currentNsClass);
+            if(phpClass != null) {
+                return phpClass;
+            }
+        }
+
+        // resolve class name on imports and aliases
         if(getUseImportMap(containingFile).size() == 0) {
             return null;
         }
@@ -204,7 +224,10 @@ public class AnnotationUtil {
     @Nullable
     public static PhpClass getAnnotationReference(PhpDocTag phpDocTag, final Map<String, String> useImports) {
 
-        String tagName = phpDocTag.getName().substring(1);
+        String tagName = phpDocTag.getName();
+        if(tagName.startsWith("@")) {
+            tagName = tagName.substring(1);
+        }
 
         String className = tagName;
         String subNamespaceName = "";

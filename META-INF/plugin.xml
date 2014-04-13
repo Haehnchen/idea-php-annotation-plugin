@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>1.0</version>
+  <version>1.0.1</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">espend</vendor>
 
   <description><![CDATA[
@@ -37,6 +37,11 @@
   </description>
 
   <change-notes><![CDATA[
+
+<h2>1.0.1</h2>
+<ul>
+    <li>Detect annotation classes in same namespace</li>
+</ul>
 
 <h2>1.0</h2>
 <ul>
