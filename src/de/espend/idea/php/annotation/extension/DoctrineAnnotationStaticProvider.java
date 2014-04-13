@@ -25,6 +25,12 @@ public class DoctrineAnnotationStaticProvider implements PhpAnnotationCompletion
             }
         }
 
+        if(propertyName.equals("onDelete") && PhpLangUtil.equalsClassNames(annotationPropertyParameter.getPhpClass().getPresentableFQN(), "Doctrine\\ORM\\Mapping\\JoinColumn")) {
+            for(String s: Arrays.asList("CASCADE", "SET NULL")) {
+                completionParameter.getResult().addElement(LookupElementBuilder.create(s));
+            }
+        }
+
     }
 
 }
