@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import de.espend.idea.php.annotation.*;
 import de.espend.idea.php.annotation.completion.insert.AnnotationTagInsertHandler;
 import de.espend.idea.php.annotation.completion.parameter.CompletionParameter;
@@ -134,6 +135,13 @@ public class AnnotationCompletionContributor extends CompletionContributor {
             }
 
             String propertyName = field.getName();
+
+            // private $isNillable = false;
+            PhpType type = field.getType();
+            if(type.toString().equals("bool")) {
+                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.BOOLEAN)));
+                return;
+            }
 
             PhpDocComment docComment = field.getDocComment();
             if(docComment != null) {
