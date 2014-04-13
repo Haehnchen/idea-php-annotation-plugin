@@ -18,6 +18,7 @@
 
 <h2>Features</h2>
 <ul>
+  <li>Attach PhpClass to their DocTag to support "Code > Optimize Imports"</li>
   <li>Auto alias detection on use statement</li>
   <li>Filter annotation classes on targets like method, class, property, ...</li>
   <li>Goto for doc tags and property names</li>
@@ -25,6 +26,7 @@
   <li>Index classes with @Annotation inside doc block</li>
   <li>Plugin extension point</li>
   <li>Doctrine related providers</li>
+  <li>Class import annotator</li>
 </ul>
 
 <h2>Todo</h2>
@@ -39,12 +41,13 @@
 <h2>1.0</h2>
 <ul>
     <li>Remove all PhpStorm6 hacks, support new Api and only allow PhpStorm7 builds</li>
+    <li>Add more property value type detections</li>
+    <li>Add and change extension points to reflect latest api features</li>
+    <li>Add class import annotator</li>
     <li>Add docblock property value provider for @Enum</li>
     <li>Add Doctrine providers for: targetEntity, repositoryClass, mappedBy, inversedBy</li>
     <li>Migrate pattern to allow multiple docblocks  <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/12">#12</a>, <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/8">#8</a></li>
-    <li>Add more property value type detections</li>
-    <li>Add and change extension points to reflect latest api features</li>
-    <li>Plugin dont need to explicit enabled anymore</li>
+    <li>Plugin dont need to explicit enable</li>
 </ul>
 
 <h2>0.4</h2>

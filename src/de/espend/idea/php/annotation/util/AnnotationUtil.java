@@ -2,6 +2,7 @@ package de.espend.idea.php.annotation.util;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
@@ -10,6 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileBasedIndexImpl;
+import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.ID;
 import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
@@ -253,6 +255,22 @@ public class AnnotationUtil {
             return set;
         }
 
+    }
+
+    public static boolean isValidForIndex(FileContent inputData) {
+
+        String fileName = inputData.getPsiFile().getName();
+        if(fileName.startsWith(".") || fileName.contains("Test")) {
+            return false;
+        }
+
+        // is Test file in path name
+        String relativePath = VfsUtil.getRelativePath(inputData.getFile(), inputData.getProject().getBaseDir(), '/');
+        if(relativePath == null || relativePath.contains("\\Test") || relativePath.contains("\\Fixtures")) {
+            return false;
+        }
+
+        return true;
     }
 
 }

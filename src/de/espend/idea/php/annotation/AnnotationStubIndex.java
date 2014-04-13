@@ -42,7 +42,7 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
                     return map;
                 }
 
-                if(!PluginUtil.isEnabled(inputData.getPsiFile())) {
+                if(!PluginUtil.isEnabled(inputData.getPsiFile()) || !AnnotationUtil.isValidForIndex(inputData)) {
                     return map;
                 }
 
