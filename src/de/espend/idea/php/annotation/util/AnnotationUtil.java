@@ -3,18 +3,22 @@ package de.espend.idea.php.annotation.util;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.ID;
+import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import de.espend.idea.php.annotation.AnnotationStubIndex;
 import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
+import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler;
 import de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
@@ -31,6 +35,15 @@ public class AnnotationUtil {
     public static final ExtensionPointName<PhpAnnotationReferenceProvider> EXTENSION_POINT_REFERENCES = new ExtensionPointName<PhpAnnotationReferenceProvider>("de.espend.idea.php.annotation.PhpAnnotationReferenceProvider");
 
     public static final ExtensionPointName<PhpAnnotationDocTagGotoHandler> EP_DOC_TAG_GOTO = new ExtensionPointName<PhpAnnotationDocTagGotoHandler>("de.espend.idea.php.annotation.PhpAnnotationDocTagGotoHandler");
+    public static final ExtensionPointName<PhpAnnotationDocTagAnnotator> EP_DOC_TAG_ANNOTATOR = new ExtensionPointName<PhpAnnotationDocTagAnnotator>("de.espend.idea.php.annotation.PhpAnnotationDocTagAnnotator");
+
+    public static Set<String> NON_ANNOTATION_TAGS = new HashSet<String>() {{
+        addAll(Arrays.asList(PhpDocUtil.ALL_TAGS));
+        add("@Annotation");
+        add("@inheritDoc");
+        add("@inheritdoc");
+        add("@Target");
+    }};
 
     public static boolean isAnnotationClass(PhpClass phpClass) {
         PhpDocComment phpDocComment = phpClass.getDocComment();
@@ -133,26 +146,21 @@ public class AnnotationUtil {
         return resultPhpAnnotation;
     }
 
-
-    @Nullable
-    public static PhpClass getAnnotationReference(PhpDocTag phpDocTag) {
-
-        // only usable on eap7 because of "@ORM\OneToMany()" bug before
-        String annotationName = phpDocTag.getName().substring(1);
-
-        // @TODO: remove this
-        // phpstorm6 fallback;
-        String tagText = phpDocTag.getText();
-        if(tagText.contains("(")) {
-            annotationName = tagText.substring(1, tagText.indexOf("("));
-        }
+    /**
+     * Collect file use imports and resolve alias with their class name
+     *
+     * @param psiFile file to search
+     * @return map with class names as key and fqn on value
+     */
+    public static Map<String, String> getUseImportMap(PsiFile psiFile) {
 
         // search for use alias in local file
-        final HashMap<String, String> useImports = new HashMap<String, String>();
-        phpDocTag.getContainingFile().acceptChildren(new PsiRecursiveElementWalkingVisitor() {
+        final Map<String, String> useImports = new HashMap<String, String>();
+
+        psiFile.acceptChildren(new PsiRecursiveElementWalkingVisitor() {
             @Override
             public void visitElement(PsiElement element) {
-                if(element instanceof PhpUse) {
+                if (element instanceof PhpUse) {
                     visitUse((PhpUse) element);
                 }
                 super.visitElement(element);
@@ -160,7 +168,7 @@ public class AnnotationUtil {
 
             private void visitUse(PhpUse phpUse) {
                 String alias = phpUse.getAliasName();
-                if(alias != null) {
+                if (alias != null) {
                     useImports.put(alias, phpUse.getOriginal());
                 } else {
                     useImports.put(phpUse.getName(), phpUse.getOriginal());
@@ -170,21 +178,44 @@ public class AnnotationUtil {
 
         });
 
+        return useImports;
+    }
 
-        String className = annotationName;
+    @Nullable
+    public static PhpClass getAnnotationReference(PhpDocTag phpDocTag) {
+
+        PsiFile containingFile;
+        try {
+            containingFile = phpDocTag.getContainingFile();
+        } catch (PsiInvalidElementAccessException e) {
+            return null;
+        }
+
+        if(getUseImportMap(containingFile).size() == 0) {
+            return null;
+        }
+
+        return getAnnotationReference(phpDocTag, getUseImportMap(containingFile));
+
+    }
+
+    @Nullable
+    public static PhpClass getAnnotationReference(PhpDocTag phpDocTag, final Map<String, String> useImports) {
+
+        String tagName = phpDocTag.getName().substring(1);
+
+        String className = tagName;
         String subNamespaceName = "";
         if(className.contains("\\")) {
             className = className.substring(0, className.indexOf("\\"));
-            subNamespaceName = annotationName.substring(className.length());
+            subNamespaceName = tagName.substring(className.length());
         }
 
         if(!useImports.containsKey(className)) {
             return null;
         }
 
-        String resolvedClassName = useImports.get(className) + subNamespaceName;
-
-        return PhpElementsUtil.getClass(phpDocTag.getProject(), resolvedClassName);
+        return PhpElementsUtil.getClass(phpDocTag.getProject(), useImports.get(className) + subNamespaceName);
 
     }
 

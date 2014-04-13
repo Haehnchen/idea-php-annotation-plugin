@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>0.4</version>
+  <version>1.0</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">espend</vendor>
 
   <description><![CDATA[
@@ -10,13 +10,10 @@
 <a href="https://github.com/Haehnchen/idea-php-annotation-plugin">GitHub</a> | <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues">Issues</a><br>
 <br>
 
-Support php annotations, which is ported from <a href="http://plugins.jetbrains.com/plugin/7219">Symfony2 Plugin</a>.<br>
-Current php doc comments api is very limited, so for now its possible to support PhpStorm6 and 7. Old version support will be removed soon!
-
 <h2>Installation</h2>
 <ul>
-  <li>Enabled Plugin: "Settings -> PHP -> Annotation"</li>
-  <li>Force file reindex if necessary with: "File -> Invalidate Cache"</li>
+  <li>Just install and be happy</li>
+  <li>You should also install <a href="http://plugins.jetbrains.com/plugin/7219">Symfony2 Plugin</a></li>
 </ul>
 
 <h2>Features</h2>
@@ -27,17 +24,28 @@ Current php doc comments api is very limited, so for now its possible to support
   <li>Detect annotation property values on phpclass property name including types</li>
   <li>Index classes with @Annotation inside doc block</li>
   <li>Plugin extension point</li>
+  <li>Doctrine related providers</li>
 </ul>
 
 <h2>Todo</h2>
 <ul>
-  <li>Missing API (<a href="http://youtrack.jetbrains.com/issue/WI-20271">WI-20271</a>, <a href="http://youtrack.jetbrains.com/issue/WI-20346">WI-20346</a>): "Optimize Imports" and "Never usage detection" not working</li>
   <li>Configure custom aliases</li>
 </ul>
       ]]>
   </description>
 
   <change-notes><![CDATA[
+
+<h2>1.0</h2>
+<ul>
+    <li>Remove all PhpStorm6 hacks, support new Api and only allow PhpStorm7 builds</li>
+    <li>Add docblock property value provider for @Enum</li>
+    <li>Add Doctrine providers for: targetEntity, repositoryClass, mappedBy, inversedBy</li>
+    <li>Migrate pattern to allow multiple docblocks  <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/12">#12</a>, <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/8">#8</a></li>
+    <li>Add more property value type detections</li>
+    <li>Add and change extension points to reflect latest api features</li>
+    <li>Plugin dont need to explicit enabled anymore</li>
+</ul>
 
 <h2>0.4</h2>
 <ul>
@@ -103,17 +111,22 @@ Current php doc comments api is very limited, so for now its possible to support
       <completion.confidence language="PHP" implementationClass="de.espend.idea.php.annotation.completion.PhpAnnotationCompletionConfidence"
                              id="asTrue" order="first"/>
 
+      <annotator language="PHP" implementationClass="de.espend.idea.php.annotation.annotator.AnnotationDocTagAnnotator"/>
+
+
   </extensions>
 
   <extensionPoints>
       <extensionPoint name="PhpAnnotationCompletionProvider" interface="de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider"/>
       <extensionPoint name="PhpAnnotationReferenceProvider" interface="de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider"/>
       <extensionPoint name="PhpAnnotationDocTagGotoHandler" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler"/>
+      <extensionPoint name="PhpAnnotationDocTagAnnotator" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="de.espend.idea.php.annotation">
       <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.completion.PhpAnnotationTypeCompletionProvider"/>
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.reference.AnnotationClassProvider"/>
+      <PhpAnnotationDocTagAnnotator implementation="de.espend.idea.php.annotation.annotator.AnnotationImportAnnotator"/>
 
       <!-- Doctrine -->
       <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.doctrine.navigation.DoctrineAnnotationStaticCompletionProvider"/>
