@@ -16,7 +16,12 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
     @Override
     public void registerReferenceProviders(PsiReferenceRegistrar psiReferenceRegistrar) {
 
-        // "@Template()", "@ORM\PostPersist()"
+        /**
+         * Our main reference provider to attach DocBlocTag to their use declaration
+         * This one resolve the "Optimize Usage" issues
+         *
+         * "@Template()", "@ORM\PostPersist()"
+         */
         psiReferenceRegistrar.registerReferenceProvider(
             PlatformPatterns.psiElement(PhpDocTag.class),
             new PsiReferenceProvider() {
@@ -42,19 +47,15 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
 
     }
 
-    public class PhpDocTagReference extends PsiPolyVariantReferenceBase<PhpDocTag> {
+    private static class PhpDocTagReference extends PsiPolyVariantReferenceBase<PhpDocTag> {
 
         public PhpDocTagReference(PhpDocTag psiElement) {
             super(psiElement);
         }
 
-
         @Override
         public boolean isReferenceTo(PsiElement element) {
 
-            // eg for "Optimize Imports"
-
-            // we only get calls on "use" alias
             // use Doctrine\ORM\Mapping as "ORM";
             if (element instanceof PhpUse) {
                 String useName = ((PhpUse) element).getName();
@@ -64,15 +65,10 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                     return true;
                 }
 
-                /* ResolveResult[] results = multiResolve(false);
-                for (ResolveResult result : results) {
-                    if(result.isValidResult() && result.getElement() == element) {
-                        return true;
-                    }
-                }*/
             }
 
-            // attach reference to @Template(), but its stripped anyways
+            // eg for "Optimize Imports"
+            // attach reference to @Template()
             if (element instanceof PhpClass) {
                 if(((PhpClass) element).getName().equals(getDocBlockName())) {
                     return true;
@@ -82,12 +78,18 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
             return false;
         }
 
+        /**
+         * We need to strip @ char before DocTag @Test, @Test\Foo
+         *
+         * @return TextRange of DocTag without @ char
+         */
         public TextRange getRangeInElement() {
             String tagName = getElement().getName();
             int rangeStart = 0;
             int rangeEnd = tagName.length();
 
-            // strip "@" should be always the case; just for secure
+            // remove DocTag "@" char
+            // it should always be true, check for security reason
             if(tagName.startsWith("@")) {
                 rangeStart = 1;
                 tagName = tagName.substring(1);
