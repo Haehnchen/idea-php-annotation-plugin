@@ -28,6 +28,10 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
         psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getPropertyValueString(), new PropertyValueReferences());
     }
 
+    /**
+     * '@Template("foo.twig.html")'
+     * '@Service("foo")'
+     */
     private class PropertyValueDefaultReferences extends PsiReferenceProvider {
 
         @NotNull
@@ -49,6 +53,9 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
         }
     }
 
+    /**
+     * '@Template(name="foo.twig.html")'
+     */
     private class PropertyValueReferences extends PsiReferenceProvider {
 
         @NotNull
@@ -69,7 +76,7 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
                 return new PsiReference[0];
             }
 
-            AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(psiElement, phpClass, propertyName.getText(), AnnotationPropertyParameter.Type.STRING);
+            AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(psiElement, phpClass, propertyName.getText(), AnnotationPropertyParameter.Type.PROPERTY_VALUE);
             return addPsiReferences(psiElement, processingContext, annotationPropertyParameter);
 
         }

@@ -26,6 +26,12 @@ public class AnnotationPropertyParameter {
         this.project = phpClass.getProject();
     }
 
+    /**
+     * DEFAULT: '@Template("foo.twig.html")'
+     * PROPERTY_VALUE: '@Service("foo")'
+     *
+     * @return Value type
+     */
     public Type getType() {
         return type;
     }
@@ -48,7 +54,7 @@ public class AnnotationPropertyParameter {
     }
 
     public static enum Type {
-        DEFAULT, STRING, ARRAY, INTEGER
+        DEFAULT, PROPERTY_VALUE
     }
 
 }

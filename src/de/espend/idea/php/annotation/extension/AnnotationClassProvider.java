@@ -14,6 +14,10 @@ public class AnnotationClassProvider implements PhpAnnotationReferencesProvider 
     @Override
     public PsiReference[] getPropertyReferences(AnnotationPropertyParameter annotationPropertyParameter, ReferencesByElementParameter referencesByElementParameter) {
 
+        if(annotationPropertyParameter.getType() != AnnotationPropertyParameter.Type.PROPERTY_VALUE) {
+            return null;
+        }
+
         String propertyName = annotationPropertyParameter.getPropertyName();
         if(propertyName == null || !propertyName.equals("targetEntity")) {
             return null;

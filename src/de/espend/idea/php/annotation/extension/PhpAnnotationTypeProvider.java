@@ -23,7 +23,7 @@ public class PhpAnnotationTypeProvider implements PhpAnnotationCompletionProvide
 
         String propertyName = annotationPropertyParameter.getPropertyName();
 
-        if(!annotationPropertyParameter.getType().equals(AnnotationPropertyParameter.Type.STRING) && propertyName == null) {
+        if(!annotationPropertyParameter.getType().equals(AnnotationPropertyParameter.Type.PROPERTY_VALUE) && propertyName == null) {
             return;
         }
 

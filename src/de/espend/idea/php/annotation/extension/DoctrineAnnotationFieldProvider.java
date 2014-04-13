@@ -19,6 +19,10 @@ public class DoctrineAnnotationFieldProvider implements PhpAnnotationReferencesP
     @Override
     public PsiReference[] getPropertyReferences(AnnotationPropertyParameter annotationPropertyParameter, ReferencesByElementParameter referencesByElementParameter) {
 
+        if(annotationPropertyParameter.getType() != AnnotationPropertyParameter.Type.PROPERTY_VALUE) {
+            return null;
+        }
+
         String propertyName = annotationPropertyParameter.getPropertyName();
         if(propertyName == null || !(propertyName.equals("mappedBy") || propertyName.equals("inversedBy"))) {
             return null;
