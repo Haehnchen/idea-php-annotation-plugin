@@ -11,7 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class PhpClassAnnotationLookupElement extends LookupElement {
 
-    private PhpClass phpClass;
+    final private PhpClass phpClass;
+    private String typeText;
 
     @Nullable
     private InsertHandler<LookupElement> insertHandler = null;
@@ -33,9 +34,9 @@ public class PhpClassAnnotationLookupElement extends LookupElement {
 
     public void renderElement(LookupElementPresentation presentation) {
         presentation.setItemText(getLookupString());
-        presentation.setTypeText(this.phpClass.getPresentableFQN());
+        presentation.setTypeText(typeText != null ? typeText : this.phpClass.getPresentableFQN());
         presentation.setTypeGrayed(true);
-        presentation.setIcon(PhpIcons.CLASS);
+        presentation.setIcon(this.phpClass.getIcon());
     }
 
     public void handleInsert(InsertionContext context) {
@@ -44,6 +45,12 @@ public class PhpClassAnnotationLookupElement extends LookupElement {
         }
     }
 
+    public PhpClassAnnotationLookupElement withTypeText(String typeText) {
+        this.typeText = typeText;
+        return this;
+    }
+
+    @NotNull
     public Object getObject() {
         return this.phpClass;
     }

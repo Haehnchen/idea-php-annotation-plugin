@@ -39,4 +39,14 @@ public class PhpAnnotation {
         return targets;
     }
 
+    public boolean matchOneOf(AnnotationTarget... matchOneTargets) {
+        for(AnnotationTarget matchOneTarget: matchOneTargets) {
+            if(this.targets.contains(matchOneTarget)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

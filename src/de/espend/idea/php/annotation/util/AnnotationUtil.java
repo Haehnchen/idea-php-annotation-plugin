@@ -28,6 +28,7 @@ import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler;
 import de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import de.espend.idea.php.annotation.dict.PhpAnnotation;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -124,14 +125,18 @@ public class AnnotationUtil {
         return new PhpAnnotation(phpClass, targets);
     }
 
-    public static ArrayList<PhpAnnotation> getAnnotationsOnTarget(Project project, AnnotationTarget... targets) {
+    @NotNull
+    public static Map<String, PhpAnnotation> getAnnotationsOnTargetMap(Project project, AnnotationTarget... targets) {
 
-        ArrayList<PhpAnnotation> phpAnnotations = new ArrayList<PhpAnnotation>();
+        Map<String, PhpAnnotation> phpAnnotations = new HashMap<String, PhpAnnotation>();
 
         for(PhpClass phpClass: AnnotationUtil.getAnnotationsClasses(project)) {
             PhpAnnotation phpAnnotation = AnnotationUtil.getClassAnnotation(phpClass);
             if(phpAnnotation != null && phpAnnotation.hasTarget(targets)) {
-                phpAnnotations.add(phpAnnotation);
+                String presentableFQN = phpClass.getPresentableFQN();
+                if(presentableFQN != null) {
+                    phpAnnotations.put(presentableFQN, phpAnnotation);
+                }
             }
 
         }
@@ -140,30 +145,33 @@ public class AnnotationUtil {
 
     }
 
-    public static ArrayList<PhpAnnotation> getAnnotationsOnName(Project project, String annotationName, AnnotationTarget... targets) {
-        ArrayList<PhpAnnotation> resultPhpAnnotation = new ArrayList<PhpAnnotation>();
-
-        for(PhpAnnotation phpAnnotation: getAnnotationsOnTarget(project, targets)) {
-            if(phpAnnotation.getPhpClass().getName().equals(annotationName)) {
-                resultPhpAnnotation.add(phpAnnotation);
-            }
-        }
-
-        return resultPhpAnnotation;
+    @NotNull
+    public static Map<String, String> getUseImportMap(@Nullable PhpDocTag phpDocTag) {
+        return getUseImportMap(PsiTreeUtil.getParentOfType(phpDocTag, PhpDocComment.class));
     }
 
-    /**
-     * Collect file use imports and resolve alias with their class name
-     *
-     * @param psiFile file to search
-     * @return map with class names as key and fqn on value
-     */
-    public static Map<String, String> getUseImportMap(PsiFile psiFile) {
+    /*
+    * Collect file use imports and resolve alias with their class name
+    *
+    * @param PhpDocComment current doc scope
+    * @return map with class names as key and fqn on value
+    */
+    @NotNull
+    public static Map<String, String> getUseImportMap(@Nullable PhpDocComment phpDocComment) {
 
         // search for use alias in local file
         final Map<String, String> useImports = new HashMap<String, String>();
 
-        psiFile.acceptChildren(new PsiRecursiveElementWalkingVisitor() {
+        if(phpDocComment == null) {
+            return useImports;
+        }
+
+        PhpNamespace phpNamespace = PsiTreeUtil.getParentOfType(phpDocComment, PhpNamespace.class);
+        if(phpNamespace == null) {
+            return useImports;
+        }
+
+        phpNamespace.acceptChildren(new PsiRecursiveElementWalkingVisitor() {
             @Override
             public void visitElement(PsiElement element) {
                 if (element instanceof PhpUse) {
@@ -188,14 +196,8 @@ public class AnnotationUtil {
     }
 
     @Nullable
-    public static PhpClass getAnnotationReference(PhpDocTag phpDocTag) {
-
-        PsiFile containingFile;
-        try {
-            containingFile = phpDocTag.getContainingFile();
-        } catch (PsiInvalidElementAccessException e) {
-            return null;
-        }
+    public static PhpClass getAnnotationReference(@Nullable PhpDocTag phpDocTag) {
+        if(phpDocTag == null) return null;
 
         // check annoation in current namespace
         String tagName = phpDocTag.getName();
@@ -213,11 +215,11 @@ public class AnnotationUtil {
         }
 
         // resolve class name on imports and aliases
-        if(getUseImportMap(containingFile).size() == 0) {
+        if(getUseImportMap(phpDocTag).size() == 0) {
             return null;
         }
 
-        return getAnnotationReference(phpDocTag, getUseImportMap(containingFile));
+        return getAnnotationReference(phpDocTag, getUseImportMap(phpDocTag));
 
     }
 

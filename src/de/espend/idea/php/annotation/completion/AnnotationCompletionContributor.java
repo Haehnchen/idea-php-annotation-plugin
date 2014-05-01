@@ -1,6 +1,7 @@
 package de.espend.idea.php.annotation.completion;
 
 import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
@@ -14,21 +15,23 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import de.espend.idea.php.annotation.completion.insert.AnnotationTagInsertHandler;
 import de.espend.idea.php.annotation.completion.lookupelements.PhpAnnotationPropertyLookupElement;
 import de.espend.idea.php.annotation.completion.lookupelements.PhpClassAnnotationLookupElement;
-import de.espend.idea.php.annotation.extension.parameter.AnnotationCompletionProviderParameter;
 import de.espend.idea.php.annotation.dict.AnnotationProperty;
 import de.espend.idea.php.annotation.dict.AnnotationPropertyEnum;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationCompletionProviderParameter;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
+import de.espend.idea.php.annotation.util.PhpIndexUtil;
 import de.espend.idea.php.annotation.util.PluginUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -40,6 +43,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         extend(CompletionType.BASIC, AnnotationPattern.getDocAttribute(), new PhpDocAttributeList());
         extend(CompletionType.BASIC, AnnotationPattern.getTextIdentifier(), new PhpDocAttributeValue());
         extend(CompletionType.BASIC, AnnotationPattern.getDefaultPropertyValue(), new PhpDocDefaultValue());
+        extend(CompletionType.BASIC, AnnotationPattern.getDocBlockTagAfterBackslash(), new PhpDocBlockTagAlias());
     }
 
     private class PhpDocDefaultValue  extends CompletionProvider<CompletionParameters> {
@@ -202,32 +206,117 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                 return;
             }
 
-            AnnotationTarget annotationTarget = PhpElementsUtil.findAnnotationTarget(PsiTreeUtil.getParentOfType(psiElement, PhpDocComment.class));
+            PhpDocComment parentOfType = PsiTreeUtil.getParentOfType(psiElement, PhpDocComment.class);
+            if(parentOfType == null) {
+                return;
+            }
+
+            AnnotationTarget annotationTarget = PhpElementsUtil.findAnnotationTarget(parentOfType);
             if(annotationTarget == null) {
                 return;
             }
 
+            Map<String, String> importMap = AnnotationUtil.getUseImportMap(parentOfType);
+
             Project project = completionParameters.getPosition().getProject();
-            attachLookupElements(project, annotationTarget, completionResultSet);
+            attachLookupElements(project, importMap , annotationTarget, completionResultSet);
 
         }
 
-        private void attachLookupElements(Project project, AnnotationTarget foundTarget, CompletionResultSet completionResultSet) {
+        private void attachLookupElements(Project project, Map<String, String> importMap, AnnotationTarget foundTarget, CompletionResultSet completionResultSet) {
             for(PhpAnnotation phpClass: getPhpAnnotationTargetClasses(project, foundTarget)) {
-                completionResultSet.addElement(new PhpClassAnnotationLookupElement(phpClass.getPhpClass()).withInsertHandler(AnnotationTagInsertHandler.getInstance()));
+                PhpClassAnnotationLookupElement lookupElement = new PhpClassAnnotationLookupElement(phpClass.getPhpClass()).withInsertHandler(AnnotationTagInsertHandler.getInstance());
+                String fqnClass = phpClass.getPhpClass().getPresentableFQN();
+
+                if(fqnClass != null) {
+                    if(!fqnClass.startsWith("\\")) {
+                        fqnClass = "\\" + fqnClass;
+                    }
+
+                    for(Map.Entry<String, String> entry: importMap.entrySet()) {
+                        if(fqnClass.startsWith(entry.getValue() + "\\")) {
+                            lookupElement.withTypeText(entry.getKey() + fqnClass.substring(entry.getValue().length()));
+                        }
+                    }
+                }
+
+                completionResultSet.addElement(lookupElement);
             }
         }
 
-        private List<PhpAnnotation> getPhpAnnotationTargetClasses(Project project, AnnotationTarget foundTarget) {
+        private Collection<PhpAnnotation> getPhpAnnotationTargetClasses(Project project, AnnotationTarget foundTarget) {
             // @TODO: how handle unknown types
-            return AnnotationUtil.getAnnotationsOnTarget(project,
+            return AnnotationUtil.getAnnotationsOnTargetMap(project,
                 foundTarget,
                 AnnotationTarget.ALL,
                 AnnotationTarget.UNKNOWN,
                 AnnotationTarget.UNDEFINED
-            );
+            ).values();
         }
 
+    }
+
+    private class PhpDocBlockTagAlias extends CompletionProvider<CompletionParameters> {
+
+        @Override
+        protected void addCompletions(@NotNull CompletionParameters completionParameters, ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
+            PsiElement psiElement = completionParameters.getOriginalPosition();
+            if(psiElement == null) {
+                return;
+            }
+
+            PsiElement phpDocTag = psiElement.getParent();
+            if(!(phpDocTag instanceof PhpDocTag)) {
+                return;
+            }
+
+            String name = ((PhpDocTag) phpDocTag).getName();
+            if(!(name.startsWith("@"))) {
+                return;
+            }
+
+            int start = name.indexOf("\\");
+            if(start == -1) {
+                return;
+            }
+
+            name = name.substring(1, start);
+
+            Map<String, String> importMap = AnnotationUtil.getUseImportMap((PhpDocTag) phpDocTag);
+            if(!importMap.containsKey(name)) {
+                return;
+            }
+
+            // find annotation scope, to filter classes
+            AnnotationTarget annotationTarget = PhpElementsUtil.findAnnotationTarget(PsiTreeUtil.getParentOfType(psiElement, PhpDocComment.class));
+            if(annotationTarget == null) {
+                annotationTarget = AnnotationTarget.UNKNOWN;
+            }
+
+
+            // force trailing backslash on namespace
+            String namespace = importMap.get(name);
+            if(!namespace.startsWith("\\")) {
+                namespace = "\\" + namespace;
+            }
+
+
+            Map<String, PhpAnnotation> annotationMap = AnnotationUtil.getAnnotationsOnTargetMap(psiElement.getProject(), AnnotationTarget.ALL, AnnotationTarget.UNDEFINED, AnnotationTarget.UNKNOWN, annotationTarget);
+
+            for(PhpClass phpClass: PhpIndexUtil.getPhpClassInsideNamespace(psiElement.getProject(), namespace)) {
+                String fqnName = phpClass.getPresentableFQN();
+                if(fqnName != null && annotationMap.containsKey(fqnName)) {
+                    PhpAnnotation phpAnnotation = annotationMap.get(fqnName);
+                    if(phpAnnotation != null && phpAnnotation.matchOneOf(AnnotationTarget.ALL, AnnotationTarget.UNDEFINED, AnnotationTarget.UNKNOWN, annotationTarget)) {
+                        String subNamespace = fqnName.substring(namespace.length());
+                        String lookupString = name + "\\" + subNamespace;
+                        completionResultSet.addElement(LookupElementBuilder.create(lookupString).withTypeText(phpClass.getPresentableFQN(), true).withIcon(phpClass.getIcon()));
+                    }
+                }
+
+            }
+
+        }
     }
 
 }

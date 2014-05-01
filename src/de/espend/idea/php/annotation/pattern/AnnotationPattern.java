@@ -13,6 +13,12 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 
 public class AnnotationPattern {
+
+
+    public static ElementPattern<PsiElement> getDocBlockTagAfterBackslash() {
+        return PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TAG_NAME);
+    }
+
     public static ElementPattern<PsiElement> getDocBlockTag() {
         return
             PlatformPatterns.or(
