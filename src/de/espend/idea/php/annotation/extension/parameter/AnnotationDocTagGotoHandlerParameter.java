@@ -40,4 +40,8 @@ public class AnnotationDocTagGotoHandlerParameter {
         return phpClass;
     }
 
+    public PhpDocTag getPhpDocTag() {
+        return phpDocTag;
+    }
+
 }
