@@ -4,24 +4,20 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.ID;
 import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
-import com.jetbrains.php.lang.psi.elements.PhpNamespace;
-import com.jetbrains.php.lang.psi.elements.PhpUse;
+import com.jetbrains.php.lang.psi.elements.*;
 import de.espend.idea.php.annotation.AnnotationStubIndex;
+import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
+import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
 import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler;
@@ -298,5 +294,26 @@ public class AnnotationUtil {
         return true;
     }
 
+    @Nullable
+    public static PhpDocCommentAnnotation getPhpDocCommentAnnotationContainer(@Nullable PhpDocComment phpDocComment) {
+        if(phpDocComment == null) return null;
+
+        Map<String, String> uses = AnnotationUtil.getUseImportMap(phpDocComment);
+
+        Map<String, PhpDocTagAnnotation> annotationRefsMap = new HashMap<String, PhpDocTagAnnotation>();
+        for(PhpDocTag phpDocTag: PsiTreeUtil.findChildrenOfType(phpDocComment, PhpDocTag.class)) {
+            if(!AnnotationUtil.NON_ANNOTATION_TAGS.contains(phpDocTag.getName())) {
+                PhpClass annotationClass = AnnotationUtil.getAnnotationReference(phpDocTag, uses);
+                if(annotationClass != null && annotationClass.getPresentableFQN() != null) {
+                    annotationRefsMap.put(annotationClass.getPresentableFQN(), new PhpDocTagAnnotation(annotationClass, phpDocTag));
+                }
+            }
+
+        }
+
+        return new PhpDocCommentAnnotation(annotationRefsMap, phpDocComment);
+    }
+
 }
+
 

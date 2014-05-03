@@ -10,12 +10,14 @@ import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.resolve.PhpResolveResult;
+import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
+import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
+import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
+import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
@@ -62,32 +64,36 @@ public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<
     private LookupElementBuilder attachLookupInformation(Field field, LookupElementBuilder lookupElement) {
 
         // get some more presentable completion information
-        // dont resolve docblocks; just extract them from doc comment
         PhpDocComment docBlock = field.getDocComment();
-
         if(docBlock == null) {
             return lookupElement;
         }
 
-        String text = docBlock.getText();
-
-        // column type
-        Matcher matcher = Pattern.compile("type=[\"|']([\\w_\\\\]+)[\"|']").matcher(text);
-        if (matcher.find()) {
-            lookupElement = lookupElement.withTypeText(matcher.group(1), true);
+        PhpDocCommentAnnotation phpDocCommentAnnotation = AnnotationUtil.getPhpDocCommentAnnotationContainer(docBlock);
+        if(phpDocCommentAnnotation == null) {
+            return lookupElement;
         }
 
-        // targetEntity name
-        matcher = Pattern.compile("targetEntity=[\"|']([\\w_\\\\]+)[\"|']").matcher(text);
-        if (matcher.find()) {
-            lookupElement = lookupElement.withTypeText(matcher.group(1), true);
-            lookupElement = lookupElement.withBoldness(true);
+        // search column type
+        PhpDocTagAnnotation phpDocTagAnnotation = phpDocCommentAnnotation.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Column");
+        if(phpDocTagAnnotation != null) {
+            String value = phpDocTagAnnotation.getPropertyValue("type");
+            if(value != null) {
+                lookupElement = lookupElement.withTypeText(value, true);
+            }
         }
 
-        // relation type
-        matcher = Pattern.compile("((Many|One)To(Many|One))\\(").matcher(text);
-        if (matcher.find()) {
-            lookupElement = lookupElement.withTailText(matcher.group(1), true);
+        // search for relations
+        PhpDocTagAnnotation relation = phpDocCommentAnnotation.getFirstPhpDocBlock(DoctrineUtil.DOCTRINE_RELATION_FIELDS);
+        if(relation != null) {
+
+            String value = relation.getPropertyValue("targetEntity");
+            if(value != null) {
+                lookupElement = lookupElement.withTypeText(value, true);
+                lookupElement = lookupElement.withBoldness(true);
+            }
+
+            lookupElement = lookupElement.withTailText(String.format("(%s)", relation.getPhpClass().getName()), true);
         }
 
         return lookupElement;
