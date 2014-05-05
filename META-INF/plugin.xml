@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>1.0.1</version>
+  <version>1.1</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">espend</vendor>
 
   <description><![CDATA[
@@ -37,6 +37,14 @@
   </description>
 
   <change-notes><![CDATA[
+
+<h2>1.1</h2>
+<ul>
+    <li>Add doc tag property value utils and dicts</li>
+    <li>Add alias annotation class completion</li>
+    <li>Improve performance on annotation class completion</li>
+    <li>Use php class statement scope instead of file scope for namespace collection</li>
+</ul>
 
 <h2>1.0.1</h2>
 <ul>
