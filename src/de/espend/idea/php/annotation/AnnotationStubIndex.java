@@ -1,6 +1,7 @@
 package de.espend.idea.php.annotation;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.indexing.*;
@@ -38,19 +39,20 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
             public Map<String, Void> map(FileContent inputData) {
                 final Map<String, Void> map = new THashMap<String, Void>();
 
-                if(!(inputData.getPsiFile() instanceof PhpFile)) {
+                PsiFile psiFile = inputData.getPsiFile();
+                if(!(psiFile instanceof PhpFile)) {
                     return map;
                 }
 
-                if(!PluginUtil.isEnabled(inputData.getPsiFile()) || !AnnotationUtil.isValidForIndex(inputData)) {
+                if(!AnnotationUtil.isValidForIndex(inputData)) {
                     return map;
                 }
 
-                inputData.getPsiFile().accept(new PsiRecursiveElementWalkingVisitor() {
+                psiFile.accept(new PsiRecursiveElementWalkingVisitor() {
                     @Override
                     public void visitElement(PsiElement element) {
                         if ((element instanceof PhpClass)) {
-                            visitPhpClass((PhpClass)element);
+                            visitPhpClass((PhpClass) element);
                         }
 
                         super.visitElement(element);
@@ -58,21 +60,15 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
 
                     private void visitPhpClass(PhpClass phpClass) {
                         String fqn = phpClass.getPresentableFQN();
-                        if(fqn == null) {
+                        if (fqn == null) {
                             return;
                         }
 
                         // doctrine has many tests: Doctrine\Tests\Common\Annotations\Fixtures
                         // we are on index process, project is not fully loaded here, so filter name based tests
                         // eg PhpUnitUtil.isTestClass not possible
-                        if(!fqn.contains("\\Tests\\") && !fqn.contains("\\Fixtures\\") && AnnotationUtil.isAnnotationClass(phpClass)) {
+                        if (!fqn.contains("\\Tests\\") && !fqn.contains("\\Fixtures\\") && AnnotationUtil.isAnnotationClass(phpClass)) {
                             map.put(phpClass.getPresentableFQN(), null);
-                            return;
-                        }
-
-                        // on class change cleanup. right?
-                        if(map.containsKey(fqn)) {
-                            map.remove(fqn);
                         }
 
                     }
