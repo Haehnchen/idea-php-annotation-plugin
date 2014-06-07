@@ -265,7 +265,7 @@ public class AnnotationUtil {
             Set<String> set = new HashSet<String>();
 
             for (String key : stringSet) {
-                Collection fileCollection = FileBasedIndex.getInstance().getContainingFiles(id, key, GlobalSearchScope.projectScope(project));
+                Collection fileCollection = FileBasedIndex.getInstance().getContainingFiles(id, key, GlobalSearchScope.allScope(this.project));
 
                 if (fileCollection.size() > 0) {
                     set.add(key);
