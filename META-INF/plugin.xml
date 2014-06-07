@@ -1,12 +1,13 @@
-<idea-plugin version="2">
+<idea-plugin version="2" url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>1.1</version>
-  <vendor email="daniel@espendiller.net" url="http://www.espend.de">espend</vendor>
+  <version>1.2</version>
+  <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
 
 <h1>PHP Annotation</h1>
+<br>
 <a href="https://github.com/Haehnchen/idea-php-annotation-plugin">GitHub</a> | <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues">Issues</a><br>
 <br>
 
@@ -18,6 +19,7 @@
 
 <h2>Features</h2>
 <ul>
+  <li>Youtube: <a href="https://www.youtube.com/watch?v=hACeHnUbHYo">PhpStorm: PHP Annotations Plugin</a></li>
   <li>Attach PhpClass to their DocTag to support "Code > Optimize Imports"</li>
   <li>Auto alias detection on use statement</li>
   <li>Filter annotation classes on targets like method, class, property, ...</li>
@@ -37,6 +39,14 @@
   </description>
 
   <change-notes><![CDATA[
+
+<h2>1.2</h2>
+<ul>
+    <li>Fix annotation class inside composer libraries where not autocompleted <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/13">#13</a></li>
+    <li>Support fqn classes annotation <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/17">#17</a></li>
+    <li>Add java annotations for all extension points</li>
+    <li>Pipe additional util methods in extension parameters</li>
+</ul>
 
 <h2>1.1</h2>
 <ul>
