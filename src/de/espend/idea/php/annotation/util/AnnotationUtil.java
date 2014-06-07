@@ -210,11 +210,6 @@ public class AnnotationUtil {
             }
         }
 
-        // resolve class name on imports and aliases
-        if(getUseImportMap(phpDocTag).size() == 0) {
-            return null;
-        }
-
         return getAnnotationReference(phpDocTag, getUseImportMap(phpDocTag));
 
     }
@@ -235,6 +230,13 @@ public class AnnotationUtil {
         }
 
         if(!useImports.containsKey(className)) {
+
+            // allow full classes on annotations #17 eg: @Doctrine\ORM\Mapping\PostPersist()
+            PhpClass phpClass = PhpElementsUtil.getClass(phpDocTag.getProject(), tagName);
+            if(phpClass != null && isAnnotationClass(phpClass)) {
+                return phpClass;
+            }
+
             return null;
         }
 
