@@ -4,6 +4,8 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
+import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,10 +32,17 @@ public class PhpAnnotationDocTagAnnotatorParameter {
         return phpDocTag;
     }
 
+    @Nullable
+    public PhpDocTagAnnotation getAnnotationDocTag() {
+        return AnnotationUtil.getPhpDocAnnotationContainer(this.phpDocTag);
+    }
+
+    @NotNull
     public AnnotationHolder getHolder() {
         return holder;
     }
 
+    @NotNull
     public Project getProject() {
         return this.phpDocTag.getProject();
     }

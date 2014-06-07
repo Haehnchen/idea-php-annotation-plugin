@@ -3,6 +3,8 @@ package de.espend.idea.php.annotation.extension.parameter;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AnnotationPropertyParameter {
@@ -14,12 +16,12 @@ public class AnnotationPropertyParameter {
     final private Project project;
     private String propertyName;
 
-    public AnnotationPropertyParameter(PsiElement element, PhpClass phpClass, String propertyName, Type type) {
+    public AnnotationPropertyParameter(@NotNull PsiElement element, @NotNull PhpClass phpClass, @NonNls String propertyName, @NotNull Type type) {
         this(element, phpClass, type);
         this.propertyName = propertyName;
     }
 
-    public AnnotationPropertyParameter(PsiElement psiElement, PhpClass phpClass, Type type) {
+    public AnnotationPropertyParameter(@NotNull PsiElement psiElement, @NotNull PhpClass phpClass, @NotNull Type type) {
         this.element = psiElement;
         this.phpClass = phpClass;
         this.type = type;
@@ -32,14 +34,17 @@ public class AnnotationPropertyParameter {
      *
      * @return Value type
      */
+    @NotNull
     public Type getType() {
         return type;
     }
 
+    @NotNull
     public PsiElement getElement() {
         return element;
     }
 
+    @NotNull
     public PhpClass getPhpClass() {
         return phpClass;
     }
@@ -49,6 +54,7 @@ public class AnnotationPropertyParameter {
         return propertyName;
     }
 
+    @NotNull
     public Project getProject() {
         return project;
     }

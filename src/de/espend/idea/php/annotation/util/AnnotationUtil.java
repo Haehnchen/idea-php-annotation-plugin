@@ -316,6 +316,17 @@ public class AnnotationUtil {
         return new PhpDocCommentAnnotation(annotationRefsMap, phpDocComment);
     }
 
+    @Nullable
+    public static PhpDocTagAnnotation getPhpDocAnnotationContainer(@NotNull PhpDocTag phpDocTag) {
+
+        PhpClass annotationReference = getAnnotationReference(phpDocTag);
+        if(annotationReference == null) {
+            return null;
+        }
+
+        return new PhpDocTagAnnotation(annotationReference, phpDocTag);
+    }
+
 }
 
 
