@@ -68,7 +68,7 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
                         // we are on index process, project is not fully loaded here, so filter name based tests
                         // eg PhpUnitUtil.isTestClass not possible
                         if (!fqn.contains("\\Tests\\") && !fqn.contains("\\Fixtures\\") && AnnotationUtil.isAnnotationClass(phpClass)) {
-                            map.put(phpClass.getPresentableFQN(), null);
+                            map.put(fqn, null);
                         }
 
                     }
