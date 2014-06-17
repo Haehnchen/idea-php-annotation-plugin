@@ -50,12 +50,12 @@ public class PhpDocTagAnnotation {
     }
 
     /**
-     * Get string value from root "@Template("foo");
+     * Get default property value from annotation "@Template("foo");
      *
-     * @return Content of root literal
+     * @return Content of property value literal
      */
     @Nullable
-    public String getRootValue() {
+    public String getDefaultPropertyValue() {
         PhpPsiElement phpDocAttrList = phpDocTag.getFirstPsiChild();
 
         if(phpDocAttrList != null) {
