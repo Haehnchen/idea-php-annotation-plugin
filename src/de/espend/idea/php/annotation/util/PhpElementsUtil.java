@@ -39,7 +39,7 @@ public class PhpElementsUtil {
         }
 
         if(phpDocComment.getNextPsiSibling() instanceof PhpClass) {
-            return AnnotationTarget.METHOD;
+            return AnnotationTarget.CLASS;
         }
 
         // workaround: if file has no use statements all is wrapped inside a group
