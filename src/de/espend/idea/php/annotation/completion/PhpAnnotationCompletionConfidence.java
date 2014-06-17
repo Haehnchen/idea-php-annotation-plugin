@@ -32,18 +32,17 @@ public class PhpAnnotationCompletionConfidence extends CompletionConfidence {
                 return ThreeState.NO;
             }
 
-        }
-
-        if(context instanceof PhpDocComment) {
+        } else if(context instanceof PhpDocComment) {
 
             // * <|>
-            if(PhpPatterns.psiElement().beforeLeafSkipping(PhpPatterns.psiElement(PhpDocTokenTypes.DOC_LEADING_ASTERISK), PhpPatterns.psiElement(PsiWhiteSpace.class)).accepts(context)) {
+            if(PhpPatterns.psiElement().afterLeafSkipping(
+                PhpPatterns.psiElement(PsiWhiteSpace.class),
+                PhpPatterns.psiElement(PhpDocTokenTypes.DOC_LEADING_ASTERISK)
+            ).accepts(contextElement)) {
                 return ThreeState.NO;
             }
 
-        }
-
-        if(context instanceof PhpPsiElementImpl) {
+        } else if(context instanceof PhpPsiElementImpl) {
 
             // @Foo(<|>)
             if(PhpPatterns.psiElement(PhpDocElementTypes.phpDocAttributeList).accepts(context)) {
