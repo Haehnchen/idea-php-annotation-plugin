@@ -126,7 +126,6 @@
 
       <projectService serviceImplementation="de.espend.idea.php.annotation.Settings"/>
       <fileBasedIndex implementation="de.espend.idea.php.annotation.AnnotationStubIndex"/>
-      <projectConfigurable instance="de.espend.idea.php.annotation.ui.PluginSettingsForm" id="Configurable.Espend.Php.Annotation" displayName="Annotation" parentId="Configurable.PHP"/>
 
       <gotoDeclarationHandler implementation="de.espend.idea.php.annotation.navigation.AnnotationGoToDeclarationHandler"/>
       <completion.contributor language="PHP" implementationClass="de.espend.idea.php.annotation.completion.AnnotationCompletionContributor"/>
