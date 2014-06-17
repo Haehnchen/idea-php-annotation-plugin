@@ -15,7 +15,7 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
 
     public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement lookupElement) {
 
-        // reuse jetbrains us importer: this is private only so we need some workaround
+        // reuse jetbrains "use importer": this is private only so we need some workaround
         // to not implement your own algo for that
         PhpReferenceInsertHandler.getInstance().handleInsert(context, lookupElement);
         if(!PhpInsertHandlerUtil.isStringAtCaret(context.getEditor(), "(")) {

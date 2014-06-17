@@ -310,7 +310,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                     if(phpAnnotation != null && phpAnnotation.matchOneOf(AnnotationTarget.ALL, AnnotationTarget.UNDEFINED, AnnotationTarget.UNKNOWN, annotationTarget)) {
                         String subNamespace = fqnName.substring(namespace.length());
                         String lookupString = name + "\\" + subNamespace;
-                        completionResultSet.addElement(LookupElementBuilder.create(lookupString).withTypeText(phpClass.getPresentableFQN(), true).withIcon(phpClass.getIcon()));
+                        completionResultSet.addElement(LookupElementBuilder.create(lookupString).withTypeText(phpClass.getPresentableFQN(), true).withIcon(phpClass.getIcon()).withInsertHandler(AnnotationTagInsertHandler.getInstance()));
                     }
                 }
 
