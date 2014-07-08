@@ -1,5 +1,6 @@
 package de.espend.idea.php.annotation.dict;
 
+import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
@@ -38,12 +39,25 @@ public class PhpDocTagAnnotation {
      */
     @Nullable
     public String getPropertyValue(String propertyName) {
+        StringLiteralExpression literalExpression = getPropertyValuePsi(propertyName);
+        if(literalExpression != null) {
+            return literalExpression.getContents();
+        }
+
+        return null;
+    }
+
+    /**
+     * Get property psi element
+     *
+     * @param propertyName property name template=""
+     * @return Property value
+     */
+    @Nullable
+    public StringLiteralExpression getPropertyValuePsi(String propertyName) {
         PhpPsiElement docAttrList = phpDocTag.getFirstPsiChild();
         if(docAttrList != null) {
-            StringLiteralExpression literalExpression = PhpElementsUtil.getChildrenOnPatternMatch(docAttrList, AnnotationPattern.getPropertyIdentifierValue(propertyName));
-            if(literalExpression != null) {
-                return literalExpression.getContents();
-            }
+            return PhpElementsUtil.getChildrenOnPatternMatch(docAttrList, AnnotationPattern.getPropertyIdentifierValue(propertyName));
         }
 
         return null;
