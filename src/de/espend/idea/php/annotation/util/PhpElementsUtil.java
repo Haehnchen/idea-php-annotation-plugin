@@ -133,6 +133,11 @@ public class PhpElementsUtil {
 
     }
 
+    /**
+     * Get a PhpClass on some possible context like namespace or use imports
+     * TODO there must be some core utils
+     *
+     */
     @Nullable
     public static PhpClass getClassByContext(PsiElement psiElement, String className) {
 
@@ -146,6 +151,11 @@ public class PhpElementsUtil {
             return PhpElementsUtil.getClass(psiElement.getProject(), map.get(className));
         }
 
-        return null;
+        PhpNamespace phpNamespace = PsiTreeUtil.getParentOfType(psiElement, PhpNamespace.class);
+        if(phpNamespace != null) {
+            return PhpElementsUtil.getClass(psiElement.getProject(), phpNamespace.getFQN() + "\\" + className);
+        }
+
+        return PhpElementsUtil.getClass(psiElement.getProject(), className);
     }
 }
