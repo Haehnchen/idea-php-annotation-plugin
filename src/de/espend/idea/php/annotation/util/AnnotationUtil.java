@@ -162,31 +162,24 @@ public class AnnotationUtil {
             return useImports;
         }
 
-        PhpNamespace phpNamespace = PsiTreeUtil.getParentOfType(phpDocComment, PhpNamespace.class);
+        GroupStatement phpNamespace = PsiTreeUtil.getParentOfType(phpDocComment, GroupStatement.class);
         if(phpNamespace == null) {
             return useImports;
         }
 
-        phpNamespace.acceptChildren(new PsiRecursiveElementWalkingVisitor() {
-            @Override
-            public void visitElement(PsiElement element) {
-                if (element instanceof PhpUse) {
-                    visitUse((PhpUse) element);
+        for(PhpUseList phpUseList : PsiTreeUtil.getChildrenOfTypeAsList(phpNamespace, PhpUseList.class)) {
+            PhpUse[] declarations = phpUseList.getDeclarations();
+            if(declarations != null) {
+                for(PhpUse phpUse : declarations) {
+                    String alias = phpUse.getAliasName();
+                    if (alias != null) {
+                        useImports.put(alias, phpUse.getOriginal());
+                    } else {
+                        useImports.put(phpUse.getName(), phpUse.getOriginal());
+                    }
                 }
-                super.visitElement(element);
             }
-
-            private void visitUse(PhpUse phpUse) {
-                String alias = phpUse.getAliasName();
-                if (alias != null) {
-                    useImports.put(alias, phpUse.getOriginal());
-                } else {
-                    useImports.put(phpUse.getName(), phpUse.getOriginal());
-                }
-
-            }
-
-        });
+        }
 
         return useImports;
     }
