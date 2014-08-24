@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Map;
 
 public class PhpElementsUtil {
 
@@ -131,4 +133,19 @@ public class PhpElementsUtil {
 
     }
 
+    @Nullable
+    public static PhpClass getClassByContext(PsiElement psiElement, String className) {
+
+        PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(psiElement, PhpDocTag.class);
+        if(phpDocTag == null) {
+            return null;
+        }
+
+        Map<String, String> map = AnnotationUtil.getUseImportMap(phpDocTag);
+        if(map.containsKey(className)) {
+            return PhpElementsUtil.getClass(psiElement.getProject(), map.get(className));
+        }
+
+        return null;
+    }
 }

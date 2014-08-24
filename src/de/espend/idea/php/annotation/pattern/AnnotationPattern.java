@@ -177,4 +177,8 @@ public class AnnotationPattern {
 
     }
 
+    public static ElementPattern<PsiElement> getClassConstant() {
+        return PlatformPatterns.psiElement().afterLeaf(PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STATIC)).withLanguage(PhpLanguage.INSTANCE);
+    }
+
 }

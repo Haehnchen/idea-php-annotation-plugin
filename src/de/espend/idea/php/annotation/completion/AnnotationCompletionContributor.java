@@ -7,6 +7,7 @@ import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
+import com.jetbrains.php.PhpIcons;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
@@ -44,6 +45,9 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         extend(CompletionType.BASIC, AnnotationPattern.getTextIdentifier(), new PhpDocAttributeValue());
         extend(CompletionType.BASIC, AnnotationPattern.getDefaultPropertyValue(), new PhpDocDefaultValue());
         extend(CompletionType.BASIC, AnnotationPattern.getDocBlockTagAfterBackslash(), new PhpDocBlockTagAlias());
+
+        // @Route(name=ClassName::<FOO>)
+        extend(CompletionType.BASIC, AnnotationPattern.getClassConstant(), new PhpDocClassConstantCompletion());
     }
 
     private class PhpDocDefaultValue  extends CompletionProvider<CompletionParameters> {
@@ -319,4 +323,34 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         }
     }
 
+    /**
+     * Completion for const fields inside phpdoc @Route(name=ClassName::<FOO>)
+     */
+    private class PhpDocClassConstantCompletion extends CompletionProvider<CompletionParameters> {
+
+        @Override
+        protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
+
+            PsiElement psiElement = parameters.getOriginalPosition();
+            if(psiElement == null | !PluginUtil.isEnabled(psiElement)) {
+                return;
+            }
+
+            PsiElement docStatic = psiElement.getPrevSibling();
+            if(docStatic != null && docStatic.getNode().getElementType() == PhpDocTokenTypes.DOC_STATIC) {
+                PsiElement docIdentifier = docStatic.getPrevSibling();
+                if(docIdentifier != null && docIdentifier.getNode().getElementType() == PhpDocTokenTypes.DOC_IDENTIFIER) {
+                    String className = docIdentifier.getText();
+                    PhpClass phpClass = PhpElementsUtil.getClassByContext(psiElement, className);
+                    if(phpClass != null) {
+                        for(Field field: phpClass.getFields()) {
+                            if(field.isConstant()) {
+                                result.addElement(LookupElementBuilder.create(field.getName()).withIcon(PhpIcons.FIELD).withTypeText(phpClass.getName(), true));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
