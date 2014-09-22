@@ -280,13 +280,14 @@ public class AnnotationUtil {
             return false;
         }
 
-        // is Test file in path name
+        // we check for project path, on no match we are properly inside external library paths
         String relativePath = VfsUtil.getRelativePath(inputData.getFile(), inputData.getProject().getBaseDir(), '/');
-        if(relativePath == null || relativePath.contains("\\Test") || relativePath.contains("\\Fixtures")) {
-            return false;
+        if(relativePath == null) {
+            return true;
         }
 
-        return true;
+        // is Test file in path name
+        return !(relativePath.contains("\\Test\\") || relativePath.contains("\\Fixtures\\"));
     }
 
     @Nullable

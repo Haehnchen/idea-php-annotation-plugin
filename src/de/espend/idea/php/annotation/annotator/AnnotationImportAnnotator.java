@@ -50,6 +50,7 @@ public class AnnotationImportAnnotator implements PhpAnnotationDocTagAnnotator {
             return;
         }
 
+        //Annotation annotationHolder = parameter.getHolder().createWarningAnnotation(new TextRange(phpDocTag.getTextOffset(), phpDocTag.getTextOffset() + tagName.length()), "Import");
         Annotation annotationHolder = parameter.getHolder().createWarningAnnotation(new TextRange(phpDocTag.getTextOffset(), phpDocTag.getTextOffset() + tagName.length()), "Import");
         for(PhpClass phpClass: phpClasses) {
             annotationHolder.registerFix(new CreatePropertyQuickFix(phpDocTag, "\\" + phpClass.getPresentableFQN()));
