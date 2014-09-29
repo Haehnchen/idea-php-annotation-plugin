@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>1.4.1</version>
+  <version>1.5</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -41,9 +41,11 @@
 
   <change-notes><![CDATA[
 
-<h2>1.4.1</h2>
+<h2>1.5</h2>
 <ul>
-    <li>Support classes in external library paths</li>
+    <li>Fix property value pattern completion for PhpStorm8</li>
+    <li>Add whitelist for annotation PhpDoc on next siblings, to filter inline doc blocks <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/24">#24</a></li>
+    <li>Move "Missing Import" annotator to inspection <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/19">#19</a></li>
 </ul>
 
 <h2>1.4</h2>
