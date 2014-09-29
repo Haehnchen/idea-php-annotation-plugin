@@ -14,6 +14,7 @@ import com.intellij.util.indexing.ID;
 import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import de.espend.idea.php.annotation.AnnotationStubIndex;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
@@ -319,6 +320,20 @@ public class AnnotationUtil {
         }
 
         return new PhpDocTagAnnotation(annotationReference, phpDocTag);
+    }
+
+    public static boolean isAnnotationPhpDocTag(PhpDocTag phpDocTag) {
+        PhpDocComment phpDocComment = PsiTreeUtil.getParentOfType(phpDocTag, PhpDocComment.class);
+        if(phpDocComment == null) {
+            return false;
+        }
+
+        PsiElement nextPsiElement = phpDocComment.getNextPsiSibling();
+        if(nextPsiElement == null || !(nextPsiElement instanceof Method || nextPsiElement instanceof PhpClass || nextPsiElement.getNode().getElementType() == PhpElementTypes.CLASS_FIELDS)) {
+            return false;
+        }
+
+        return true;
     }
 
 }
