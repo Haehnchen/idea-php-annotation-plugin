@@ -1,15 +1,17 @@
 package de.espend.idea.php.annotation.annotator;
 
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
+import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpCodeEditUtil;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
@@ -17,10 +19,10 @@ import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator;
 import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationDocTagAnnotatorParameter;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 public class AnnotationImportAnnotator implements PhpAnnotationDocTagAnnotator {
     @Override
@@ -31,27 +33,28 @@ public class AnnotationImportAnnotator implements PhpAnnotationDocTagAnnotator {
         }
 
         PhpDocTag phpDocTag = parameter.getPhpDocTag();
-        String tagName = phpDocTag.getName();
-
-        String className = tagName;
-        if(className.startsWith("@")) {
-            className = className.substring(1);
-        }
-
-        List<PhpClass> phpClasses = new ArrayList<PhpClass>();
-
-        for(PhpClass annotationClass: AnnotationUtil.getAnnotationsClasses(parameter.getProject())) {
-            if(annotationClass.getName().equals(className)) {
-                phpClasses.add(annotationClass);
-            }
-        }
-
+        Collection<PhpClass> phpClasses = AnnotationUtil.getPossibleImportClasses(phpDocTag);
         if(phpClasses.size() == 0) {
             return;
         }
 
-        //Annotation annotationHolder = parameter.getHolder().createWarningAnnotation(new TextRange(phpDocTag.getTextOffset(), phpDocTag.getTextOffset() + tagName.length()), "Import");
-        Annotation annotationHolder = parameter.getHolder().createWarningAnnotation(new TextRange(phpDocTag.getTextOffset(), phpDocTag.getTextOffset() + tagName.length()), "Import");
+        String tagName = phpDocTag.getName();
+        if(StringUtils.isBlank(tagName)) {
+            return;
+        }
+
+        PsiElement firstChild = phpDocTag.getFirstChild();
+         /* @TODO: not working  firstChild.getNode().getElementType() == PhpDocElementTypes.DOC_TAG_NAME */
+        if(firstChild == null) {
+            return;
+        }
+
+        Annotation annotationHolder = parameter.getHolder().createWarningAnnotation(firstChild, "Import class");
+
+        // clean warning; we dont want tooltip, but popover menu entry; @TODO: direct call possible?
+        annotationHolder.setHighlightType(ProblemHighlightType.INFORMATION);
+        annotationHolder.setTooltip(null);
+
         for(PhpClass phpClass: phpClasses) {
             annotationHolder.registerFix(new CreatePropertyQuickFix(phpDocTag, "\\" + phpClass.getPresentableFQN()));
         }

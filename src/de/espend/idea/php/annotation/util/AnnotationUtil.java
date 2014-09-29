@@ -336,6 +336,28 @@ public class AnnotationUtil {
         return true;
     }
 
+    public static Collection<PhpClass> getPossibleImportClasses(PhpDocTag phpDocTag) {
+
+        String className = phpDocTag.getName();
+        if(className.startsWith("@")) {
+            className = className.substring(1);
+        }
+
+        List<PhpClass> phpClasses = new ArrayList<PhpClass>();
+
+        for(PhpClass annotationClass: AnnotationUtil.getAnnotationsClasses(phpDocTag.getProject())) {
+            if(annotationClass.getName().equals(className)) {
+                phpClasses.add(annotationClass);
+            }
+        }
+
+        if(phpClasses.size() == 0) {
+            return Collections.emptyList();
+        }
+
+        return phpClasses;
+    }
+
 }
 
 

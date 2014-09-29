@@ -160,6 +160,10 @@
 
       <annotator language="PHP" implementationClass="de.espend.idea.php.annotation.annotator.AnnotationDocTagAnnotator"/>
 
+      <localInspection groupPath="PHP" shortName="AnnotationMissingUseInspection" displayName="Missing Import"
+                       groupName="Annotation"
+                       enabledByDefault="true" level="WARNING"
+                       implementationClass="de.espend.idea.php.annotation.inspection.AnnotationMissingUseInspection"/>
 
   </extensions>
 
