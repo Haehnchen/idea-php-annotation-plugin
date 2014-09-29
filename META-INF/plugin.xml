@@ -177,6 +177,7 @@
 
       <!-- Doctrine -->
       <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.doctrine.navigation.DoctrineAnnotationStaticCompletionProvider"/>
+      <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.doctrine.navigation.ColumnNameCompletionProvider"/>
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineAnnotationFieldProvider"/>
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineAnnotationTypeProvider"/>
   </extensions>
