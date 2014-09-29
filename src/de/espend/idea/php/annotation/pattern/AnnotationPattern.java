@@ -80,7 +80,10 @@ public class AnnotationPattern {
         return PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STRING)
             .withParent(PlatformPatterns.psiElement(StringLiteralExpression.class)
                 .afterLeafSkipping(
-                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText(PlatformPatterns.string().contains("=")),
+                    PlatformPatterns.or(
+                        PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText(PlatformPatterns.string().containsChars("=")),
+                        PlatformPatterns.psiElement(PsiWhiteSpace.class)
+                    ),
                     PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
                 )
                 .withParent(PlatformPatterns
