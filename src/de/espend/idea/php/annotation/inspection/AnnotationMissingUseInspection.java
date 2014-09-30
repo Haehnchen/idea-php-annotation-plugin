@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -28,7 +29,7 @@ public class AnnotationMissingUseInspection extends LocalInspectionTool {
                 @Override
                 public void visitElement(PsiElement element) {
                     if(element instanceof PhpDocTag && AnnotationUtil.isAnnotationPhpDocTag((PhpDocTag) element)) {
-                        foo((PhpDocTag) element, holder);
+                        visitAnnotationDocTag((PhpDocTag) element, holder);
                     }
                     super.visitElement(element);
                 }
@@ -38,11 +39,21 @@ public class AnnotationMissingUseInspection extends LocalInspectionTool {
         return super.buildVisitor(holder, isOnTheFly);
     }
 
-    private void foo(PhpDocTag phpDocTag, @NotNull ProblemsHolder holder) {
+    private void visitAnnotationDocTag(PhpDocTag phpDocTag, @NotNull ProblemsHolder holder) {
+
+        String name = phpDocTag.getName();
+        if(StringUtils.isBlank(name) || AnnotationUtil.NON_ANNOTATION_TAGS.contains(name)) {
+            return;
+        }
 
         PsiElement firstChild = phpDocTag.getFirstChild();
          /* @TODO: not working  firstChild.getNode().getElementType() == PhpDocElementTypes.DOC_TAG_NAME */
         if(firstChild == null) {
+            return;
+        }
+
+        PhpClass annotationReference = AnnotationUtil.getAnnotationReference(phpDocTag);
+        if(annotationReference != null) {
             return;
         }
 

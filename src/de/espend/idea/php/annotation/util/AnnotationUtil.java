@@ -351,10 +351,6 @@ public class AnnotationUtil {
             }
         }
 
-        if(phpClasses.size() == 0) {
-            return Collections.emptyList();
-        }
-
         return phpClasses;
     }
 
