@@ -12,6 +12,9 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class AnnotationPattern {
 
 

@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class AnnotationDocTagGotoHandlerParameter {
 
     final private PhpDocTag phpDocTag;

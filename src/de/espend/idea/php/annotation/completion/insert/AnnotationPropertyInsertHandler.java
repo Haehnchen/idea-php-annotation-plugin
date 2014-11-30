@@ -8,6 +8,9 @@ import de.espend.idea.php.annotation.dict.AnnotationProperty;
 import de.espend.idea.php.annotation.dict.AnnotationPropertyEnum;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class AnnotationPropertyInsertHandler implements InsertHandler<LookupElement> {
 
     private static final AnnotationPropertyInsertHandler instance = new AnnotationPropertyInsertHandler();

@@ -8,6 +8,9 @@ import de.espend.idea.php.annotation.completion.insert.AnnotationPropertyInsertH
 import de.espend.idea.php.annotation.dict.AnnotationProperty;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class PhpAnnotationPropertyLookupElement extends LookupElement {
 
     private AnnotationProperty annotationProperty;

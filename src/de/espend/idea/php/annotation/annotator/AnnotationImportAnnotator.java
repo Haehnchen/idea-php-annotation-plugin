@@ -24,6 +24,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class AnnotationImportAnnotator implements PhpAnnotationDocTagAnnotator {
     @Override
     public void annotate(PhpAnnotationDocTagAnnotatorParameter parameter) {

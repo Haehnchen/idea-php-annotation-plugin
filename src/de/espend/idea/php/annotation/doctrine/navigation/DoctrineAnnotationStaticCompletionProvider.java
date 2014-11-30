@@ -8,7 +8,9 @@ import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
 
 import java.util.Arrays;
 
-
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class DoctrineAnnotationStaticCompletionProvider implements PhpAnnotationCompletionProvider {
 
     @Override

@@ -32,6 +32,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class AnnotationUtil {
 
     public static final ExtensionPointName<PhpAnnotationCompletionProvider> EXTENSION_POINT_COMPLETION = new ExtensionPointName<PhpAnnotationCompletionProvider>("de.espend.idea.php.annotation.PhpAnnotationCompletionProvider");

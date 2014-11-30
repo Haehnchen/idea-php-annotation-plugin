@@ -16,6 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class DoctrineRepositoryReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     final private String content;

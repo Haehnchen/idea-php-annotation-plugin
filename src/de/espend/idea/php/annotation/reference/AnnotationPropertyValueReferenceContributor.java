@@ -20,6 +20,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class AnnotationPropertyValueReferenceContributor extends PsiReferenceContributor {
 
     @Override

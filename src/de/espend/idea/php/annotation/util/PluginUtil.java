@@ -5,6 +5,9 @@ import com.intellij.psi.PsiElement;
 import de.espend.idea.php.annotation.Settings;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class PluginUtil {
 
     public static boolean isEnabled(Project project) {

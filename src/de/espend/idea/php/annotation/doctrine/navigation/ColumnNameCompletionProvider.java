@@ -13,9 +13,10 @@ import com.jetbrains.php.lang.psi.elements.Field;
 import org.apache.commons.lang.StringUtils;
 
 /**
- /**
  * "Column(name="field_data2", type="integer")"
  * private $FieldData2;
+ *
+ * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class ColumnNameCompletionProvider implements PhpAnnotationCompletionProvider {
 

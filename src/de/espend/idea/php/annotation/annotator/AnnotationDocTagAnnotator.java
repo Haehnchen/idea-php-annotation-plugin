@@ -10,6 +10,9 @@ import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationDocTagAnno
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class AnnotationDocTagAnnotator implements Annotator {
 
     @Override

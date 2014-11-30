@@ -6,6 +6,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class PhpDocCommentAnnotation {
 
     final private Map<String, PhpDocTagAnnotation> annotationReferences;

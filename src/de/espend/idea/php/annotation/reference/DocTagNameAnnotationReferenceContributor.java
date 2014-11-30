@@ -11,6 +11,9 @@ import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PluginUtil;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContributor {
 
     @Override

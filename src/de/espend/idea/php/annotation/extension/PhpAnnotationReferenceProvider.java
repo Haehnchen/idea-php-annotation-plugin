@@ -5,6 +5,9 @@ import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParam
 import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationReferenceProviderParameter;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public interface PhpAnnotationReferenceProvider {
     @Nullable
     public PsiReference[] getPropertyReferences(AnnotationPropertyParameter annotationPropertyParameter, PhpAnnotationReferenceProviderParameter referencesByElementParameter);

@@ -5,7 +5,9 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
-
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class AnnotationCompletionProviderParameter {
 
     private CompletionParameters parameters;

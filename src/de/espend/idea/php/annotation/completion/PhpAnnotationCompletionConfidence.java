@@ -14,7 +14,9 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.impl.PhpPsiElementImpl;
 import org.jetbrains.annotations.NotNull;
 
-
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class PhpAnnotationCompletionConfidence extends CompletionConfidence {
     @NotNull
     @Override

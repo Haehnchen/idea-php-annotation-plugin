@@ -9,6 +9,9 @@ import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class PhpAnnotationDocTagAnnotatorParameter {
 
     private final PhpDocTag phpDocTag;

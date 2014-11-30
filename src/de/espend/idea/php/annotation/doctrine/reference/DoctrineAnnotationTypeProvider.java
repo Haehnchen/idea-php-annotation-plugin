@@ -9,7 +9,9 @@ import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationReferenceP
 import de.espend.idea.php.annotation.doctrine.reference.references.DoctrineRepositoryReference;
 import org.jetbrains.annotations.Nullable;
 
-
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class DoctrineAnnotationTypeProvider implements PhpAnnotationReferenceProvider {
 
     @Nullable

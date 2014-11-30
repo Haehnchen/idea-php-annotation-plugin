@@ -19,7 +19,9 @@ import com.intellij.util.indexing.ScalarIndexExtension;
 
 import java.util.Map;
 
-
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
     public static final ID<String, Void> KEY = ID.create("espend.php.annotation.classes");
     private final KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();

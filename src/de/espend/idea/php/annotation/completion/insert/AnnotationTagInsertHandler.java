@@ -9,6 +9,9 @@ import com.jetbrains.php.completion.insert.PhpInsertHandlerUtil;
 import com.jetbrains.php.completion.insert.PhpReferenceInsertHandler;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> {
 
     private static final AnnotationTagInsertHandler instance = new AnnotationTagInsertHandler();

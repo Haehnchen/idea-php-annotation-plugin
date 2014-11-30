@@ -15,7 +15,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class PhpAnnotationTypeCompletionProvider implements PhpAnnotationCompletionProvider {
 
     @Override

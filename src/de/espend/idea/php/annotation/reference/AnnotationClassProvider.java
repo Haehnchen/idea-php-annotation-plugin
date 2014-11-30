@@ -8,6 +8,9 @@ import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationReferenceP
 import de.espend.idea.php.annotation.reference.references.PhpClassReference;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class AnnotationClassProvider implements PhpAnnotationReferenceProvider {
 
     @Nullable

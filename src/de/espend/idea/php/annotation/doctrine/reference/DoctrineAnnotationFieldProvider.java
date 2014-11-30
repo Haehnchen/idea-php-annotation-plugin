@@ -12,7 +12,9 @@ import de.espend.idea.php.annotation.doctrine.reference.references.DoctrinePhpCl
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.jetbrains.annotations.Nullable;
 
-
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class DoctrineAnnotationFieldProvider implements PhpAnnotationReferenceProvider {
 
     @Nullable

@@ -9,6 +9,9 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class PhpClassAnnotationLookupElement extends LookupElement {
 
     final private PhpClass phpClass;

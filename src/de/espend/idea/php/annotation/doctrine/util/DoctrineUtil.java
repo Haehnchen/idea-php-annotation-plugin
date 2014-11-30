@@ -1,5 +1,8 @@
 package de.espend.idea.php.annotation.doctrine.util;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class DoctrineUtil {
 
     final public static String[] DOCTRINE_RELATION_FIELDS = new String[] {
