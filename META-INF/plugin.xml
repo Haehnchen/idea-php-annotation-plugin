@@ -148,7 +148,15 @@
   </project-components>
 
   <actions>
-    <!-- Add your actions here -->
+
+      <action icon="PhpAnnotationIcons.DOCTRINE" id="PhpAnnotation.Doctrine.Orm.PropertyGenerator" class="de.espend.idea.php.annotation.doctrine.action.DoctrinePropertyOrmAnnotationGenerateAction" text="Generate ORM Annotation">
+          <add-to-group group-id="GenerateGroup" anchor="last" />
+      </action>
+
+      <action icon="PhpAnnotationIcons.DOCTRINE" id="PhpAnnotation.Doctrine.Orm.ClassGenerator" class="de.espend.idea.php.annotation.doctrine.action.DoctrineClassOrmAnnotationGenerateAction" text="Generate ORM Class">
+          <add-to-group group-id="GenerateGroup" anchor="last" />
+      </action>
+
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -171,6 +179,12 @@
                        groupName="Annotation"
                        enabledByDefault="true" level="WARNING"
                        implementationClass="de.espend.idea.php.annotation.inspection.AnnotationMissingUseInspection"/>
+
+      <intentionAction>
+          <className>de.espend.idea.php.annotation.doctrine.intention.DoctrineOrmFieldIntention</className>
+          <category>PHP</category>
+          <descriptionDirectoryName>DoctrineOrmFieldIntention</descriptionDirectoryName>
+      </intentionAction>
 
   </extensions>
 
