@@ -1,7 +1,7 @@
 idea-php-annotation-plugin
 ==========================
 
-Provides php annotation support for PhpStorm and IntelliJ
+Provides PHP annotation support for PhpStorm / IntelliJ and provides references support for "Code > Optimize Imports" action
 
 ### Install
 * [Download plugin](http://plugins.jetbrains.com/plugin/7320) or install directly out of PhpStorm
@@ -58,15 +58,16 @@ class NotBlank extends Constraint {
 
 ### Extension Points
 
-React on completion and reference events inside annotation property values.
+Plugins provides several extension points, which allows external plugins to provide additional. See some examples on [Symfony2 Plugin](https://github.com/Haehnchen/idea-php-symfony2-plugin/blob/master/META-INF/plugin.xml)
 
 Example for extension points.
 
 ```java
 <extensionPoints>
       <extensionPoint name="PhpAnnotationCompletionProvider" interface="de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider"/>
-      <extensionPoint name="PhpAnnotationReferencesProvider" interface="de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider"/>
+      <extensionPoint name="PhpAnnotationReferenceProvider" interface="de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider"/>
       <extensionPoint name="PhpAnnotationDocTagGotoHandler" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler"/>
+      <extensionPoint name="PhpAnnotationDocTagAnnotator" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator"/>
 </extensionPoints>
 
 <extensions defaultExtensionNs="de.espend.idea.php.annotation">
@@ -74,6 +75,55 @@ Example for extension points.
 </extensions>
 ```
 
+### Completion confidence
+
+Annoying pressing completion shortcut? Plugin provides a nice completion confidence to open completion popover on several conditions
+
+```php
+/**
+ * @<carpet>
+ * <carpet>
+ */
+```
+
+### Doctrine
+
+#### ORM: Property generator
+
+```php
+class Foo {
+    public $id<carpet>;
+
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     */
+    public $id<carpet>;
+}
+```
+
+#### ORM: class entity generator
+
+```php
+/**
+ * @ORM\Entity(repositoryClass="Foo")
+ * @ORM\Table(name="bike")
+ */
+class Foo { }
+```
+
+#### ORM: repository class generator
+
+```php
+/**
+ * @ORM\Entity(repositoryClass="UnknownClass")
+ */
+class Foo { }
+```
+
 ### Other
 * Doctrine repositoryName
-* Completion confidence to auto popup completion in docblocks
+
+### PhpStorm9
+* will see :)
