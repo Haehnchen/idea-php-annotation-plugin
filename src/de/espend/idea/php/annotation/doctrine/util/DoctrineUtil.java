@@ -4,9 +4,12 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.Field;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
+import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -44,11 +47,25 @@ public class DoctrineUtil {
         }
 
         PhpDocCommentAnnotation container = AnnotationUtil.getPhpDocCommentAnnotationContainer(docComment);
-        if(container == null) {
-            return false;
+        return container != null && container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Column") != null;
+
+    }
+
+    @Nullable
+    public static PhpDocTagAnnotation getOrmEntityPhpDocBlock(@NotNull PhpClass phpClass)
+    {
+
+        PhpDocComment docComment = phpClass.getDocComment();
+        if(docComment == null) {
+            return null;
         }
 
-        return container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Column") != null;
+        PhpDocCommentAnnotation container = AnnotationUtil.getPhpDocCommentAnnotationContainer(docComment);
+        if(container == null) {
+            return null;
+        }
+
+        return container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Entity");
 
     }
 

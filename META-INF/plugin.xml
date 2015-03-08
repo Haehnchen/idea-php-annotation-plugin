@@ -186,6 +186,12 @@
           <descriptionDirectoryName>DoctrineOrmFieldIntention</descriptionDirectoryName>
       </intentionAction>
 
+      <intentionAction>
+          <className>de.espend.idea.php.annotation.doctrine.intention.DoctrineOrmRepositoryIntention</className>
+          <category>PHP</category>
+          <descriptionDirectoryName>DoctrineOrmRepositoryIntention</descriptionDirectoryName>
+      </intentionAction>
+
   </extensions>
 
   <extensionPoints>

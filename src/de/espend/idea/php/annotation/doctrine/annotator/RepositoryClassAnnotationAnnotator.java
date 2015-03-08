@@ -135,25 +135,32 @@ public class RepositoryClassAnnotationAnnotator implements PhpAnnotationDocTagAn
 
                     IdeUtil.RunnableCreateAndOpenFile runnableCreateAndOpenFile = IdeUtil.getRunnableCreateAndOpenFile(project, psiDirectory, fileName);
 
-                    try {
-                        
-                        String content = StreamUtil.readText(RepositoryClassAnnotationAnnotator.class.getResourceAsStream("template/EntityRepository.php"), "UTF-8");
-                        for(Map.Entry<String, String> templateVar: templateVars.entrySet()) {
-                            content = content.replace("{{" + templateVar.getKey() +"}}", templateVar.getValue());
-                        }
-
-                        runnableCreateAndOpenFile.setContent(content);
-
-                    } catch (IOException ignored) {
-                    }
+                    String content = createEntityRepositoryContent(templateVars);
+                    runnableCreateAndOpenFile.setContent(content);
 
                     ApplicationManager.getApplication().runWriteAction(runnableCreateAndOpenFile);
                 }
             });
         }
+
         @Override
         public boolean startInWriteAction() {
             return true;
         }
+    }
+
+    public static String createEntityRepositoryContent(Map<String, String> templateVars) {
+        String content = null;
+
+        try {
+            content = StreamUtil.readText(RepositoryClassAnnotationAnnotator.class.getResourceAsStream("template/EntityRepository.php"), "UTF-8");
+        } catch (IOException e) {
+            return null;
+        }
+
+        for(Map.Entry<String, String> templateVar: templateVars.entrySet()) {
+            content = content.replace("{{" + templateVar.getKey() +"}}", templateVar.getValue());
+        }
+        return content;
     }
 }
