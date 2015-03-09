@@ -76,11 +76,10 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
         if(repoPhpClass == null) {
             Map<String, String> templateVars = new HashMap<String, String>();
 
-            templateVars.put("namespace", phpClass.getNamespaceName());
+            templateVars.put("namespace", DoctrineUtil.trimBlackSlashes(phpClass.getNamespaceName()));
             templateVars.put("class", phpClass.getName() + "Repository");
 
             String content = RepositoryClassAnnotationAnnotator.createEntityRepositoryContent(templateVars);
-
 
             String fileName = phpClass.getName() + "Repository.php";
             PsiDirectory dir = phpClass.getContainingFile().getContainingDirectory();

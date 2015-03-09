@@ -81,4 +81,17 @@ public class DoctrineUtil {
             PhpIndex.getInstance(project).getInterfacesByFQN("Doctrine\\ORM\\Mapping\\Annotation").size() > 0;
     }
 
+    public static String trimBlackSlashes(@NotNull String namespaceName) {
+
+        if(namespaceName.startsWith("\\")) {
+            namespaceName = namespaceName.substring(1);
+        }
+
+        if(namespaceName.endsWith("\\")) {
+            namespaceName = namespaceName.substring(0, namespaceName.length() - 1);
+        }
+
+        return namespaceName;
+    }
+
 }

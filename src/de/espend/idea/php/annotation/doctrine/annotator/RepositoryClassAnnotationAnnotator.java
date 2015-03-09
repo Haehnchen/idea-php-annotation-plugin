@@ -102,7 +102,7 @@ public class RepositoryClassAnnotationAnnotator implements PhpAnnotationDocTagAn
         if(directory.findFile(filename) == null) {
 
             Map<String, String> templateVars = new HashMap<String, String>();
-            templateVars.put("namespace", ns.endsWith("\\") ? ns.substring(0, ns.length() - 1) : ns);
+            templateVars.put("namespace", DoctrineUtil.trimBlackSlashes(ns));
             templateVars.put("class", targetClassName);
 
             warningAnnotation.registerFix(new CreateEntityRepositoryIntentionAction(directory, filename, templateVars));
