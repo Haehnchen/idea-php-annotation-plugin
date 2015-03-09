@@ -10,14 +10,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
 import de.espend.idea.php.annotation.doctrine.annotator.RepositoryClassAnnotationAnnotator;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
+import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,7 +40,7 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
             return false;
         }
 
-        PhpClass phpClass = PsiTreeUtil.getParentOfType(element, PhpClass.class);
+        PhpClass phpClass = getScopedPhpClass(element);
         if(phpClass == null) {
             return false;
         }
@@ -56,8 +61,7 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
 
-
-        PhpClass phpClass = PsiTreeUtil.getParentOfType(element, PhpClass.class);
+        PhpClass phpClass = getScopedPhpClass(element);
         if(phpClass == null) {
             return;
         }
@@ -100,11 +104,67 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
         if(ormEntityPhpDocBlock != null) {
             PhpDocTag phpDocTag = ormEntityPhpDocBlock.getPhpDocTag();
             PhpPsiElement firstPsiChild = phpDocTag.getFirstPsiChild();
-            if(firstPsiChild != null) {
-                editor.getDocument().insertString(firstPsiChild.getTextRange().getStartOffset() + 1, "repositoryClass=\"" + phpClass.getName() + "Repository"  + "\"");
-            }
+            insertAttribute(editor, phpClass, phpDocTag, firstPsiChild);
         }
 
+    }
+
+    /**
+     * Scope resolve for PhpClass:
+     * "@ORM\Entity" or inside PhpClass
+     */
+    @Nullable
+    private PhpClass getScopedPhpClass(PsiElement element) {
+
+        // inside "@ORM\Entity"
+        PsiElement parent = element.getParent();
+        if(parent instanceof PhpDocTag) {
+            PhpDocTagAnnotation phpDocAnnotationContainer = AnnotationUtil.getPhpDocAnnotationContainer((PhpDocTag) parent);
+
+            if(phpDocAnnotationContainer != null) {
+                PhpClass phpClass = phpDocAnnotationContainer.getPhpClass();
+                if("Doctrine\\ORM\\Mapping\\Entity".equals(phpClass.getPresentableFQN())) {
+                    PsiElement docTag = parent.getParent();
+                    if(docTag instanceof PhpDocComment) {
+                        PhpPsiElement nextPsiSibling = ((PhpDocComment) docTag).getNextPsiSibling();
+                        if(nextPsiSibling instanceof PhpClass) {
+                            return (PhpClass) nextPsiSibling;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        // and finally check PhpClass class scope
+        return PsiTreeUtil.getParentOfType(element, PhpClass.class);
+    }
+
+    private void insertAttribute(@NotNull Editor editor, @NotNull PhpClass phpClass, @NotNull PhpDocTag phpDocTag, @Nullable PhpPsiElement firstPsiChild) {
+        if(firstPsiChild == null) return;
+
+        String attr = "repositoryClass=\"" + phpClass.getName() + "Repository" + "\"";
+
+        // we already have an attribute list
+        if(firstPsiChild.getNode().getElementType() == PhpDocElementTypes.phpDocAttributeList) {
+
+            if(StringUtils.trim(firstPsiChild.getText()).length() == 0) {
+                // @ORM\Entity()
+                editor.getDocument().insertString(firstPsiChild.getTextRange().getStartOffset() + 1, attr);
+            } else {
+                // @ORM\Entity(readOnly=true)
+                editor.getDocument().insertString(firstPsiChild.getTextRange().getStartOffset() + 1, attr + ", ");
+            }
+
+            return;
+        }
+
+        // @ORM\Entity
+        PsiElement firstChild = phpDocTag.getFirstChild();
+        if(firstChild != null) {
+            editor.getDocument().insertString(firstChild.getTextRange().getEndOffset(), "(" + attr + ")");
+        }
     }
 
     @NotNull
