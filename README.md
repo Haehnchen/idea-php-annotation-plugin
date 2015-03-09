@@ -85,6 +85,13 @@ Annoying pressing completion shortcut? Plugin provides a nice completion confide
  */
 ```
 
+### Static values
+```php
+    /**
+     * @DI\Observe(SomethingEvents::PRE_UPDATE)
+     */
+```
+
 ### Doctrine
 
 #### ORM: Property generator
@@ -112,7 +119,7 @@ class Foo {
 class Foo { }
 ```
 
-#### ORM: repository class generator
+#### ORM: repository class generator / indention
 
 ```php
 /**
@@ -121,8 +128,20 @@ class Foo { }
 class Foo { }
 ```
 
-### Other
-* Doctrine repositoryName
+```php
+/**
+ * @ORM\Entity<carpet>
+ */
+class Foo { }
+```
+
+#### ORM: repository class completion
+
+```php
+/**
+ * @ORM\Entity(repositoryClass="<carpet>")
+ */
+```
 
 ### PhpStorm9
 * will see :)
