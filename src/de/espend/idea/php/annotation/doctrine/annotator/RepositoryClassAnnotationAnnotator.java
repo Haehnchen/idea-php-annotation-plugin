@@ -1,9 +1,11 @@
 package de.espend.idea.php.annotation.doctrine.annotator;
 
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.lang.annotation.Annotation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
@@ -19,6 +21,7 @@ import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator;
 import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationDocTagAnnotatorParameter;
 import de.espend.idea.php.annotation.util.IdeUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -49,7 +52,7 @@ public class RepositoryClassAnnotationAnnotator implements PhpAnnotationDocTagAn
         }
 
         StringLiteralExpression repositoryClass = annotationDocTag.getPropertyValuePsi("repositoryClass");
-        if(repositoryClass == null) {
+        if(repositoryClass == null || StringUtils.isBlank(repositoryClass.getContents())) {
             return;
         }
 
@@ -88,14 +91,22 @@ public class RepositoryClassAnnotationAnnotator implements PhpAnnotationDocTagAn
         String targetClassName = targetClass.substring(targetClass.lastIndexOf("\\") + 1);
         String filename = targetClassName  + ".php";
 
-        Map<String, String> templateVars = new HashMap<String, String>();
-        templateVars.put("namespace", ns.endsWith("\\") ? ns.substring(0, ns.length() - 1) : ns);
-        templateVars.put("class", targetClassName);
-
         PsiDirectory directory = phpClassContext.getContainingFile().getContainingDirectory();
+        TextRange textRange = repositoryClass.getTextRange();
 
-        parameter.getHolder().createWarningAnnotation(repositoryClass.getTextRange(), "Create Doctrine repository class")
-            .registerFix(new CreateEntityRepositoryIntentionAction(directory, filename, templateVars));
+        Annotation warningAnnotation = parameter.getHolder().createWarningAnnotation(
+            new TextRange(textRange.getStartOffset() + 1, textRange.getEndOffset() - 1),
+            "Missing Repository Class"
+        );
+
+        if(directory.findFile(filename) == null) {
+
+            Map<String, String> templateVars = new HashMap<String, String>();
+            templateVars.put("namespace", ns.endsWith("\\") ? ns.substring(0, ns.length() - 1) : ns);
+            templateVars.put("class", targetClassName);
+
+            warningAnnotation.registerFix(new CreateEntityRepositoryIntentionAction(directory, filename, templateVars));
+        }
 
     }
 
@@ -114,7 +125,7 @@ public class RepositoryClassAnnotationAnnotator implements PhpAnnotationDocTagAn
         @NotNull
         @Override
         public String getText() {
-            return "Create Doctrine repository class";
+            return "Create Doctrine Repository Class";
         }
 
         @NotNull
@@ -150,7 +161,7 @@ public class RepositoryClassAnnotationAnnotator implements PhpAnnotationDocTagAn
     }
 
     public static String createEntityRepositoryContent(Map<String, String> templateVars) {
-        String content = null;
+        String content;
 
         try {
             content = StreamUtil.readText(RepositoryClassAnnotationAnnotator.class.getResourceAsStream("template/EntityRepository.php"), "UTF-8");
@@ -161,6 +172,7 @@ public class RepositoryClassAnnotationAnnotator implements PhpAnnotationDocTagAn
         for(Map.Entry<String, String> templateVar: templateVars.entrySet()) {
             content = content.replace("{{" + templateVar.getKey() +"}}", templateVar.getValue());
         }
+
         return content;
     }
 }
