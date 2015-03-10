@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>1.5.1</version>
+  <version>1.6</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -30,6 +30,7 @@
   <li>Doctrine related providers</li>
   <li>Class import annotator</li>
   <li>Class constants in DocTags</li>
+  <li>Doctrine ORM indention and quickfixes for: repository and properties</li>
 </ul>
 
 <h2>Todo</h2>
@@ -40,6 +41,13 @@
   </description>
 
   <change-notes><![CDATA[
+
+<h2>1.6</h2>
+<ul>
+    <li>Add Doctrine repository create quickfix</li>
+    <li>Add indention creation for Doctrine: @Column properties</li>
+    <li>Add generator for Doctrine entity class and properties</li>
+</ul>
 
 <h2>1.5.1</h2>
 <ul>
