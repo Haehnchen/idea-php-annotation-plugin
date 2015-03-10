@@ -47,8 +47,8 @@ public class DoctrineUtil {
         }
 
         PhpDocCommentAnnotation container = AnnotationUtil.getPhpDocCommentAnnotationContainer(docComment);
-        return container != null && container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Column") != null;
-
+        return container != null
+            && (container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Column") != null || container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\JoinColumn") != null);
     }
 
     @Nullable
