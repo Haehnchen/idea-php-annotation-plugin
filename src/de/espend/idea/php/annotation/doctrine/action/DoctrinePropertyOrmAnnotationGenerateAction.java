@@ -2,18 +2,16 @@ package de.espend.idea.php.annotation.doctrine.action;
 
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.actions.CodeInsightAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.jetbrains.php.lang.PhpCodeUtil;
 import com.jetbrains.php.lang.actions.generation.PhpGenerateFieldAccessorHandlerBase;
+import com.jetbrains.php.lang.intentions.generators.PhpAccessorMethodData;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import de.espend.idea.php.annotation.PhpAnnotationIcons;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
 import de.espend.idea.php.annotation.util.PhpDocUtil;
 import org.jetbrains.annotations.NotNull;
@@ -36,13 +34,13 @@ public class DoctrinePropertyOrmAnnotationGenerateAction extends CodeInsightActi
             super.invoke(project, editor, file);
         }
 
-        protected PhpCodeUtil.AccessorMethodData[] createAccessors(PsiElement field)
+        protected PhpAccessorMethodData[] createAccessors(PsiElement field)
         {
             if(field instanceof Field) {
                 PhpDocUtil.addPropertyOrmDocs((Field) field, this.editor.getDocument(), file);
             }
 
-            return new PhpCodeUtil.AccessorMethodData[0];
+            return new PhpAccessorMethodData[0];
         }
 
         protected boolean isSelectable(PhpClass phpClass, Field field)
@@ -54,6 +52,11 @@ public class DoctrinePropertyOrmAnnotationGenerateAction extends CodeInsightActi
         {
             return "No possible orm property found";
         }
+
+      @Override
+      protected boolean containsSetters() {
+        return false;
+      }
     };
 
     @Override
