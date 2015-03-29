@@ -7,6 +7,11 @@ Provides PHP annotation support for PhpStorm / IntelliJ and provides references 
 * [Download plugin](http://plugins.jetbrains.com/plugin/7320) or install directly out of PhpStorm
 * Force file reindex if necessary with: `File -> Invalidate Cache`
 
+### Version
+
+* 2.x: PhpStorm9
+* 1.x: PhpStorm8
+
 ### Annotation Class Detection
 
 * Every class with `@Annotation` inside class doc block is detected on file indexing
