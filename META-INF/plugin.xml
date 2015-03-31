@@ -30,7 +30,7 @@
   <li>Doctrine related providers</li>
   <li>Class import annotator</li>
   <li>Class constants in DocTags</li>
-  <li>Doctrine ORM indention and quickfixes for: repository and properties</li>
+  <li>Doctrine ORM intention and quickfixes for: repository and properties</li>
 </ul>
 
 <h2>Todo</h2>
@@ -48,7 +48,7 @@
 <h2>2.6 / 1.6</h2>
 <ul>
     <li>Add Doctrine repository create quickfix</li>
-    <li>Add indention creation for Doctrine: @Column properties</li>
+    <li>Add intention creation for Doctrine: @Column properties</li>
     <li>Add generator for Doctrine entity class and properties</li>
 </ul>
 
