@@ -127,7 +127,7 @@ class Foo {
 class Foo { }
 ```
 
-#### ORM: repository class generator / indention
+#### ORM: repository class generator / intention
 
 ```php
 /**
