@@ -1,15 +1,22 @@
 package de.espend.idea.php.annotation.doctrine.util;
 
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import de.espend.idea.php.annotation.PhpAnnotationIcons;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
+import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -92,6 +99,71 @@ public class DoctrineUtil {
         }
 
         return namespaceName;
+    }
+
+    public static void visitCustomTypes(@NotNull Project project, @NotNull ColumnTypeVisitor visitor) {
+
+        Set<String> found = new HashSet<String>();
+
+        for (PhpClass phpClass : PhpIndex.getInstance(project).getAllSubclasses("\\Doctrine\\DBAL\\Types\\Type")) {
+            String name = PhpElementsUtil.getMethodReturnAsString(phpClass, "getName");
+            if(name != null) {
+                found.add(name);
+                visitor.visit(name, phpClass, phpClass.findMethodByName("getName"));
+            }
+        }
+
+        for (String s : Arrays.asList("id", "string", "integer", "smallint", "bigint", "boolean", "decimal", "date", "time", "datetime", "text", "array", "float")) {
+            if(!found.contains(s)) {
+                visitor.visit(s, null, null);
+            }
+        }
+
+    }
+
+    public interface ColumnTypeVisitor {
+        public void visit(@NotNull String name, @Nullable PhpClass phpClass, @Nullable PsiElement psiElement);
+    }
+
+    public static Collection<LookupElement> getTypes(@NotNull Project project) {
+
+        final Collection<LookupElement> lookupElements = new ArrayList<LookupElement>();
+
+        visitCustomTypes(project, new ColumnTypeVisitor() {
+            @Override
+            public void visit(@NotNull String name, @Nullable PhpClass phpClass, @Nullable PsiElement psiElement) {
+                LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(name).withIcon(PhpAnnotationIcons.DOCTRINE);
+
+                if(phpClass != null) {
+                    lookupElementBuilder = lookupElementBuilder.withTypeText(phpClass.getName(), true);
+                }
+
+                lookupElements.add(lookupElementBuilder);
+            }
+        });
+
+        return lookupElements;
+    }
+
+    public static Collection<PsiElement> getColumnTypesTargets(@NotNull Project project, final @NotNull String contents) {
+
+        final Collection<PsiElement> targets = new ArrayList<PsiElement>();
+
+        visitCustomTypes(project, new ColumnTypeVisitor() {
+            @Override
+            public void visit(@NotNull String name, @Nullable PhpClass phpClass, @Nullable PsiElement psiElement) {
+                if(!name.equals(contents)) {
+                    return;
+                }
+
+                LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(name).withIcon(PhpAnnotationIcons.DOCTRINE);
+                if(phpClass != null) {
+                    targets.add(phpClass);
+                }
+            }
+        });
+
+        return targets;
     }
 
 }
