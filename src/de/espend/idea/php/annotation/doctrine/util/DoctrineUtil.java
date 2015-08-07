@@ -5,13 +5,17 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpClassMember;
+import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import de.espend.idea.php.annotation.PhpAnnotationIcons;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
+import de.espend.idea.php.annotation.util.PhpDocUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +26,8 @@ import java.util.*;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class DoctrineUtil {
+
+    public static final String DOCTRINE_ORM_MAPPING = "\\Doctrine\\ORM\\Mapping";
 
     final public static String[] DOCTRINE_RELATION_FIELDS = new String[] {
         "\\Doctrine\\ORM\\Mapping\\OneToOne",
@@ -166,4 +172,26 @@ public class DoctrineUtil {
         return targets;
     }
 
+    public static void importOrmUseAliasIfNotExists(@NotNull PhpClassMember field) {
+
+        // check for already imported class aliases
+        String qualifiedName = PhpDocUtil.getQualifiedName(field, DOCTRINE_ORM_MAPPING);
+        if(qualifiedName == null || !qualifiedName.equals(DOCTRINE_ORM_MAPPING.substring(1))) {
+            return;
+        }
+
+        // try to import:
+        // use Doctrine\ORM\Mapping as ORM;
+        PhpClass phpClass = field.getContainingClass();
+        if(phpClass == null) {
+            return;
+        }
+
+        PhpPsiElement scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(phpClass);
+        if(scopeForUseOperator == null) {
+            return;
+        }
+
+        PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, DOCTRINE_ORM_MAPPING, "ORM");
+    }
 }

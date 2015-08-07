@@ -8,11 +8,13 @@ import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.refactoring.PhpAliasImporter;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -270,5 +272,10 @@ public class PhpElementsUtil {
         return values.iterator().next();
     }
 
+    public static void insertUseIfNecessary(@NotNull PhpPsiElement scopeForUseOperator, @NotNull String nsClass, @NotNull String alias) {
+        if(!PhpCodeInsightUtil.getAliasesInScope(scopeForUseOperator).values().contains(nsClass)) {
+            PhpAliasImporter.insertUseStatement(nsClass, alias, scopeForUseOperator);
+        }
+    }
 
 }

@@ -45,6 +45,7 @@ public class DoctrineOrmFieldIntention extends PsiElementBaseIntentionAction {
         if(parent != null && parent.getNode().getElementType() == PhpElementTypes.CLASS_FIELDS) {
             Field field = PsiTreeUtil.getChildOfType(parent, Field.class);
             if(field != null) {
+                DoctrineUtil.importOrmUseAliasIfNotExists(field);
                 PhpDocUtil.addPropertyOrmDocs(field, editor.getDocument(), psiElement.getContainingFile());
             }
         }

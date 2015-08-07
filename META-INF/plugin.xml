@@ -160,11 +160,11 @@
 
   <actions>
 
-      <action icon="PhpAnnotationIcons.DOCTRINE" id="PhpAnnotation.Doctrine.Orm.PropertyGenerator" class="de.espend.idea.php.annotation.doctrine.action.DoctrinePropertyOrmAnnotationGenerateAction" text="Generate ORM Annotation">
+      <action icon="PhpAnnotationIcons.DOCTRINE" id="PhpAnnotation.Doctrine.Orm.PropertyGenerator" class="de.espend.idea.php.annotation.doctrine.action.DoctrinePropertyOrmAnnotationGenerateAction" text="ORM Annotation">
           <add-to-group group-id="GenerateGroup" anchor="last" />
       </action>
 
-      <action icon="PhpAnnotationIcons.DOCTRINE" id="PhpAnnotation.Doctrine.Orm.ClassGenerator" class="de.espend.idea.php.annotation.doctrine.action.DoctrineClassOrmAnnotationGenerateAction" text="Generate ORM Class">
+      <action icon="PhpAnnotationIcons.DOCTRINE" id="PhpAnnotation.Doctrine.Orm.ClassGenerator" class="de.espend.idea.php.annotation.doctrine.action.DoctrineClassOrmAnnotationGenerateAction" text="ORM Class">
           <add-to-group group-id="GenerateGroup" anchor="last" />
       </action>
 

@@ -130,7 +130,7 @@ public class PhpDocUtil {
      * Get class path on "use" path statement
      */
     @Nullable
-    private static String getQualifiedName(@NotNull PsiElement psiElement, @NotNull String fqn) {
+    public static String getQualifiedName(@NotNull PsiElement psiElement, @NotNull String fqn) {
 
         PhpPsiElement scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(psiElement);
         if (scopeForUseOperator == null) {
