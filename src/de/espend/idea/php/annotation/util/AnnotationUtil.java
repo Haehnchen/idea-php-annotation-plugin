@@ -52,7 +52,7 @@ public class AnnotationUtil {
         add("@Target");
     }};
 
-    public static boolean isAnnotationClass(PhpClass phpClass) {
+    public static boolean isAnnotationClass(@NotNull PhpClass phpClass) {
         PhpDocComment phpDocComment = phpClass.getDocComment();
         if(phpDocComment != null) {
             PhpDocTag[] annotationDocTags = phpDocComment.getTagElementsByName("@Annotation");
