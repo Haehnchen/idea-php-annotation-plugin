@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>2.6</version>
+  <version>2.6.1</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -44,6 +44,12 @@
 
 2.x: PhpStorm9<br>
 1.x: PhpStorm8<br>
+
+<h2>2.6.1</h2>
+<ul>
+    <li>Replace Doctrine static column types with parser to support simple_array and json_array <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/39">#39</a></li>
+    <li>On ORM annotations generation missing ORM alias will add automatically</li>
+</ul>
 
 <h2>2.6 / 1.6</h2>
 <ul>
