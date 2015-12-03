@@ -1,5 +1,6 @@
 idea-php-annotation-plugin
 ==========================
+[![Build Status](https://travis-ci.org/Haehnchen/idea-php-annotation-plugin.svg?branch=master)](https://travis-ci.org/Haehnchen/idea-php-annotation-plugin)
 [![Version](http://phpstorm.espend.de/badge/7320/version)](https://plugins.jetbrains.com/plugin/7320)
 [![Downloads](http://phpstorm.espend.de/badge/7320/downloads)](https://plugins.jetbrains.com/plugin/7320)
 [![Downloads last month](http://phpstorm.espend.de/badge/7320/last-month)](https://plugins.jetbrains.com/plugin/7320)
