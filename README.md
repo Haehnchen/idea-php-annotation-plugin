@@ -89,8 +89,8 @@ Annoying pressing completion shortcut? Plugin provides a nice completion confide
 
 ```php
 /**
- * @<carpet>
- * <carpet>
+ * @<caret>
+ * <caret>
  */
 ```
 
@@ -107,14 +107,14 @@ Annoying pressing completion shortcut? Plugin provides a nice completion confide
 
 ```php
 class Foo {
-    public $id<carpet>;
+    public $id<caret>;
 
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
      */
-    public $id<carpet>;
+    public $id<caret>;
 }
 ```
 
@@ -139,7 +139,7 @@ class Foo { }
 
 ```php
 /**
- * @ORM\Entity<carpet>
+ * @ORM\Entity<caret>
  */
 class Foo { }
 ```
@@ -148,7 +148,7 @@ class Foo { }
 
 ```php
 /**
- * @ORM\Entity(repositoryClass="<carpet>")
+ * @ORM\Entity(repositoryClass="<caret>")
  */
 ```
 
