@@ -232,7 +232,13 @@
       <PhpAnnotationDocTagAnnotator implementation="de.espend.idea.php.annotation.doctrine.annotator.RepositoryClassAnnotationAnnotator"/>
   </extensions>
 
+  <extensions defaultExtensionNs="de.espend.idea.php.toolbox.extension">
+      <LanguageRegistrarMatcher implementation="de.espend.idea.php.annotation.toolbox.DefaultPropertyRegistrarMatcher"/>
+      <LanguageRegistrarMatcher implementation="de.espend.idea.php.annotation.toolbox.PropertyRegistrarMatcher"/>
+  </extensions>
+
   <depends>com.jetbrains.php</depends>
   <depends>com.intellij.modules.platform</depends>
+  <depends optional="true">de.espend.idea.php.toolbox</depends>
 
 </idea-plugin>

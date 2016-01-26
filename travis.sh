@@ -84,6 +84,11 @@ else
     exit 1
 fi
 
+
+rm -f $travisCache/php-toolbox.jar
+download "https://plugins.jetbrains.com/files/8133/23580/php-toolbox.jar"
+cp $travisCache/php-toolbox.jar ./plugins
+
 # Run the tests
 if [ "$1" = "-d" ]; then
     ant -d -f build-test.xml -DIDEA_HOME=./idea
