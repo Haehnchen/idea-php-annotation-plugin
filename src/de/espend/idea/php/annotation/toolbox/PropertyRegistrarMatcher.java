@@ -34,8 +34,9 @@ public class PropertyRegistrarMatcher implements LanguageRegistrarMatcherInterfa
             public boolean value(JsonSignature jsonSignature) {
                 return
                     "annotation".equals(jsonSignature.getType()) &&
-                    StringUtils.isNotBlank(jsonSignature.getClassName()) &&
-                    StringUtils.isNotBlank(jsonSignature.getFunction());
+                    StringUtils.isNotBlank(jsonSignature.getField()) &&
+                    StringUtils.isNotBlank(jsonSignature.getClassName())
+                ;
             }
         });
 
@@ -62,13 +63,13 @@ public class PropertyRegistrarMatcher implements LanguageRegistrarMatcherInterfa
             return false;
         }
 
-        String text = propertyName.getText();
-        if(StringUtils.isBlank(text)) {
+        String fieldName = propertyName.getText();
+        if(StringUtils.isBlank(fieldName)) {
             return false;
         }
 
         for (JsonSignature signature : filter) {
-            if(!text.equals(signature.getFunction())) {
+            if(!fieldName.equals(signature.getField())) {
                 continue;
             }
 
