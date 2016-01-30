@@ -235,6 +235,7 @@
   <extensions defaultExtensionNs="de.espend.idea.php.toolbox.extension">
       <LanguageRegistrarMatcher implementation="de.espend.idea.php.annotation.toolbox.DefaultPropertyRegistrarMatcher"/>
       <LanguageRegistrarMatcher implementation="de.espend.idea.php.annotation.toolbox.PropertyRegistrarMatcher"/>
+      <ToolboxJsonFileCompletion implementation="de.espend.idea.php.annotation.toolbox.AnnotationToolboxJsonFileCompletion"/>
   </extensions>
 
   <depends>com.jetbrains.php</depends>
