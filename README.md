@@ -13,7 +13,7 @@ Provides PHP annotation support for PhpStorm / IntelliJ and provides references 
 
 ### Version
 
-* 2.x: PhpStorm9
+* 2.x: PhpStorm9+
 * 1.x: PhpStorm8
 
 ### Annotation Class Detection
@@ -152,5 +152,37 @@ class Foo { }
  */
 ```
 
-### PhpStorm9
-* will see :)
+### PHP Toolbox
+
+Provides integration for [PHP Toolbox](https://github.com/Haehnchen/idea-php-toolbox)
+
+```php
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+/**
+ * @Route("<caret>")
+ * @Route(condition="<caret>")
+ */
+```
+
+```javascript
+{
+  "registrar":[
+    {
+      "signatures":[
+        {
+          "class": "Sensio\\Bundle\\FrameworkExtraBundle\\Configuration\\Route",
+          "type": "annotation"
+        },
+        {
+          "class": "Sensio\\Bundle\\FrameworkExtraBundle\\Configuration\\Route",
+          "field": "condition",
+          "type": "annotation"
+        }
+      ],
+      "provider":"foo",
+      "language":"php"
+    }
+  ],
+}
+```
