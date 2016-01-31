@@ -4,7 +4,6 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
@@ -17,14 +16,14 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import de.espend.idea.php.annotation.AnnotationStubIndex;
+import de.espend.idea.php.annotation.dict.AnnotationTarget;
+import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
 import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler;
 import de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider;
-import de.espend.idea.php.annotation.dict.AnnotationTarget;
-import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -126,17 +125,19 @@ public class AnnotationUtil {
     }
 
     @NotNull
-    public static Map<String, PhpAnnotation> getAnnotationsOnTargetMap(Project project, AnnotationTarget... targets) {
+    public static Map<String, PhpAnnotation> getAnnotationsOnTargetMap(@NotNull Project project, AnnotationTarget... targets) {
 
         Map<String, PhpAnnotation> phpAnnotations = new HashMap<String, PhpAnnotation>();
 
         for(PhpClass phpClass: AnnotationUtil.getAnnotationsClasses(project)) {
             PhpAnnotation phpAnnotation = AnnotationUtil.getClassAnnotation(phpClass);
             if(phpAnnotation != null && phpAnnotation.hasTarget(targets)) {
-                String presentableFQN = phpClass.getPresentableFQN();
-                if(presentableFQN != null) {
-                    phpAnnotations.put(presentableFQN, phpAnnotation);
+                String fqn = phpClass.getFQN();
+                if(fqn.startsWith("\\")) {
+                    fqn = fqn.substring(1);
                 }
+
+                phpAnnotations.put(fqn, phpAnnotation);
             }
 
         }

@@ -1,16 +1,28 @@
 package de.espend.idea.php.annotation.tests.util;
 
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import de.espend.idea.php.annotation.dict.AnnotationTarget;
+import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
+
+import java.io.File;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  *
  * @see de.espend.idea.php.annotation.util.AnnotationUtil
  */
-public class AnnotationUtilTest extends LightCodeInsightFixtureTestCase {
+public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCase {
+
+    public void setUp() throws Exception {
+        super.setUp();
+        myFixture.copyFileToProject("targets.php");
+    }
+
+    public String getTestDataPath() {
+        return new File(this.getClass().getResource("fixtures").getFile()).getAbsolutePath();
+    }
 
     public void testIsAnnotationClass() {
         assertTrue(AnnotationUtil.isAnnotationClass(
@@ -38,4 +50,14 @@ public class AnnotationUtilTest extends LightCodeInsightFixtureTestCase {
         )));
     }
 
+    public void testGetAnnotationsOnTargetMap() {
+        assertTrue(AnnotationUtil.getAnnotationsOnTargetMap(getProject(), AnnotationTarget.PROPERTY).containsKey("My\\Annotations\\Property"));
+        assertTrue(AnnotationUtil.getAnnotationsOnTargetMap(getProject(), AnnotationTarget.ALL).containsKey("My\\Annotations\\All"));
+        assertTrue(AnnotationUtil.getAnnotationsOnTargetMap(getProject(), AnnotationTarget.PROPERTY).containsKey("My\\Annotations\\PropertyMethod"));
+        assertTrue(AnnotationUtil.getAnnotationsOnTargetMap(getProject(), AnnotationTarget.METHOD).containsKey("My\\Annotations\\PropertyMethod"));
+        assertTrue(AnnotationUtil.getAnnotationsOnTargetMap(getProject(), AnnotationTarget.PROPERTY).containsKey("My\\Annotations\\PropertyMethodArray"));
+        assertTrue(AnnotationUtil.getAnnotationsOnTargetMap(getProject(), AnnotationTarget.METHOD).containsKey("My\\Annotations\\PropertyMethodArray"));
+        assertTrue(AnnotationUtil.getAnnotationsOnTargetMap(getProject(), AnnotationTarget.UNDEFINED).containsKey("My\\Annotations\\Undefined"));
+        assertFalse(AnnotationUtil.getAnnotationsOnTargetMap(getProject(), AnnotationTarget.ALL).containsKey("My\\Annotations\\Unknown"));
+    }
 }
