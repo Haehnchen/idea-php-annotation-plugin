@@ -24,6 +24,9 @@
         <fileset dir="${plugins}/php/lib">
             <include name="*.jar"/>
         </fileset>
+        <fileset dir="${plugins}/twig/lib">
+            <include name="*.jar"/>
+        </fileset>
         <fileset dir="${idea.build}/plugins/properties/lib">
             <include name="*.jar"/>
         </fileset>
@@ -51,6 +54,9 @@
             <include name="*.jar"/>
         </fileset>
         <fileset dir="${plugins}/php/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${plugins}/twig/lib">
             <include name="*.jar"/>
         </fileset>
         <fileset dir="${idea.build}/plugins/properties/lib">
@@ -158,7 +164,7 @@
             <jvmarg value="-Didea.home.path=${idea.build}"/>
             <jvmarg value="-Xbootclasspath/a:${idea.build}/lib/boot.jar"/>
             <jvmarg value="-Dfile.encoding=UTF-8"/>
-            <jvmarg value="-Didea.load.plugins.id=com.jetbrains.php,de.espend.idea.php.toolbox,de.espend.idea.php.annotation"/>
+            <jvmarg value="-Didea.load.plugins.id=com.jetbrains.php,com.jetbrains.php,com.jetbrains.twig,de.espend.idea.php.toolbox,de.espend.idea.php.annotation"/>
             <jvmarg value="-ea"/>
             <jvmarg value="-Didea.plugins.path=${plugins}"/>
             <jvmarg line="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=${suspend},address=43251"/>

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ideaVersion="14.1.4"
+ideaVersion="14.1.6"
 if [ "$PHPSTORM_ENV" == "10" ]; then
     ideaVersion="15.0"
 elif [ "$PHPSTORM_ENV" == "10eap" ]; then
@@ -60,11 +60,19 @@ if [ "$PHPSTORM_ENV" == "9" ]; then
     download "http://plugins.jetbrains.com/files/6610/20930/php-141.2462.zip"
     unzip -qo $travisCache/php-141.2462.zip -d ./plugins
 
+    #twig
+    download "http://plugins.jetbrains.com/files/7303/20774/twig-141.2325.zip"
+    unzip -qo $travisCache/twig-141.2325.zip -d ./plugins
+
 elif [ "$PHPSTORM_ENV" == "10" ]; then
 
     #php
     download "http://plugins.jetbrains.com/files/6610/22045/php-143.381.48.zip"
     unzip -qo $travisCache/php-143.381.48.zip -d ./plugins
+
+    #twig
+    download "http://plugins.jetbrains.com/files/7303/22048/twig-143.381.48.zip"
+    unzip -qo $travisCache/twig-143.381.48.zip -d ./plugins
 
 elif [ "$PHPSTORM_ENV" == "10eap" ]; then
 
@@ -86,7 +94,7 @@ fi
 
 
 rm -f $travisCache/php-toolbox.jar
-download "https://plugins.jetbrains.com/files/8133/23580/php-toolbox.jar"
+download "https://plugins.jetbrains.com/files/8133/23695/php-toolbox.jar"
 cp $travisCache/php-toolbox.jar ./plugins
 
 # Run the tests
