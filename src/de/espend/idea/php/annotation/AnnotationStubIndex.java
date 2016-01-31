@@ -61,9 +61,9 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
                     }
 
                     private void visitPhpClass(PhpClass phpClass) {
-                        String fqn = phpClass.getPresentableFQN();
-                        if (fqn == null) {
-                            return;
+                        String fqn = phpClass.getFQN();
+                        if(fqn.startsWith("\\")) {
+                            fqn = fqn.substring(1);
                         }
 
                         // doctrine has many tests: Doctrine\Tests\Common\Annotations\Fixtures
