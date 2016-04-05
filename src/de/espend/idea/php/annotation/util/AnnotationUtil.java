@@ -178,9 +178,9 @@ public class AnnotationUtil {
                 for(PhpUse phpUse : declarations) {
                     String alias = phpUse.getAliasName();
                     if (alias != null) {
-                        useImports.put(alias, phpUse.getOriginal());
+                        useImports.put(alias, phpUse.getFQN());
                     } else {
-                        useImports.put(phpUse.getName(), phpUse.getOriginal());
+                        useImports.put(phpUse.getName(), phpUse.getFQN());
                     }
                 }
             }
