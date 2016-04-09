@@ -60,6 +60,10 @@ if [ "$PHPSTORM_ENV" == "2016.1" ]; then
     download "https://plugins.jetbrains.com/files/6610/24752/php-145.258.2.zip"
     unzip -qo $travisCache/php-145.258.2.zip -d ./plugins
 
+    #twig
+    download "https://plugins.jetbrains.com/files/7303/24757/twig-145.258.2.zip"
+    unzip -qo $travisCache/twig-145.258.2.zip -d ./plugins
+
 elif [ "$PHPSTORM_ENV" == "eap" ]; then
 
     # TODO: extract latest builds for plugins from eap site they are not public
