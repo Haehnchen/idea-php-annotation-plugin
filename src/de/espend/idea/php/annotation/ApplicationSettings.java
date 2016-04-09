@@ -5,7 +5,11 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import de.espend.idea.php.annotation.dict.UseAliasOption;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -14,6 +18,8 @@ import org.jetbrains.annotations.Nullable;
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
 
     public boolean appendRoundBracket = true;
+
+    public List<UseAliasOption> useAliasOptions = new ArrayList<UseAliasOption>();
 
     @Nullable
     @Override

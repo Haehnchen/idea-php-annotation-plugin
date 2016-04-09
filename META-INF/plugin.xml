@@ -212,6 +212,13 @@
                            nonDefaultProject="true"
       />
 
+      <projectConfigurable instance="de.espend.idea.php.annotation.ui.UseAliasListForm"
+                           displayName="Use Alias"
+                           id="PhpAnnotations.UseAliasListForm"
+                           groupId="PhpAnnotations.SettingsForm"
+                           nonDefaultProject="true"
+      />
+
       <intentionAction>
           <className>de.espend.idea.php.annotation.doctrine.intention.DoctrineOrmFieldIntention</className>
           <category>PHP</category>

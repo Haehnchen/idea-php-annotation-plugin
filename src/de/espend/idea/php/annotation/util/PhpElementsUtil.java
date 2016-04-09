@@ -272,7 +272,19 @@ public class PhpElementsUtil {
         return values.iterator().next();
     }
 
+    /**
+     * Adds class as alias
+     *
+     * @param scopeForUseOperator Any element that is inside a namespace statement
+     * @param nsClass \Class\Foo
+     * @param alias Class\Foo as Bar
+     */
     public static void insertUseIfNecessary(@NotNull PhpPsiElement scopeForUseOperator, @NotNull String nsClass, @NotNull String alias) {
+        // we need absolute class, else we get duplicate imports
+        if(!nsClass.startsWith("\\")) {
+            nsClass = "\\" + nsClass;
+        }
+
         if(!PhpCodeInsightUtil.getAliasesInScope(scopeForUseOperator).values().contains(nsClass)) {
             PhpAliasImporter.insertUseStatement(nsClass, alias, scopeForUseOperator);
         }
