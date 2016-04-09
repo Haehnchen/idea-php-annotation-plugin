@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ideaVersion="14.1.6"
+ideaVersion="2016.1"
 if [ "$PHPSTORM_ENV" == "10" ]; then
     ideaVersion="15.0.4"
 elif [ "$PHPSTORM_ENV" == "10eap" ]; then
