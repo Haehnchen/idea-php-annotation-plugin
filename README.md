@@ -31,6 +31,20 @@ Provides PHP annotation support for PhpStorm / IntelliJ IDEA and references for 
 class NotBlank extends Constraint {}
 ```
 
+#### Use / Import alias
+
+`Languages & Framework > PHP > Annotations -> Use Alias`
+
+```php
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @Id() -> @ORM\Id()
+ */
+class Foo {}
+```
+
 ### Annotation Class Detection
 
 * Every class with `@Annotation` inside class doc block is detected on file indexing

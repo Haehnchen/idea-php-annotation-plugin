@@ -33,6 +33,9 @@ public class UseAliasForm extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
+        textClassName.setText(useAliasOption.getClassName());
+        textAlias.setText(useAliasOption.getAlias());
+
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onOK();

@@ -90,6 +90,7 @@ public class UseAliasListForm implements Configurable {
                 UseAliasForm.create(panel1, useAliasOption, new UseAliasForm.Callback() {
                     @Override
                     public void ok(@NotNull UseAliasOption option) {
+                        tableView.getTableViewModel().fireTableDataChanged();
                         changed = true;
                     }
                 });
