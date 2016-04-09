@@ -1,7 +1,10 @@
 package de.espend.idea.php.annotation.tests.completion;
 
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.jetbrains.php.lang.PhpFileType;
+import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -90,6 +93,70 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
                 "class Foo {}\n" +
                 "",
             "FOO"
+        );
+    }
+
+    public void testThatAnnotationCompletionInsertUseAndClassNameWithRoundBracket() {
+        assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace {\n" +
+                "  class Foo {\n" +
+                "    /**\n" +
+                "     * <caret>\n" +
+                "     */\n" +
+                "    function foo() {}\n" +
+                "  }\n" +
+                "}",
+            "<?php\n" +
+                "namespace {\n" +
+                "\n" +
+                "    use My\\Annotations\\All;\n" +
+                "\n" +
+                "    class Foo {\n" +
+                "    /**\n" +
+                "     * @All()\n" +
+                "     */\n" +
+                "    function foo() {}\n" +
+                "  }\n" +
+                "}",
+            new LookupElementInsert.Assert() {
+                @Override
+                public boolean match(@NotNull LookupElement lookupElement) {
+                    return "All".equals(lookupElement.getLookupString());
+                }
+            }
+        );
+    }
+
+    public void testThatAnnotationCompletionInsertUseAndClassNameWithoutRoundBracket() {
+        ApplicationSettings.getInstance().appendRoundBracket = false;
+
+        assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace {\n" +
+                "  class Foo {\n" +
+                "    /**\n" +
+                "     * <caret>\n" +
+                "     */\n" +
+                "    function foo() {}\n" +
+                "  }\n" +
+                "}",
+            "<?php\n" +
+                "namespace {\n" +
+                "\n" +
+                "    use My\\Annotations\\All;\n" +
+                "\n" +
+                "    class Foo {\n" +
+                "    /**\n" +
+                "     * @All\n" +
+                "     */\n" +
+                "    function foo() {}\n" +
+                "  }\n" +
+                "}",
+            new LookupElementInsert.Assert() {
+                @Override
+                public boolean match(@NotNull LookupElement lookupElement) {
+                    return "All".equals(lookupElement.getLookupString());
+                }
+            }
         );
     }
 }

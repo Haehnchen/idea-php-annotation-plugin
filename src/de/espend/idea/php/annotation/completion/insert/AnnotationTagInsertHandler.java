@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
 import com.jetbrains.php.completion.insert.PhpInsertHandlerUtil;
 import com.jetbrains.php.completion.insert.PhpReferenceInsertHandler;
+import de.espend.idea.php.annotation.ApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,7 +22,8 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
         // reuse jetbrains "use importer": this is private only so we need some workaround
         // to not implement your own algo for that
         PhpReferenceInsertHandler.getInstance().handleInsert(context, lookupElement);
-        if(!PhpInsertHandlerUtil.isStringAtCaret(context.getEditor(), "(")) {
+
+        if(ApplicationSettings.getInstance().appendRoundBracket && !PhpInsertHandlerUtil.isStringAtCaret(context.getEditor(), "(")) {
             PhpInsertHandlerUtil.insertStringAtCaret(context.getEditor(), "()");
             context.getEditor().getCaretModel().moveCaretRelatively(-1, 0, false, false, true);
         }

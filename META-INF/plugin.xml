@@ -203,6 +203,15 @@
                        enabledByDefault="true" level="WARNING"
                        implementationClass="de.espend.idea.php.annotation.inspection.AnnotationMissingUseInspection"/>
 
+      <applicationService serviceImplementation="de.espend.idea.php.annotation.ApplicationSettings"/>
+
+      <projectConfigurable instance="de.espend.idea.php.annotation.ui.SettingsForm"
+                           displayName="Annotations"
+                           id="PhpAnnotations.SettingsForm"
+                           groupId="reference.webide.settings.project.settings.php"
+                           nonDefaultProject="true"
+      />
+
       <intentionAction>
           <className>de.espend.idea.php.annotation.doctrine.intention.DoctrineOrmFieldIntention</className>
           <category>PHP</category>

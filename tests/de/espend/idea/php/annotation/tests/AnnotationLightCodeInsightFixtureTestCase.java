@@ -1,33 +1,45 @@
 package de.espend.idea.php.annotation.tests;
 
+import com.intellij.codeInsight.completion.CodeCompletionHandlerBase;
+import com.intellij.codeInsight.completion.CompletionProgressIndicator;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.daemon.LineMarkerProviders;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionManager;
+import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.codeInspection.*;
 import com.intellij.navigation.GotoRelatedItem;
+import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiRecursiveElementVisitor;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.ID;
+import com.intellij.util.ui.UIUtil;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpReference;
@@ -565,6 +577,68 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
 
                 return false;
             }
+        }
+    }
+
+    public void assertCompletionResultEquals(@NotNull FileType fileType, @NotNull String contents, @NotNull String result, @NotNull LookupElementInsert.Assert assertion) {
+        myFixture.configureByText(fileType, contents);
+        UIUtil.invokeAndWaitIfNeeded(new MyLookupElementConditionalInsertRunnable(assertion));
+        myFixture.checkResult(result);
+    }
+
+    public static class LookupElementInsert {
+        public interface Assert {
+            boolean match(@NotNull LookupElement lookupElement);
+        }
+    }
+
+    private class MyLookupElementConditionalInsertRunnable implements Runnable {
+
+        @NotNull
+        private final LookupElementInsert.Assert insert;
+
+        public MyLookupElementConditionalInsertRunnable(@NotNull LookupElementInsert.Assert insert) {
+            this.insert = insert;
+        }
+
+        @Override
+        public void run() {
+            CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
+                @Override
+                public void run() {
+                    final CodeCompletionHandlerBase handler = new CodeCompletionHandlerBase(CompletionType.BASIC) {
+
+                        @Override
+                        protected void completionFinished(final CompletionProgressIndicator indicator, boolean hasModifiers) {
+
+                            // find our lookup element
+                            final LookupElement lookupElement = ContainerUtil.find(indicator.getLookup().getItems(), new Condition<LookupElement>() {
+                                @Override
+                                public boolean value(LookupElement lookupElement) {
+                                    return insert.match(lookupElement);
+                                }
+                            });
+
+                            if(lookupElement == null) {
+                                fail("No matching lookup element found");
+                            }
+
+                            // overwrite behavior and force completion + insertHandler
+                            CommandProcessor.getInstance().executeCommand(indicator.getProject(), new Runnable() {
+                                @Override
+                                public void run() {
+                                    indicator.setMergeCommand();
+                                    indicator.getLookup().finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR, lookupElement);
+                                }
+                            }, "Autocompletion", null);
+                        }
+                    };
+
+                    Editor editor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(getEditor(), getFile());
+                    handler.invokeCompletion(getProject(), editor);
+                    PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+                }
+            }, null, null);
         }
     }
 }
