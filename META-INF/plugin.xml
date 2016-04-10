@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>2.6.2</version>
+  <version>3.0</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -14,7 +14,9 @@
 <h2>Installation</h2>
 <ul>
   <li>Just install and be happy</li>
-  <li>You should also install <a href="http://plugins.jetbrains.com/plugin/7219">Symfony2 Plugin</a></li>
+  <li>Optional: Install <a href="http://plugins.jetbrains.com/plugin/7219">Symfony Plugin</a></li>
+  <li>Optional: Install <a href="https://plugins.jetbrains.com/plugin/8133">PHP Toolbox</a></li>
+  <li>Optional: Configure plugin "Languages & Framework > PHP > Annotations"</li>
 </ul>
 
 <h2>Features</h2>
@@ -31,6 +33,7 @@
   <li>Class import annotator</li>
   <li>Class constants in DocTags</li>
   <li>Doctrine ORM intention and quickfixes for: repository and properties</li>
+  <li>Auto alias import for annotation class</li>
 </ul>
 
 <h2>Todo</h2>
@@ -42,8 +45,21 @@
 
   <change-notes><![CDATA[
 
-2.x: PhpStorm9<br>
+3.x: PhpStorm 2016.1+<br>
+2.x: PhpStorm9, 10<br>
 1.x: PhpStorm8<br>
+
+<h2>3.0</h2>
+<ul>
+    <li>Change minimal api level to PhpStorm 2016.1</li>
+    <li>Replace deprecated PhpUse usages <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/52">#52</a> @artspb</li>
+    <li>Add application level settings to set auto-complete without "()" <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/42">#42</a></li>
+    <li>Add option to always use an aliased import for some annotations or namespaces <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/50">#50</a></li>
+    <li>Doctrine orm class initialize should add an use alias</li>
+    <li>Fix inline annotations are not recognized <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/24">#24</a></li>
+    <li>Replace deprecated PhpStorm method calls <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/31">#31</a></li>
+    <li>Doctrine repository creation intention is now available in attribute value</li>
+</ul>
 
 <h2>2.6.2</h2>
 <ul>
@@ -154,7 +170,7 @@
   </change-notes>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="141.115"/>
+    <idea-version since-build="145.0"/>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
