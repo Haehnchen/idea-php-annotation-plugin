@@ -160,6 +160,8 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
                 }
             }
         );
+
+        ApplicationSettings.getInstance().appendRoundBracket = true;
     }
 
     public void testThatAnnotationCompletionInsertUseAlias() {
