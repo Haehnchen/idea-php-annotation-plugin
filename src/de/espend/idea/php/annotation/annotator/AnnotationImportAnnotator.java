@@ -16,6 +16,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpCodeEditUtil;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.refactoring.PhpAliasImporter;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator;
 import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationDocTagAnnotatorParameter;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
@@ -101,7 +102,7 @@ public class AnnotationImportAnnotator implements PhpAnnotationDocTagAnnotator {
 
                             PhpPsiElement scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(phpDocTag);
                             if(scopeForUseOperator != null) {
-                                PhpCodeEditUtil.insertUseStatement(className, scopeForUseOperator);
+                                PhpAliasImporter.insertUseStatement(className, scopeForUseOperator);
                             }
 
                         }

@@ -197,4 +197,17 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
             }
         );
     }
+
+    public void testCompletionOfAliasScope() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "use \\My\\Annotations as Foo" +
+                "/**\n" +
+                "* @Foo\\<caret>\n" +
+                "*/\n" +
+                "class Foo {}\n" +
+                "",
+            "Foo\\All"
+        );
+    }
+
 }

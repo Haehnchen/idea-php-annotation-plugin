@@ -308,8 +308,8 @@ public class AnnotationCompletionContributor extends CompletionContributor {
             Map<String, PhpAnnotation> annotationMap = AnnotationUtil.getAnnotationsOnTargetMap(psiElement.getProject(), AnnotationTarget.ALL, AnnotationTarget.UNDEFINED, AnnotationTarget.UNKNOWN, annotationTarget);
 
             for(PhpClass phpClass: PhpIndexUtil.getPhpClassInsideNamespace(psiElement.getProject(), namespace)) {
-                String fqnName = phpClass.getPresentableFQN();
-                if(fqnName != null && annotationMap.containsKey(fqnName)) {
+                String fqnName = StringUtils.stripStart(phpClass.getFQN(), "\\");
+                if(annotationMap.containsKey(fqnName)) {
                     PhpAnnotation phpAnnotation = annotationMap.get(fqnName);
                     if(phpAnnotation != null && phpAnnotation.matchOneOf(AnnotationTarget.ALL, AnnotationTarget.UNDEFINED, AnnotationTarget.UNKNOWN, annotationTarget)) {
                         String subNamespace = fqnName.substring(namespace.length());
