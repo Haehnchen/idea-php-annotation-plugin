@@ -167,21 +167,24 @@ public class AnnotationUtil {
             return useImports;
         }
 
-        GroupStatement phpNamespace = PsiTreeUtil.getParentOfType(phpDocComment, GroupStatement.class);
-        if(phpNamespace == null) {
-            return useImports;
+        PsiElement scope = null;
+        PhpNamespace phpNamespace = PsiTreeUtil.getParentOfType(phpDocComment, PhpNamespace.class);
+        if(phpNamespace != null) {
+            scope = phpNamespace.getStatements();
         }
 
-        for(PhpUseList phpUseList : PsiTreeUtil.getChildrenOfTypeAsList(phpNamespace, PhpUseList.class)) {
-            PhpUse[] declarations = phpUseList.getDeclarations();
-            if(declarations != null) {
-                for(PhpUse phpUse : declarations) {
-                    String alias = phpUse.getAliasName();
-                    if (alias != null) {
-                        useImports.put(alias, phpUse.getFQN());
-                    } else {
-                        useImports.put(phpUse.getName(), phpUse.getFQN());
-                    }
+        // file without namespace statement
+        if(scope == null) {
+            scope = PsiTreeUtil.getChildOfType(phpDocComment.getContainingFile(), GroupStatement.class);
+        }
+
+        for(PhpUseList phpUseList : PsiTreeUtil.getChildrenOfTypeAsList(scope, PhpUseList.class)) {
+            for(PhpUse phpUse : phpUseList.getDeclarations()) {
+                String alias = phpUse.getAliasName();
+                if (alias != null) {
+                    useImports.put(alias, phpUse.getFQN());
+                } else {
+                    useImports.put(phpUse.getName(), phpUse.getFQN());
                 }
             }
         }

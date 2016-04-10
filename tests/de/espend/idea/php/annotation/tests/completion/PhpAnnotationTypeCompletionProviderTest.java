@@ -51,4 +51,24 @@ public class PhpAnnotationTypeCompletionProviderTest extends AnnotationLightCode
             "true", "false"
         );
     }
+
+    public void testDocTagInlineCompletion() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "use \\My\\Annotations\\All;\n" +
+                "function test() {" +
+                "/** @All(<caret>) */" +
+                "}\n" +
+                "",
+            "cascade"
+        );
+
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "use \\My\\Annotations\\All;\n" +
+                "function test() {" +
+                "/** @All(strategy=\"<caret>\") */" +
+                "}\n" +
+                "",
+            "AUTO"
+        );
+    }
 }

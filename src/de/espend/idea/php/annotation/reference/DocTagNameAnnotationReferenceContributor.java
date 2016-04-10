@@ -32,7 +32,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                 @Override
                 public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
 
-                    if(!PluginUtil.isEnabled(element) || !(element instanceof PhpDocTag) || !AnnotationUtil.isAnnotationPhpDocTag((PhpDocTag) element)) {
+                    if(!PluginUtil.isEnabled(element) || !(element instanceof PhpDocTag)) {
                         return new PsiReference[0];
                     }
 
