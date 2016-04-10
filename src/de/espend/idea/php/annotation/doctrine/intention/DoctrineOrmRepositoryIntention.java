@@ -117,6 +117,12 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
 
         // inside "@ORM\Entity"
         PsiElement parent = element.getParent();
+
+        // inside "@ORM\Entity(<caret>)"
+        if(parent.getNode().getElementType() == PhpDocElementTypes.phpDocAttributeList) {
+            parent = parent.getParent();
+        }
+
         if(parent instanceof PhpDocTag) {
             PhpDocTagAnnotation phpDocAnnotationContainer = AnnotationUtil.getPhpDocAnnotationContainer((PhpDocTag) parent);
 
@@ -148,7 +154,12 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
         // we already have an attribute list
         if(firstPsiChild.getNode().getElementType() == PhpDocElementTypes.phpDocAttributeList) {
 
-            if(StringUtils.trim(firstPsiChild.getText()).length() == 0) {
+            // AttributeList: "()", "(aaa)"
+            String text = StringUtils.trim(firstPsiChild.getText());
+            text = StringUtils.strip(text, "(");
+            text = StringUtils.strip(text, ")");
+
+            if(text.length() == 0) {
                 // @ORM\Entity()
                 editor.getDocument().insertString(firstPsiChild.getTextRange().getStartOffset() + 1, attr);
             } else {
