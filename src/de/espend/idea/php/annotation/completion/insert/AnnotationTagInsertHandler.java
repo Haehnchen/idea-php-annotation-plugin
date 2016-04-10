@@ -19,6 +19,7 @@ import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
 
         final String fqn = StringUtils.stripStart(((PhpClass) object).getFQN(), "\\");
 
-        UseAliasOption useAliasOption = ContainerUtil.find(ApplicationSettings.getInstance().useAliasOptions, new Condition<UseAliasOption>() {
+        UseAliasOption useAliasOption = ContainerUtil.find(importsAliases, new Condition<UseAliasOption>() {
             @Override
             public boolean value(UseAliasOption useAliasOption) {
                 return useAliasOption.getAlias() != null &&
@@ -104,11 +105,12 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
     }
 
     private List<UseAliasOption> getImportsAliases() {
-        if(ApplicationSettings.getInstance().useAliasOptions == null || ApplicationSettings.getInstance().useAliasOptions.size() == 0) {
+        Collection<UseAliasOption> useAliasOptions = ApplicationSettings.getUseAliasOptionsWithDefaultFallback();
+        if(useAliasOptions.size() == 0) {
             return Collections.emptyList();
         }
 
-        return ContainerUtil.filter(ApplicationSettings.getInstance().useAliasOptions, new Condition<UseAliasOption>() {
+        return ContainerUtil.filter(useAliasOptions, new Condition<UseAliasOption>() {
             @Override
             public boolean value(UseAliasOption option) {
                 return option.isEnabled();

@@ -7,6 +7,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import de.espend.idea.php.annotation.dict.UseAliasOption;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -17,12 +18,12 @@ import java.util.Map;
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
-@State(name = "PhpAnnotationsPlugin", storages = @Storage(id = "php-annotations-plugin", file = "$APP_CONFIG$/php-annotations-plugin.app.xml"))
+@State(name = "PhpAnnotationsPlugin", storages = @Storage(id = "php-annotations-plugin", file = "$APP_CONFIG$/php-annotations.xml"))
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
 
     public boolean appendRoundBracket = true;
 
-    public List<UseAliasOption> useAliasOptions = new ArrayList<UseAliasOption>();
+    public List<UseAliasOption> useAliasOptions = null;
 
     @Nullable
     @Override
@@ -42,12 +43,21 @@ public class ApplicationSettings implements PersistentStateComponent<Application
     public static Collection<UseAliasOption> getDefaultUseAliasOption() {
         Collection<UseAliasOption> options = new ArrayList<UseAliasOption>();
 
-        options.add(new UseAliasOption("Symfony\\Component\\Validator\\Constraints", "Assert", false));
+        options.add(new UseAliasOption("Symfony\\Component\\Validator\\Constraints", "Assert", true));
         options.add(new UseAliasOption("Doctrine\\ORM\\Mapping", "ORM", true));
         options.add(new UseAliasOption("JMS\\DiExtraBundle\\Annotation", "DI", true));
         options.add(new UseAliasOption("JMS\\Serializer\\Annotation", "Serializer", true));
         options.add(new UseAliasOption("Gedmo\\Mapping\\Annotation", "Gedmo", true));
 
         return options;
+    }
+
+    @NotNull
+    public static Collection<UseAliasOption> getUseAliasOptionsWithDefaultFallback() {
+        if(getInstance().useAliasOptions == null) {
+            return getDefaultUseAliasOption();
+        }
+
+        return getInstance().useAliasOptions;
     }
 }

@@ -66,10 +66,7 @@ public class UseAliasListForm implements Configurable {
     }
 
     private void initList() {
-        List<UseAliasOption> useAliasOptions = ApplicationSettings.getInstance().useAliasOptions;
-        if(useAliasOptions != null && useAliasOptions.size() > 0) {
-            this.modelList.addRows(useAliasOptions);
-        }
+        this.modelList.addRows(ApplicationSettings.getUseAliasOptionsWithDefaultFallback());
     }
 
     @Nls
@@ -130,6 +127,18 @@ public class UseAliasListForm implements Configurable {
                 });
             }
         });
+
+        tablePanel.setRemoveAction(new AnActionButtonRunnable() {
+            @Override
+            public void run(AnActionButton anActionButton) {
+                modelList.removeRow(tableView.getSelectedRow());
+                tableView.getTableViewModel().fireTableDataChanged();
+                changed = true;
+            }
+        });
+
+        tablePanel.disableDownAction();
+        tablePanel.disableUpAction();
 
         this.panel1.add(tablePanel.createPanel());
 
