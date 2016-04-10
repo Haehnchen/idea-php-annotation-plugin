@@ -36,7 +36,8 @@ public class UseAliasListForm implements Configurable {
 
         this.modelList = new ListTableModel<UseAliasOption>(
             new ClassColumn(),
-            new AliasColumn()
+            new AliasColumn(),
+            new DisableColumn()
         );
 
         this.tableView.setModelAndUpdateColumns(this.modelList);
@@ -169,6 +170,37 @@ public class UseAliasListForm implements Configurable {
         @Override
         public String valueOf(UseAliasOption option) {
             return option.getAlias();
+        }
+    }
+
+    private class DisableColumn extends ColumnInfo<UseAliasOption, Boolean> {
+
+        public DisableColumn() {
+            super("Status");
+        }
+
+        public Boolean valueOf(UseAliasOption twigPath) {
+            return twigPath.isEnabled();
+        }
+
+        public void setValue(UseAliasOption twigPath, Boolean value){
+            twigPath.setEnabled(value);
+            tableView.getListTableModel().fireTableDataChanged();
+            changed = true;
+        }
+
+        public int getWidth(JTable table) {
+            return 50;
+        }
+
+        public boolean isCellEditable(UseAliasOption groupItem)
+        {
+            return true;
+        }
+
+        public Class getColumnClass()
+        {
+            return Boolean.class;
         }
     }
 }

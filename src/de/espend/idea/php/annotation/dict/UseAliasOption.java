@@ -13,12 +13,15 @@ public class UseAliasOption {
     @Nullable
     private String alias;
 
+    private boolean enabled = true;
+
     public UseAliasOption() {
     }
 
-    public UseAliasOption(@Nullable String className, @Nullable String alias) {
+    public UseAliasOption(@Nullable String className, @Nullable String alias, boolean enabled) {
         this.className = className;
         this.alias = alias;
+        this.enabled = enabled;
     }
 
     @Nullable
@@ -37,5 +40,13 @@ public class UseAliasOption {
 
     public void setAlias(@Nullable String alias) {
         this.alias = alias;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 }

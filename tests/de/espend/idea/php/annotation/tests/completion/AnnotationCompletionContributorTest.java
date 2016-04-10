@@ -166,7 +166,7 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
 
     public void testThatAnnotationCompletionInsertUseAlias() {
         ApplicationSettings.getInstance().useAliasOptions = new ArrayList<UseAliasOption>();
-        ApplicationSettings.getInstance().useAliasOptions.add(new UseAliasOption("My\\Annotations", "Bar"));
+        ApplicationSettings.getInstance().useAliasOptions.add(new UseAliasOption("My\\Annotations", "Bar", true));
 
         assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
                 "namespace {\n" +
@@ -196,6 +196,44 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
                 }
             }
         );
+
+        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<UseAliasOption>();
+    }
+
+    public void testThatDisabledUseAliasNotImported() {
+        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<UseAliasOption>();
+        ApplicationSettings.getInstance().useAliasOptions.add(new UseAliasOption("My\\Annotations", "Bar", false));
+
+        assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace {\n" +
+                "  class Foo {\n" +
+                "    /**\n" +
+                "     * <caret>\n" +
+                "     */\n" +
+                "    function foo() {}\n" +
+                "  }\n" +
+                "}",
+            "<?php\n" +
+                "namespace {\n" +
+                "\n" +
+                "    use My\\Annotations\\All;\n" +
+                "\n" +
+                "    class Foo {\n" +
+                "    /**\n" +
+                "     * @All()\n" +
+                "     */\n" +
+                "    function foo() {}\n" +
+                "  }\n" +
+                "}",
+            new LookupElementInsert.Assert() {
+                @Override
+                public boolean match(@NotNull LookupElement lookupElement) {
+                    return "All".equals(lookupElement.getLookupString());
+                }
+            }
+        );
+
+        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<UseAliasOption>();
     }
 
     public void testCompletionOfAliasScope() {

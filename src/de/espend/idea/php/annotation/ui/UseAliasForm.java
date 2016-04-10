@@ -24,6 +24,7 @@ public class UseAliasForm extends JDialog {
     private JButton buttonCancel;
     private JTextField textClassName;
     private JTextField textAlias;
+    private JCheckBox checkStatus;
 
     public UseAliasForm(@NotNull UseAliasOption useAliasOption, @NotNull Callback callback) {
         this.useAliasOption = useAliasOption;
@@ -35,6 +36,7 @@ public class UseAliasForm extends JDialog {
 
         textClassName.setText(useAliasOption.getClassName());
         textAlias.setText(useAliasOption.getAlias());
+        checkStatus.setSelected(useAliasOption.isEnabled());
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -77,6 +79,7 @@ public class UseAliasForm extends JDialog {
 
         this.useAliasOption.setClassName(classText);
         this.useAliasOption.setAlias(alias);
+        this.useAliasOption.setEnabled(checkStatus.isSelected());
 
         this.callback.ok(this.useAliasOption);
         dispose();
@@ -87,7 +90,7 @@ public class UseAliasForm extends JDialog {
     }
 
     public static void create(@NotNull Component component, @NotNull Callback callback) {
-        create(component, new UseAliasOption("", ""), callback);
+        create(component, new UseAliasOption("", "", true), callback);
     }
 
     public static void create(@NotNull Component component, @NotNull UseAliasOption option, @NotNull Callback callback) {

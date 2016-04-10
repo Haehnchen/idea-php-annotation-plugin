@@ -19,6 +19,9 @@ import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
@@ -54,7 +57,8 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
      * Insert class alias before PhpStorm tries to import a new use statement "\Foo\Bar as Car"
      */
     private void preAliasInsertion(@NotNull InsertionContext context, @NotNull LookupElement lookupElement) {
-        if(ApplicationSettings.getInstance().useAliasOptions == null || ApplicationSettings.getInstance().useAliasOptions.size() == 0) {
+        List<UseAliasOption> importsAliases = getImportsAliases();
+        if(importsAliases.size() == 0) {
             return;
         }
 
@@ -97,6 +101,19 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
 
         PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, className, useAliasOption.getAlias());
         PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(context.getDocument());
+    }
+
+    private List<UseAliasOption> getImportsAliases() {
+        if(ApplicationSettings.getInstance().useAliasOptions == null || ApplicationSettings.getInstance().useAliasOptions.size() == 0) {
+            return Collections.emptyList();
+        }
+
+        return ContainerUtil.filter(ApplicationSettings.getInstance().useAliasOptions, new Condition<UseAliasOption>() {
+            @Override
+            public boolean value(UseAliasOption option) {
+                return option.isEnabled();
+            }
+        });
     }
 
     public static AnnotationTagInsertHandler getInstance(){
