@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,7 @@ public class UseAliasListForm implements Configurable {
 
     private JPanel panel1;
     private JPanel panel;
+    private JButton buttonReset;
 
     public UseAliasListForm() {
         this.tableView = new TableView<UseAliasOption>();
@@ -42,7 +45,24 @@ public class UseAliasListForm implements Configurable {
 
         this.tableView.setModelAndUpdateColumns(this.modelList);
 
+        buttonReset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableView.getTableViewModel().fireTableDataChanged();
+                changed = true;
+                resetList();
+            }
+        });
+
         initList();
+    }
+
+    private void resetList() {
+        while(this.modelList.getRowCount() > 0) {
+            this.modelList.removeRow(0);
+        }
+
+        this.modelList.addRows(ApplicationSettings.getDefaultUseAliasOption());
     }
 
     private void initList() {
