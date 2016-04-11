@@ -51,6 +51,12 @@ public class UseAliasListForm implements Configurable {
                 tableView.getTableViewModel().fireTableDataChanged();
                 changed = true;
                 resetList();
+                try {
+                    apply();
+                    ApplicationSettings.getInstance().provideDefaults = false;
+                    JOptionPane.showMessageDialog(panel, "Default alias applied");
+                } catch (ConfigurationException ignored) {
+                }
             }
         });
 
@@ -159,6 +165,7 @@ public class UseAliasListForm implements Configurable {
         }
 
         ApplicationSettings.getInstance().useAliasOptions = options;
+        ApplicationSettings.getInstance().provideDefaults = false;
         this.changed = false;
     }
 

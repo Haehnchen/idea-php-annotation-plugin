@@ -4,16 +4,12 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.util.containers.HashMap;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import de.espend.idea.php.annotation.dict.UseAliasOption;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -23,7 +19,12 @@ public class ApplicationSettings implements PersistentStateComponent<Application
 
     public boolean appendRoundBracket = true;
 
-    public List<UseAliasOption> useAliasOptions = null;
+    public List<UseAliasOption> useAliasOptions = new ArrayList<UseAliasOption>();
+
+    /**
+     * First user change, so that can provide defaults
+     */
+    public boolean provideDefaults = true;
 
     @Nullable
     @Override
@@ -54,7 +55,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
 
     @NotNull
     public static Collection<UseAliasOption> getUseAliasOptionsWithDefaultFallback() {
-        if(getInstance().useAliasOptions == null) {
+        if(getInstance().provideDefaults && getInstance().useAliasOptions.size() == 0) {
             return getDefaultUseAliasOption();
         }
 

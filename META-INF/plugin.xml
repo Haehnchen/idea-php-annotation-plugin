@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>3.0</version>
+  <version>3.0.1</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -44,6 +44,11 @@
 3.x: PhpStorm 2016.1+<br>
 2.x: PhpStorm9, 10<br>
 1.x: PhpStorm8<br>
+
+<h2>3.0.1</h2>
+<ul>
+    <li>Custom use aliases do not work after restarting the IDE <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/54">#54</a></li>
+</ul>
 
 <h2>3.0</h2>
 <ul>
