@@ -40,7 +40,12 @@ import java.util.Map;
 public class AnnotationCompletionContributor extends CompletionContributor {
 
     public AnnotationCompletionContributor() {
+
+        // @<caret>
+        // * @<caret>
         extend(CompletionType.BASIC, AnnotationPattern.getDocBlockTag(), new PhpDocBlockTagAnnotations());
+
+        // @Callback("", <caret>)
         extend(CompletionType.BASIC, AnnotationPattern.getDocAttribute(), new PhpDocAttributeList());
         extend(CompletionType.BASIC, AnnotationPattern.getTextIdentifier(), new PhpDocAttributeValue());
         extend(CompletionType.BASIC, AnnotationPattern.getDefaultPropertyValue(), new PhpDocDefaultValue());

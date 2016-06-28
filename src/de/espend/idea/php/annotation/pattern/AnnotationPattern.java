@@ -46,7 +46,11 @@ public class AnnotationPattern {
                         PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LEADING_ASTERISK)
 
                     ).withSuperParent(1, PhpDocPsiElement.class)
-                .withLanguage(PhpLanguage.INSTANCE)
+                .withLanguage(PhpLanguage.INSTANCE),
+
+                // all "@<caret>"
+                PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TAG_NAME)
+                    .withLanguage(PhpLanguage.INSTANCE)
             );
     }
 
@@ -202,4 +206,17 @@ public class AnnotationPattern {
         return PlatformPatterns.psiElement().afterLeaf(PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STATIC)).withLanguage(PhpLanguage.INSTANCE);
     }
 
+    private static class MyWhitespaceWorkaroundPatternCondition extends PatternCondition<PsiElement> {
+        public MyWhitespaceWorkaroundPatternCondition() {
+            super("Whitespace fix");
+        }
+
+        @Override
+        public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext processingContext) {
+            // nested issue
+            String text = psiElement.getText();
+            boolean blank = StringUtils.isBlank(text);
+            return blank;
+        }
+    }
 }

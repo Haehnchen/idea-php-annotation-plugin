@@ -3,6 +3,7 @@ package de.espend.idea.php.annotation.tests.completion;
 import com.jetbrains.php.lang.PhpFileType;
 import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.dict.UseAliasOption;
+import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 
 import java.io.File;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
+ * @see de.espend.idea.php.annotation.completion.AnnotationCompletionContributor
  */
 public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsightFixtureTestCase {
     public void setUp() throws Exception {
@@ -226,4 +228,60 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
         );
     }
 
+    /**
+     * @see AnnotationPattern#getDocBlockTag()
+     */
+    public void testDocTagCompletionInsideNestedPropertyValues() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "/**" +
+                "* @All(foo={@<caret>)" +
+                "*/" +
+                "class Foo {}",
+            "All", "Clazz"
+        );
+
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "/**" +
+                "* @All(foo = @<caret>)" +
+                "*/" +
+                "class Foo {}",
+            "All", "Clazz"
+        );
+
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "/**" +
+                "* @All(foo=@<caret>)" +
+                "*/" +
+                "class Foo {}",
+            "All", "Clazz"
+        );
+
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "/**" +
+                "* @All(foo={@All(foo=@<caret>)})" +
+                "*/" +
+                "class Foo {}",
+            "All", "Clazz"
+        );
+    }
+
+    public void testDocTagCompletionInsideNestedPropertyValuesWithWhitespace() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "/**" +
+                "* @All(foo={@All(foo = @<caret>)})" +
+                "*/" +
+                "class Foo {}",
+            "All", "Clazz"
+        );
+    }
+
+    public void testDocTagInPropertyValueShouldNotComplete() {
+        assertCompletionNotContains(PhpFileType.INSTANCE, "<?php\n" +
+                "/**" +
+                "* @All(foo=\"@<caret>\")" +
+                "*/" +
+                "class Foo {}",
+            "All"
+        );
+    }
 }
