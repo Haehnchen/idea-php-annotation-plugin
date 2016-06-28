@@ -66,12 +66,7 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
             return;
         }
 
-        String presentableFQN = phpClass.getPresentableFQN();
-        if(presentableFQN == null) {
-            return;
-        }
-
-        String repoClass = presentableFQN + "Repository";
+        String repoClass = phpClass.getPresentableFQN() + "Repository";
         PhpClass repoPhpClass = PhpElementsUtil.getClass(project, repoClass);
         if(repoPhpClass == null) {
             Map<String, String> templateVars = new HashMap<>();

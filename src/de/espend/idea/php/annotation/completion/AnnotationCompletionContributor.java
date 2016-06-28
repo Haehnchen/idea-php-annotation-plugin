@@ -235,17 +235,15 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         private void attachLookupElements(Project project, Map<String, String> importMap, AnnotationTarget foundTarget, CompletionResultSet completionResultSet) {
             for(PhpAnnotation phpClass: getPhpAnnotationTargetClasses(project, foundTarget)) {
                 PhpClassAnnotationLookupElement lookupElement = new PhpClassAnnotationLookupElement(phpClass.getPhpClass()).withInsertHandler(AnnotationTagInsertHandler.getInstance());
-                String fqnClass = phpClass.getPhpClass().getPresentableFQN();
+                String fqnClass = phpClass.getPhpClass().getFQN();
 
-                if(fqnClass != null) {
-                    if(!fqnClass.startsWith("\\")) {
-                        fqnClass = "\\" + fqnClass;
-                    }
+                if(!fqnClass.startsWith("\\")) {
+                    fqnClass = "\\" + fqnClass;
+                }
 
-                    for(Map.Entry<String, String> entry: importMap.entrySet()) {
-                        if(fqnClass.startsWith(entry.getValue() + "\\")) {
-                            lookupElement.withTypeText(entry.getKey() + fqnClass.substring(entry.getValue().length()));
-                        }
+                for(Map.Entry<String, String> entry: importMap.entrySet()) {
+                    if(fqnClass.startsWith(entry.getValue() + "\\")) {
+                        lookupElement.withTypeText(entry.getKey() + fqnClass.substring(entry.getValue().length()));
                     }
                 }
 

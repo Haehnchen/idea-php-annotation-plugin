@@ -308,7 +308,7 @@ public class AnnotationUtil {
         for(PhpDocTag phpDocTag: PsiTreeUtil.findChildrenOfType(phpDocComment, PhpDocTag.class)) {
             if(!AnnotationUtil.NON_ANNOTATION_TAGS.contains(phpDocTag.getName())) {
                 PhpClass annotationClass = AnnotationUtil.getAnnotationReference(phpDocTag, uses);
-                if(annotationClass != null && annotationClass.getPresentableFQN() != null) {
+                if(annotationClass != null) {
                     annotationRefsMap.put(annotationClass.getPresentableFQN(), new PhpDocTagAnnotation(annotationClass, phpDocTag));
                 }
             }

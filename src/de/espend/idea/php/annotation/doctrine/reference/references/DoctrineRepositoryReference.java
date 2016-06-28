@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -46,14 +47,10 @@ public class DoctrineRepositoryReference extends PsiPolyVariantReferenceBase<Psi
     @Override
     public Object[] getVariants() {
 
-        List<LookupElement> lookupElements = new ArrayList<>();
-
-        for(PhpClass phpClass: PhpIndex.getInstance(getElement().getProject()).getAllSubclasses("\\Doctrine\\Common\\Persistence\\ObjectRepository")) {
-            String presentableFQN = phpClass.getPresentableFQN();
-            if(presentableFQN != null) {
-                lookupElements.add(LookupElementBuilder.create(presentableFQN).withIcon(PhpIcons.CLASS_ICON));
-            }
-        }
+        List<LookupElement> lookupElements = PhpIndex.getInstance(getElement().getProject())
+            .getAllSubclasses("\\Doctrine\\Common\\Persistence\\ObjectRepository").stream()
+            .map(phpClass -> LookupElementBuilder.create(phpClass.getPresentableFQN()).withIcon(PhpIcons.CLASS_ICON))
+            .collect(Collectors.toList());
 
         return lookupElements.toArray();
     }

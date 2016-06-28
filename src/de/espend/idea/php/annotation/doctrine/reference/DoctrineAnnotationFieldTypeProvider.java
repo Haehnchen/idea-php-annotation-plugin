@@ -29,10 +29,6 @@ public class DoctrineAnnotationFieldTypeProvider implements PhpAnnotationReferen
         }
 
         String presentableFQN = annotationPropertyParameter.getPhpClass().getPresentableFQN();
-        if(presentableFQN == null) {
-            return null;
-        }
-
         if(!presentableFQN.startsWith("\\")) {
             presentableFQN = "\\" + presentableFQN;
         }
