@@ -3,10 +3,13 @@ package de.espend.idea.php.annotation.ui;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import de.espend.idea.php.annotation.ApplicationSettings;
+import de.espend.idea.php.annotation.util.PluginUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -14,6 +17,17 @@ import javax.swing.*;
 public class SettingsForm implements Configurable {
     private JCheckBox appendRoundBracket;
     private JPanel panel;
+    private JButton buttonCleanIndex;
+
+    public SettingsForm() {
+        buttonCleanIndex.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                PluginUtil.forceReindex();
+                super.mouseClicked(e);
+            }
+        });
+    }
 
     @Nls
     @Override
