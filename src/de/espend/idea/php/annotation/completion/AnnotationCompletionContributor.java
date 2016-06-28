@@ -50,7 +50,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         extend(CompletionType.BASIC, AnnotationPattern.getClassConstant(), new PhpDocClassConstantCompletion());
     }
 
-    private class PhpDocDefaultValue  extends CompletionProvider<CompletionParameters> {
+    private class PhpDocDefaultValue extends CompletionProvider<CompletionParameters> {
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {

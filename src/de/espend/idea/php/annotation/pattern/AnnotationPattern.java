@@ -1,16 +1,20 @@
 package de.espend.idea.php.annotation.pattern;
 
 import com.intellij.patterns.ElementPattern;
+import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -51,11 +55,22 @@ public class AnnotationPattern {
      * * @ORM\Column(
      *      <completion>,
      * )
+     *
+     * On nested docs WHITESPACE is DOC_TEXT
      */
     public static ElementPattern<PsiElement> getDocAttribute() {
         return PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
             .afterLeafSkipping(
-                PlatformPatterns.psiElement(PsiWhiteSpace.class),
+                PlatformPatterns.or(
+                    PlatformPatterns.psiElement(PsiWhiteSpace.class),
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).with(new PatternCondition<PsiElement>("Whitespace fix") {
+                        @Override
+                        public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext processingContext) {
+                            // nested issue
+                            return StringUtils.isBlank(psiElement.getText());
+                        }
+                    })
+                ),
                 PlatformPatterns.or(
                     PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_COMMA),
                     PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LPAREN),
