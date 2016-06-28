@@ -2,6 +2,7 @@ package de.espend.idea.php.annotation.tests.navigation;
 
 import com.intellij.patterns.PlatformPatterns;
 import com.jetbrains.php.lang.PhpFileType;
+import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 
@@ -70,6 +71,30 @@ public class AnnotationGoToDeclarationHandlerTest extends AnnotationLightCodeIns
                 "  /** @B<caret>ar */" +
                 "}\n",
             PlatformPatterns.psiElement(PhpClass.class)
+        );
+    }
+
+    public void testThatPropertyProvidesNavigation() {
+        assertNavigationMatch(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace Bar;\n" +
+                "use Foo\\Bar;\n" +
+                "\n" +
+                "class Foo\n" +
+                "{\n" +
+                "  /** @Bar(f<caret>oo=\"bar\") */" +
+                "}\n",
+            PlatformPatterns.psiElement(Field.class).withName("foo")
+        );
+
+        assertNavigationMatch(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace Bar;\n" +
+                "use Foo\\Bar;\n" +
+                "\n" +
+                "class Foo\n" +
+                "{\n" +
+                "  /** @Foo(bla=\"\", foo={@Bar(f<caret>oo=\"bar\")}) */" +
+                "}\n",
+            PlatformPatterns.psiElement(Field.class).withName("foo")
         );
     }
 }

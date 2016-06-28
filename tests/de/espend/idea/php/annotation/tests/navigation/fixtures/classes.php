@@ -7,5 +7,6 @@ namespace Foo
      */
     class Bar
     {
+        public $foo;
     }
 }
