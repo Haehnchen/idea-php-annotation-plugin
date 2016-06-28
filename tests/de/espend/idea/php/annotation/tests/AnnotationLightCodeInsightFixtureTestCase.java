@@ -60,7 +60,6 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        Settings.getInstance(myFixture.getProject()).pluginEnabled = true;
     }
 
     public void assertCompletionContains(LanguageFileType languageFileType, String configureByText, String... lookupStrings) {
