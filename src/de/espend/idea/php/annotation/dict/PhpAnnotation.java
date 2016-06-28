@@ -12,7 +12,7 @@ import java.util.List;
 public class PhpAnnotation {
 
     private PhpClass phpClass;
-    private List<AnnotationTarget> targets = new ArrayList<AnnotationTarget>();
+    private List<AnnotationTarget> targets = new ArrayList<>();
 
     public PhpAnnotation(PhpClass phpClass, List<AnnotationTarget> annotationTargets) {
         this.phpClass = phpClass;

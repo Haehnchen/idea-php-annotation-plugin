@@ -19,7 +19,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
 
     public boolean appendRoundBracket = true;
 
-    public List<UseAliasOption> useAliasOptions = new ArrayList<UseAliasOption>();
+    public List<UseAliasOption> useAliasOptions = new ArrayList<>();
 
     /**
      * First user change, so that can provide defaults
@@ -42,7 +42,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
     }
 
     public static Collection<UseAliasOption> getDefaultUseAliasOption() {
-        Collection<UseAliasOption> options = new ArrayList<UseAliasOption>();
+        Collection<UseAliasOption> options = new ArrayList<>();
 
         options.add(new UseAliasOption("Symfony\\Component\\Validator\\Constraints", "Assert", true));
         options.add(new UseAliasOption("Doctrine\\ORM\\Mapping", "ORM", true));

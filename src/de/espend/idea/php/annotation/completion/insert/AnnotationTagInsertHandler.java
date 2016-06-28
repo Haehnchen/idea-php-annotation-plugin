@@ -3,7 +3,6 @@ package de.espend.idea.php.annotation.completion.insert;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
@@ -70,15 +69,11 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
 
         final String fqn = StringUtils.stripStart(((PhpClass) object).getFQN(), "\\");
 
-        UseAliasOption useAliasOption = ContainerUtil.find(importsAliases, new Condition<UseAliasOption>() {
-            @Override
-            public boolean value(UseAliasOption useAliasOption) {
-                return useAliasOption.getAlias() != null &&
-                    useAliasOption.getClassName() != null &&
-                    fqn.startsWith(StringUtils.stripStart(useAliasOption.getClassName(), "\\"))
-                ;
-            }
-        });
+        UseAliasOption useAliasOption = ContainerUtil.find(importsAliases, useAliasOption1 ->
+            useAliasOption1.getAlias() != null &&
+            useAliasOption1.getClassName() != null &&
+            fqn.startsWith(StringUtils.stripStart(useAliasOption1.getClassName(), "\\"))
+        );
 
         if(useAliasOption == null || useAliasOption.getClassName() == null || useAliasOption.getAlias() == null) {
             return;
@@ -110,12 +105,7 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
             return Collections.emptyList();
         }
 
-        return ContainerUtil.filter(useAliasOptions, new Condition<UseAliasOption>() {
-            @Override
-            public boolean value(UseAliasOption option) {
-                return option.isEnabled();
-            }
-        });
+        return ContainerUtil.filter(useAliasOptions, UseAliasOption::isEnabled);
     }
 
     public static AnnotationTagInsertHandler getInstance(){

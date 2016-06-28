@@ -1,7 +1,6 @@
 package de.espend.idea.php.annotation.toolbox;
 
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.util.Condition;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -29,16 +28,9 @@ public class PropertyRegistrarMatcher implements LanguageRegistrarMatcherInterfa
     @Override
     public boolean matches(@NotNull LanguageMatcherParameter parameter) {
 
-        List<JsonSignature> filter = ContainerUtil.filter(parameter.getSignatures(), new Condition<JsonSignature>() {
-            @Override
-            public boolean value(JsonSignature jsonSignature) {
-                return
-                    "annotation".equals(jsonSignature.getType()) &&
-                    StringUtils.isNotBlank(jsonSignature.getField()) &&
-                    StringUtils.isNotBlank(jsonSignature.getClassName())
-                ;
-            }
-        });
+        List<JsonSignature> filter = ContainerUtil.filter(parameter.getSignatures(), jsonSignature -> "annotation".equals(jsonSignature.getType()) &&
+        StringUtils.isNotBlank(jsonSignature.getField()) &&
+        StringUtils.isNotBlank(jsonSignature.getClassName()));
 
         if(filter.size() == 0) {
             return false;

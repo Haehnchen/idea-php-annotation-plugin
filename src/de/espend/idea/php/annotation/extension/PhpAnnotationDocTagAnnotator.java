@@ -6,5 +6,5 @@ import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationDocTagAnno
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public interface PhpAnnotationDocTagAnnotator {
-    public void annotate(PhpAnnotationDocTagAnnotatorParameter docTagAnnotationAnnotatorParameter);
+    void annotate(PhpAnnotationDocTagAnnotatorParameter docTagAnnotationAnnotatorParameter);
 }

@@ -11,9 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
-import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import com.jetbrains.php.lang.psi.PhpCodeEditUtil;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.refactoring.PhpAliasImporter;
@@ -95,20 +93,14 @@ public class AnnotationImportAnnotator implements PhpAnnotationDocTagAnnotator {
         @Override
         public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
 
-            CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-                public void run() {
-                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                        public void run() {
+            CommandProcessor.getInstance().executeCommand(project, () -> ApplicationManager.getApplication().runWriteAction(() -> {
 
-                            PhpPsiElement scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(phpDocTag);
-                            if(scopeForUseOperator != null) {
-                                PhpAliasImporter.insertUseStatement(className, scopeForUseOperator);
-                            }
-
-                        }
-                    });
+                PhpPsiElement scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(phpDocTag);
+                if(scopeForUseOperator != null) {
+                    PhpAliasImporter.insertUseStatement(className, scopeForUseOperator);
                 }
-            }, getText(), null);
+
+            }), getText(), null);
 
         }
 

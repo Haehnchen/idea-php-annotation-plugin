@@ -37,7 +37,7 @@ public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<
     @Override
     public ResolveResult[] multiResolve(boolean b) {
 
-        List<PsiElement> psiElementList = new ArrayList<PsiElement>();
+        List<PsiElement> psiElementList = new ArrayList<>();
 
         for(Field field: this.phpClass.getFields()) {
             if(!field.isConstant() && content.equals(field.getName())) {
@@ -51,7 +51,7 @@ public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<
     @NotNull
     @Override
     public Object[] getVariants() {
-        List<LookupElement> lookupElements = new ArrayList<LookupElement>();
+        List<LookupElement> lookupElements = new ArrayList<>();
 
         for(Field field: this.phpClass.getFields()) {
             if(!field.isConstant()) {

@@ -74,7 +74,7 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
         String repoClass = presentableFQN + "Repository";
         PhpClass repoPhpClass = PhpElementsUtil.getClass(project, repoClass);
         if(repoPhpClass == null) {
-            Map<String, String> templateVars = new HashMap<String, String>();
+            Map<String, String> templateVars = new HashMap<>();
 
             templateVars.put("namespace", DoctrineUtil.trimBlackSlashes(phpClass.getNamespaceName()));
             templateVars.put("class", phpClass.getName() + "Repository");

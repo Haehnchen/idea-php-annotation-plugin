@@ -2,8 +2,6 @@ package de.espend.idea.php.annotation.ui;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.ui.ColumnInfo;
@@ -12,12 +10,9 @@ import com.intellij.util.ui.ListTableModel;
 import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.dict.UseAliasOption;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +30,9 @@ public class UseAliasListForm implements Configurable {
     private JButton buttonReset;
 
     public UseAliasListForm() {
-        this.tableView = new TableView<UseAliasOption>();
+        this.tableView = new TableView<>();
 
-        this.modelList = new ListTableModel<UseAliasOption>(
+        this.modelList = new ListTableModel<>(
             new ClassColumn(),
             new AliasColumn(),
             new DisableColumn()
@@ -45,18 +40,15 @@ public class UseAliasListForm implements Configurable {
 
         this.tableView.setModelAndUpdateColumns(this.modelList);
 
-        buttonReset.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                tableView.getTableViewModel().fireTableDataChanged();
-                changed = true;
-                resetList();
-                try {
-                    apply();
-                    ApplicationSettings.getInstance().provideDefaults = false;
-                    JOptionPane.showMessageDialog(panel, "Default alias applied");
-                } catch (ConfigurationException ignored) {
-                }
+        buttonReset.addActionListener(e -> {
+            tableView.getTableViewModel().fireTableDataChanged();
+            changed = true;
+            resetList();
+            try {
+                apply();
+                ApplicationSettings.getInstance().provideDefaults = false;
+                JOptionPane.showMessageDialog(panel, "Default alias applied");
+            } catch (ConfigurationException ignored) {
             }
         });
 
@@ -102,45 +94,28 @@ public class UseAliasListForm implements Configurable {
             }
         });
 
-        tablePanel.setEditAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
+        tablePanel.setEditAction(anActionButton -> {
 
-                UseAliasOption useAliasOption = tableView.getSelectedObject();
-                if(useAliasOption == null) {
-                    return;
-                }
-
-                UseAliasForm.create(panel1, useAliasOption, new UseAliasForm.Callback() {
-                    @Override
-                    public void ok(@NotNull UseAliasOption option) {
-                        tableView.getTableViewModel().fireTableDataChanged();
-                        changed = true;
-                    }
-                });
+            UseAliasOption useAliasOption = tableView.getSelectedObject();
+            if(useAliasOption == null) {
+                return;
             }
-        });
 
-        tablePanel.setAddAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                UseAliasForm.create(panel1, new UseAliasForm.Callback() {
-                    @Override
-                    public void ok(@NotNull UseAliasOption option) {
-                        tableView.getListTableModel().addRow(option);
-                        changed = true;
-                    }
-                });
-            }
-        });
-
-        tablePanel.setRemoveAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                modelList.removeRow(tableView.getSelectedRow());
+            UseAliasForm.create(panel1, useAliasOption, option -> {
                 tableView.getTableViewModel().fireTableDataChanged();
                 changed = true;
-            }
+            });
+        });
+
+        tablePanel.setAddAction(anActionButton -> UseAliasForm.create(panel1, option -> {
+            tableView.getListTableModel().addRow(option);
+            changed = true;
+        }));
+
+        tablePanel.setRemoveAction(anActionButton -> {
+            modelList.removeRow(tableView.getSelectedRow());
+            tableView.getTableViewModel().fireTableDataChanged();
+            changed = true;
         });
 
         tablePanel.disableDownAction();
@@ -158,7 +133,7 @@ public class UseAliasListForm implements Configurable {
 
     @Override
     public void apply() throws ConfigurationException {
-        List<UseAliasOption> options = new ArrayList<UseAliasOption>();
+        List<UseAliasOption> options = new ArrayList<>();
 
         for(UseAliasOption option :this.tableView.getListTableModel().getItems()) {
             options.add(option);

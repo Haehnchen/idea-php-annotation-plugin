@@ -3,7 +3,6 @@ package de.espend.idea.php.annotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
-import com.intellij.psi.PsiReference;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
@@ -12,10 +11,8 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.stubs.indexes.PhpConstantNameIndex;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
-import de.espend.idea.php.annotation.util.PluginUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
-import com.intellij.util.indexing.ScalarIndexExtension;
 
 import java.util.Map;
 
@@ -39,7 +36,7 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
             @NotNull
             @Override
             public Map<String, Void> map(@NotNull FileContent inputData) {
-                final Map<String, Void> map = new THashMap<String, Void>();
+                final Map<String, Void> map = new THashMap<>();
 
                 PsiFile psiFile = inputData.getPsiFile();
                 if(!(psiFile instanceof PhpFile)) {

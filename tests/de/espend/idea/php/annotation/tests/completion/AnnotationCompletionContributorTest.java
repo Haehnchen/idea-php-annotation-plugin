@@ -1,11 +1,9 @@
 package de.espend.idea.php.annotation.tests.completion;
 
-import com.intellij.codeInsight.lookup.LookupElement;
 import com.jetbrains.php.lang.PhpFileType;
 import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.dict.UseAliasOption;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -120,12 +118,7 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
                 "    function foo() {}\n" +
                 "  }\n" +
                 "}",
-            new LookupElementInsert.Assert() {
-                @Override
-                public boolean match(@NotNull LookupElement lookupElement) {
-                    return "All".equals(lookupElement.getLookupString());
-                }
-            }
+            lookupElement -> "All".equals(lookupElement.getLookupString())
         );
     }
 
@@ -153,19 +146,14 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
                 "    function foo() {}\n" +
                 "  }\n" +
                 "}",
-            new LookupElementInsert.Assert() {
-                @Override
-                public boolean match(@NotNull LookupElement lookupElement) {
-                    return "All".equals(lookupElement.getLookupString());
-                }
-            }
+            lookupElement -> "All".equals(lookupElement.getLookupString())
         );
 
         ApplicationSettings.getInstance().appendRoundBracket = true;
     }
 
     public void testThatAnnotationCompletionInsertUseAlias() {
-        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<UseAliasOption>();
+        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<>();
         ApplicationSettings.getInstance().useAliasOptions.add(new UseAliasOption("My\\Annotations", "Bar", true));
 
         assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
@@ -189,19 +177,14 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
                 "    function foo() {}\n" +
                 "  }\n" +
                 "}",
-            new LookupElementInsert.Assert() {
-                @Override
-                public boolean match(@NotNull LookupElement lookupElement) {
-                    return "All".equals(lookupElement.getLookupString());
-                }
-            }
+            lookupElement -> "All".equals(lookupElement.getLookupString())
         );
 
-        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<UseAliasOption>();
+        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<>();
     }
 
     public void testThatDisabledUseAliasNotImported() {
-        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<UseAliasOption>();
+        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<>();
         ApplicationSettings.getInstance().useAliasOptions.add(new UseAliasOption("My\\Annotations", "Bar", false));
 
         assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
@@ -225,15 +208,10 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
                 "    function foo() {}\n" +
                 "  }\n" +
                 "}",
-            new LookupElementInsert.Assert() {
-                @Override
-                public boolean match(@NotNull LookupElement lookupElement) {
-                    return "All".equals(lookupElement.getLookupString());
-                }
-            }
+            lookupElement -> "All".equals(lookupElement.getLookupString())
         );
 
-        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<UseAliasOption>();
+        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<>();
     }
 
     public void testCompletionOfAliasScope() {

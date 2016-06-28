@@ -10,5 +10,5 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface PhpAnnotationReferenceProvider {
     @Nullable
-    public PsiReference[] getPropertyReferences(AnnotationPropertyParameter annotationPropertyParameter, PhpAnnotationReferenceProviderParameter referencesByElementParameter);
+    PsiReference[] getPropertyReferences(AnnotationPropertyParameter annotationPropertyParameter, PhpAnnotationReferenceProviderParameter referencesByElementParameter);
 }

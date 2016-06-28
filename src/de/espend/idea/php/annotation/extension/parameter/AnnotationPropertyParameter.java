@@ -62,7 +62,7 @@ public class AnnotationPropertyParameter {
         return project;
     }
 
-    public static enum Type {
+    public enum Type {
         DEFAULT, PROPERTY_VALUE
     }
 

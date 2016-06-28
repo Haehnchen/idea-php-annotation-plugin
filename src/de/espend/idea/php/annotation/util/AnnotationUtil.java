@@ -36,11 +36,11 @@ import java.util.regex.Pattern;
  */
 public class AnnotationUtil {
 
-    public static final ExtensionPointName<PhpAnnotationCompletionProvider> EXTENSION_POINT_COMPLETION = new ExtensionPointName<PhpAnnotationCompletionProvider>("de.espend.idea.php.annotation.PhpAnnotationCompletionProvider");
-    public static final ExtensionPointName<PhpAnnotationReferenceProvider> EXTENSION_POINT_REFERENCES = new ExtensionPointName<PhpAnnotationReferenceProvider>("de.espend.idea.php.annotation.PhpAnnotationReferenceProvider");
+    public static final ExtensionPointName<PhpAnnotationCompletionProvider> EXTENSION_POINT_COMPLETION = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationCompletionProvider");
+    public static final ExtensionPointName<PhpAnnotationReferenceProvider> EXTENSION_POINT_REFERENCES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationReferenceProvider");
 
-    public static final ExtensionPointName<PhpAnnotationDocTagGotoHandler> EP_DOC_TAG_GOTO = new ExtensionPointName<PhpAnnotationDocTagGotoHandler>("de.espend.idea.php.annotation.PhpAnnotationDocTagGotoHandler");
-    public static final ExtensionPointName<PhpAnnotationDocTagAnnotator> EP_DOC_TAG_ANNOTATOR = new ExtensionPointName<PhpAnnotationDocTagAnnotator>("de.espend.idea.php.annotation.PhpAnnotationDocTagAnnotator");
+    public static final ExtensionPointName<PhpAnnotationDocTagGotoHandler> EP_DOC_TAG_GOTO = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationDocTagGotoHandler");
+    public static final ExtensionPointName<PhpAnnotationDocTagAnnotator> EP_DOC_TAG_ANNOTATOR = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationDocTagAnnotator");
 
     public static Set<String> NON_ANNOTATION_TAGS = new HashSet<String>() {{
         addAll(Arrays.asList(PhpDocUtil.ALL_TAGS));
@@ -64,7 +64,7 @@ public class AnnotationUtil {
     }
 
     public static PhpClass[] getAnnotationsClasses(Project project) {
-        ArrayList<PhpClass> phpClasses = new ArrayList<PhpClass>();
+        ArrayList<PhpClass> phpClasses = new ArrayList<>();
 
         CollectProjectUniqueKeys ymlProjectProcessor = new CollectProjectUniqueKeys(project, AnnotationStubIndex.KEY);
         FileBasedIndex.getInstance().processAllKeys(AnnotationStubIndex.KEY, ymlProjectProcessor, project);
@@ -96,7 +96,7 @@ public class AnnotationUtil {
             return new PhpAnnotation(phpClass, AnnotationTarget.UNDEFINED);
         }
 
-        ArrayList<AnnotationTarget> targets = new ArrayList<AnnotationTarget>();
+        ArrayList<AnnotationTarget> targets = new ArrayList<>();
 
         // @Target("PROPERTY", "METHOD")
         // @Target("CLASS")
@@ -127,7 +127,7 @@ public class AnnotationUtil {
     @NotNull
     public static Map<String, PhpAnnotation> getAnnotationsOnTargetMap(@NotNull Project project, AnnotationTarget... targets) {
 
-        Map<String, PhpAnnotation> phpAnnotations = new HashMap<String, PhpAnnotation>();
+        Map<String, PhpAnnotation> phpAnnotations = new HashMap<>();
 
         for(PhpClass phpClass: AnnotationUtil.getAnnotationsClasses(project)) {
             PhpAnnotation phpAnnotation = AnnotationUtil.getClassAnnotation(phpClass);
@@ -161,7 +161,7 @@ public class AnnotationUtil {
     public static Map<String, String> getUseImportMap(@Nullable PhpDocComment phpDocComment) {
 
         // search for use alias in local file
-        final Map<String, String> useImports = new HashMap<String, String>();
+        final Map<String, String> useImports = new HashMap<>();
 
         if(phpDocComment == null) {
             return useImports;
@@ -255,7 +255,7 @@ public class AnnotationUtil {
         public CollectProjectUniqueKeys(Project project, ID id) {
             this.project = project;
             this.id = id;
-            this.stringSet = new HashSet<String>();
+            this.stringSet = new HashSet<>();
         }
 
         @Override
@@ -265,7 +265,7 @@ public class AnnotationUtil {
         }
 
         public Set<String> getResult() {
-            Set<String> set = new HashSet<String>();
+            Set<String> set = new HashSet<>();
 
             for (String key : stringSet) {
                 Collection fileCollection = FileBasedIndex.getInstance().getContainingFiles(id, key, GlobalSearchScope.allScope(this.project));
@@ -304,7 +304,7 @@ public class AnnotationUtil {
 
         Map<String, String> uses = AnnotationUtil.getUseImportMap(phpDocComment);
 
-        Map<String, PhpDocTagAnnotation> annotationRefsMap = new HashMap<String, PhpDocTagAnnotation>();
+        Map<String, PhpDocTagAnnotation> annotationRefsMap = new HashMap<>();
         for(PhpDocTag phpDocTag: PsiTreeUtil.findChildrenOfType(phpDocComment, PhpDocTag.class)) {
             if(!AnnotationUtil.NON_ANNOTATION_TAGS.contains(phpDocTag.getName())) {
                 PhpClass annotationClass = AnnotationUtil.getAnnotationReference(phpDocTag, uses);
@@ -350,7 +350,7 @@ public class AnnotationUtil {
             className = className.substring(1);
         }
 
-        List<PhpClass> phpClasses = new ArrayList<PhpClass>();
+        List<PhpClass> phpClasses = new ArrayList<>();
 
         for(PhpClass annotationClass: AnnotationUtil.getAnnotationsClasses(phpDocTag.getProject())) {
             if(annotationClass.getName().equals(className)) {

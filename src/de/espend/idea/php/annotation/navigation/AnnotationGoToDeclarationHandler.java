@@ -38,7 +38,7 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
         }
 
         // @Test(<foo>=)
-        List<PsiElement> psiElements = new ArrayList<PsiElement>();
+        List<PsiElement> psiElements = new ArrayList<>();
         if(AnnotationPattern.getDocAttribute().accepts(psiElement)) {
             this.addPropertyGoto(psiElement, psiElements);
         }

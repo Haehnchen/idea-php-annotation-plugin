@@ -46,7 +46,7 @@ public class DoctrineRepositoryReference extends PsiPolyVariantReferenceBase<Psi
     @Override
     public Object[] getVariants() {
 
-        List<LookupElement> lookupElements = new ArrayList<LookupElement>();
+        List<LookupElement> lookupElements = new ArrayList<>();
 
         for(PhpClass phpClass: PhpIndex.getInstance(getElement().getProject()).getAllSubclasses("\\Doctrine\\Common\\Persistence\\ObjectRepository")) {
             String presentableFQN = phpClass.getPresentableFQN();

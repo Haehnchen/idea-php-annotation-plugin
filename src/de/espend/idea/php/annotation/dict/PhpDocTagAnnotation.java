@@ -1,6 +1,5 @@
 package de.espend.idea.php.annotation.dict;
 
-import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;

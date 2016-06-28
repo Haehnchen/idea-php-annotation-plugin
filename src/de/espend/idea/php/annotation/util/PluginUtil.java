@@ -2,7 +2,6 @@ package de.espend.idea.php.annotation.util;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import de.espend.idea.php.annotation.Settings;
 import org.jetbrains.annotations.Nullable;
 
 /**

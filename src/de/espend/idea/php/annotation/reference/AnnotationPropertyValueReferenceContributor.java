@@ -96,7 +96,7 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
     }
 
     private PsiReference[] addPsiReferences(PsiElement psiElement, ProcessingContext processingContext, AnnotationPropertyParameter annotationPropertyParameter) {
-        ArrayList<PsiReference> psiReferences = new ArrayList<PsiReference>();
+        ArrayList<PsiReference> psiReferences = new ArrayList<>();
 
         PhpAnnotationReferenceProviderParameter referencesByElementParameter = new PhpAnnotationReferenceProviderParameter(psiElement, processingContext);
 

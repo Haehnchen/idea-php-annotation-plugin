@@ -6,5 +6,5 @@ import de.espend.idea.php.annotation.extension.parameter.AnnotationDocTagGotoHan
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public interface PhpAnnotationDocTagGotoHandler {
-    public void getGotoDeclarationTargets(AnnotationDocTagGotoHandlerParameter parameter);
+    void getGotoDeclarationTargets(AnnotationDocTagGotoHandlerParameter parameter);
 }

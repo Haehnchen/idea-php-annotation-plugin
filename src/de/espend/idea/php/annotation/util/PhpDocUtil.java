@@ -1,7 +1,6 @@
 package de.espend.idea.php.annotation.util;
 
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -111,11 +110,7 @@ public class PhpDocUtil {
         PsiDocumentManager.getInstance(forElement.getProject()).doPostponedOperationsAndUnblockDocument(document);
         PsiElement atElement = file.findElementAt(atOffset);
         if (atElement != null)            {
-            PsiElement docParent = PsiTreeUtil.findFirstParent(atElement, true, new Condition<PsiElement>() {
-                public boolean value(PsiElement element) {
-                    return ((element instanceof PhpDocComment)) || ((element instanceof PhpFile));
-                }
-            });
+            PsiElement docParent = PsiTreeUtil.findFirstParent(atElement, true, element -> ((element instanceof PhpDocComment)) || ((element instanceof PhpFile)));
             if ((docParent instanceof PhpDocComment)) {
                 CodeStyleManager.getInstance(forElement.getProject()).reformatNewlyAddedElement(docParent.getParent().getNode(), docParent.getNode());
             }

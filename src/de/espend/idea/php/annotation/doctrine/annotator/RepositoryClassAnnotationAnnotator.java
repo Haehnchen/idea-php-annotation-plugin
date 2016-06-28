@@ -101,7 +101,7 @@ public class RepositoryClassAnnotationAnnotator implements PhpAnnotationDocTagAn
 
         if(directory.findFile(filename) == null) {
 
-            Map<String, String> templateVars = new HashMap<String, String>();
+            Map<String, String> templateVars = new HashMap<>();
             templateVars.put("namespace", DoctrineUtil.trimBlackSlashes(ns));
             templateVars.put("class", targetClassName);
 
@@ -140,17 +140,14 @@ public class RepositoryClassAnnotationAnnotator implements PhpAnnotationDocTagAn
         }
 
         public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-            ApplicationManager.getApplication().invokeLater(new Runnable() {
-                @Override
-                public void run() {
+            ApplicationManager.getApplication().invokeLater(() -> {
 
-                    IdeUtil.RunnableCreateAndOpenFile runnableCreateAndOpenFile = IdeUtil.getRunnableCreateAndOpenFile(project, psiDirectory, fileName);
+                IdeUtil.RunnableCreateAndOpenFile runnableCreateAndOpenFile = IdeUtil.getRunnableCreateAndOpenFile(project, psiDirectory, fileName);
 
-                    String content = createEntityRepositoryContent(templateVars);
-                    runnableCreateAndOpenFile.setContent(content);
+                String content = createEntityRepositoryContent(templateVars);
+                runnableCreateAndOpenFile.setContent(content);
 
-                    ApplicationManager.getApplication().runWriteAction(runnableCreateAndOpenFile);
-                }
+                ApplicationManager.getApplication().runWriteAction(runnableCreateAndOpenFile);
             });
         }
 

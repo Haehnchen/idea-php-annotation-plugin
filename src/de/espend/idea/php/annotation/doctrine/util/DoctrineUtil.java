@@ -109,7 +109,7 @@ public class DoctrineUtil {
 
     public static void visitCustomTypes(@NotNull Project project, @NotNull ColumnTypeVisitor visitor) {
 
-        Set<String> found = new HashSet<String>();
+        Set<String> found = new HashSet<>();
 
         for (PhpClass phpClass : PhpIndex.getInstance(project).getAllSubclasses("\\Doctrine\\DBAL\\Types\\Type")) {
             String name = PhpElementsUtil.getMethodReturnAsString(phpClass, "getName");
@@ -128,24 +128,21 @@ public class DoctrineUtil {
     }
 
     public interface ColumnTypeVisitor {
-        public void visit(@NotNull String name, @Nullable PhpClass phpClass, @Nullable PsiElement psiElement);
+        void visit(@NotNull String name, @Nullable PhpClass phpClass, @Nullable PsiElement psiElement);
     }
 
     public static Collection<LookupElement> getTypes(@NotNull Project project) {
 
-        final Collection<LookupElement> lookupElements = new ArrayList<LookupElement>();
+        final Collection<LookupElement> lookupElements = new ArrayList<>();
 
-        visitCustomTypes(project, new ColumnTypeVisitor() {
-            @Override
-            public void visit(@NotNull String name, @Nullable PhpClass phpClass, @Nullable PsiElement psiElement) {
-                LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(name).withIcon(PhpAnnotationIcons.DOCTRINE);
+        visitCustomTypes(project, (name, phpClass, psiElement) -> {
+            LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(name).withIcon(PhpAnnotationIcons.DOCTRINE);
 
-                if(phpClass != null) {
-                    lookupElementBuilder = lookupElementBuilder.withTypeText(phpClass.getName(), true);
-                }
-
-                lookupElements.add(lookupElementBuilder);
+            if(phpClass != null) {
+                lookupElementBuilder = lookupElementBuilder.withTypeText(phpClass.getName(), true);
             }
+
+            lookupElements.add(lookupElementBuilder);
         });
 
         return lookupElements;
@@ -153,19 +150,16 @@ public class DoctrineUtil {
 
     public static Collection<PsiElement> getColumnTypesTargets(@NotNull Project project, final @NotNull String contents) {
 
-        final Collection<PsiElement> targets = new ArrayList<PsiElement>();
+        final Collection<PsiElement> targets = new ArrayList<>();
 
-        visitCustomTypes(project, new ColumnTypeVisitor() {
-            @Override
-            public void visit(@NotNull String name, @Nullable PhpClass phpClass, @Nullable PsiElement psiElement) {
-                if(!name.equals(contents)) {
-                    return;
-                }
+        visitCustomTypes(project, (name, phpClass, psiElement) -> {
+            if(!name.equals(contents)) {
+                return;
+            }
 
-                LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(name).withIcon(PhpAnnotationIcons.DOCTRINE);
-                if(phpClass != null) {
-                    targets.add(phpClass);
-                }
+            LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(name).withIcon(PhpAnnotationIcons.DOCTRINE);
+            if(phpClass != null) {
+                targets.add(phpClass);
             }
         });
 

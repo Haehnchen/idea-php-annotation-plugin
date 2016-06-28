@@ -29,7 +29,7 @@ public class PhpAnnotationTypeCompletionProvider implements PhpAnnotationComplet
             return;
         }
 
-        Set<String> values = new HashSet<String>();
+        Set<String> values = new HashSet<>();
         for(Field field: annotationPropertyParameter.getPhpClass().getFields()) {
             if(field.getName().equals(propertyName)) {
 
