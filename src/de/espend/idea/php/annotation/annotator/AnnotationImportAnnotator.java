@@ -58,7 +58,7 @@ public class AnnotationImportAnnotator implements PhpAnnotationDocTagAnnotator {
         annotationHolder.setTooltip(null);
 
         for(PhpClass phpClass: phpClasses) {
-            annotationHolder.registerFix(new CreatePropertyQuickFix(phpDocTag, "\\" + phpClass.getPresentableFQN()));
+            annotationHolder.registerFix(new CreatePropertyQuickFix(phpDocTag, StringUtils.stripStart(phpClass.getFQN(), "\\")));
         }
 
     }
