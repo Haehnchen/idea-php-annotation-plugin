@@ -17,8 +17,6 @@ import org.jetbrains.annotations.Nullable;
 )
 public class Settings implements PersistentStateComponent<Settings> {
 
-    public boolean pluginEnabled = false;
-
     public static Settings getInstance(Project project) {
         return ServiceManager.getService(project, Settings.class);
     }
