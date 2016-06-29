@@ -1,15 +1,15 @@
 <idea-plugin version="2" url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>3.0.1</version>
+  <version>4.0</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
 
 <h1>PHP Annotation</h1>
-<br>
-<a href="https://github.com/Haehnchen/idea-php-annotation-plugin">GitHub</a> | <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues">Issues</a><br>
-<br>
+<br/>
+<a href="https://github.com/Haehnchen/idea-php-annotation-plugin">GitHub</a> | <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues">Issues</a><br/>
+<br/>
 
 <h2>Installation</h2>
 <ul>
@@ -41,9 +41,19 @@
 
   <change-notes><![CDATA[
 
-3.x: PhpStorm 2016.1+<br>
-2.x: PhpStorm9, 10<br>
-1.x: PhpStorm8<br>
+4.x: PhpStorm 2016.1.2+<br/>
+3.x: PhpStorm 2016.1+<br/>
+2.x: PhpStorm9, 10<br/>
+1.x: PhpStorm8<br/>
+
+<h2>4.0</h2>
+<ul>
+    <li>Support nested annotations <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/8">#8</a>, <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/55">#55</a></li>
+    <li>Add button in settings form to force reindex of annotation classes <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/55">#55</a></li>
+    <li>Drop project references in settings form; prevent memory leaks</li>
+    <li>Java8 migration</li>
+    <li>Use newest api level and migrate internal code usage</li>    
+</ul>
 
 <h2>3.0.1</h2>
 <ul>
