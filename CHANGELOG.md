@@ -1,10 +1,10 @@
 # Changelog
 
 ## Versions
-4.x: PhpStorm 2016.1.2+
-3.x: PhpStorm 2016.1+
-2.x: PhpStorm9, 10
-1.x: PhpStorm8
+* 4.x: PhpStorm 2016.1.2+
+* 3.x: PhpStorm 2016.1+
+* 2.x: PhpStorm9, 10
+* 1.x: PhpStorm8
 
 ## 4.0
 * Support nested annotations [#8](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/8), [#55](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/55)
