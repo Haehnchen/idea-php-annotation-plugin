@@ -8,13 +8,21 @@ IntelliJ IDEA / PhpStorm PHP Annotations
 
 Provides PHP annotation support for PhpStorm / IntelliJ IDEA and references for "Code > Optimize Imports" action. Code extraction of [Symfony Plugin](https://github.com/Haehnchen/idea-php-symfony2-plugin)
 
+Key         | Value
+----------- | -----------
+Plugin url  | https://plugins.jetbrains.com/plugin/7320
+Id          | de.espend.idea.php.annotation
+Changelog   | [CHANGELOG](CHANGELOG.md)
+
 ### Install
 * [Download plugin](http://plugins.jetbrains.com/plugin/7320) or install directly out of PhpStorm
 * Force file reindex if necessary with: `File -> Invalidate Cache`
 
 ### Versions
 
-* 2.x: PhpStorm9+
+* 4.x: PhpStorm 2016.2
+* 3.x: PhpStorm 2016.1
+* 2.x: PhpStorm9
 * 1.x: PhpStorm8
 
 ### Settings
