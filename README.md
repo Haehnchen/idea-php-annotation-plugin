@@ -20,7 +20,7 @@ Changelog   | [CHANGELOG](CHANGELOG.md)
 
 ### Versions
 
-* 4.x: PhpStorm 2016.2
+* 4.x: PhpStorm 2016.1.2+
 * 3.x: PhpStorm 2016.1
 * 2.x: PhpStorm9
 * 1.x: PhpStorm8

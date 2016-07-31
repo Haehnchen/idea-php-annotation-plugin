@@ -6,6 +6,9 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+# 4.0.1
+* Fails to recognize import useful for PHPDoc Annotation(s), PHPStorm 2016.2 [#59](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/59), [#63](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/63) @artspb
+
 ## 4.0
 * Support nested annotations [#8](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/8), [#55](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/55)
 * Add button in settings form to force reindex of annotation classes [#55](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/55)
