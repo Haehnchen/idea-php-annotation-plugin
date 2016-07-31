@@ -6,6 +6,7 @@ import com.intellij.psi.*;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PluginUtil;
@@ -68,8 +69,9 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
 
             // eg for "Optimize Imports"
             // attach reference to @Template()
-            if (element instanceof PhpClass) {
-                if(((PhpClass) element).getName().equals(getDocBlockName())) {
+            // reference can also point to a namespace e.g. @Annotation\Exclude()
+            if (element instanceof PhpNamedElement) {
+                if(((PhpNamedElement) element).getName().equals(getDocBlockName())) {
                     return true;
                 }
             }
