@@ -170,6 +170,21 @@ public class PhpElementsUtil {
         return PhpElementsUtil.getClass(psiElement.getProject(), className);
     }
 
+    /**
+     * Resolve clasname with scoped namespace imports on inside PhpDocTag
+     *
+     * @param psiElement PhpDocTag scoped element
+     * @param className with namespace
+     */
+    @Nullable
+    public static String getFqnForClassNameByContext(@NotNull PsiElement psiElement, @NotNull String className) {
+        PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(psiElement, PhpDocTag.class);
+        if(phpDocTag == null) {
+            return null;
+        }
+
+        return AnnotationUtil.getUseImportMap(phpDocTag).get(className);
+    }
 
     @Nullable
     public static String getStringValue(@Nullable PsiElement psiElement) {

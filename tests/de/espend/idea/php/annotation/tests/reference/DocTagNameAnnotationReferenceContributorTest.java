@@ -110,6 +110,58 @@ public class DocTagNameAnnotationReferenceContributorTest extends AnnotationLigh
         assertTrue(optimized.contains("use Zend\\Form\\Annotation;"));
     }
 
+    public void testThatOptimizeImportShouldSupportStringConstants() {
+        String[] strings = {
+            "@Car(Foo::MY_CONST)",
+            "@Car(name=Foo::MY_CONST)",
+            "@Car(name={@Car(Foo::MY_CONST)})",
+        };
+
+        for (String string : strings) {
+            String optimized = optimizeImports("<?php\n" +
+                "\n" +
+                "namespace My;\n" +
+                "\n" +
+                "use FooBar\\Car;\n" +
+                "use MyConstant\\Foo;\n" +
+                "\n" +
+                "class Foo\n" +
+                "{\n" +
+                "  /**\n" +
+                "   * " + string +
+                "   */\n" +
+                "  public function foo()\n" +
+                "  {\n" +
+                "  }\n" +
+                "}\n"
+            );
+
+            assertTrue(optimized.contains("use MyConstant\\Foo;"));
+        }
+    }
+
+    public void testThatOptimizeImportShouldRemoveNamespaceWithoutUse() {
+        String optimized = optimizeImports("<?php\n" +
+            "\n" +
+            "namespace My;\n" +
+            "\n" +
+            "use FooBar\\Car;\n" +
+            "use MyConstant\\Foo;\n" +
+            "\n" +
+            "class Foo\n" +
+            "{\n" +
+            "  /**\n" +
+            "   * @Car(Foo\\Foo::MY_CONST)" +
+            "   */\n" +
+            "  public function foo()\n" +
+            "  {\n" +
+            "  }\n" +
+            "}\n"
+        );
+
+        assertFalse(optimized.contains("use MyConstant\\Foo;"));
+    }
+
     @NotNull
     private String optimizeImports(@NotNull String content) {
         PsiFile psiFile = myFixture.configureByText(PhpFileType.INSTANCE, content);

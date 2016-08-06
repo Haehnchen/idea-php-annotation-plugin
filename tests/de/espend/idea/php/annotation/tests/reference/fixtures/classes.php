@@ -25,5 +25,12 @@ namespace Zend\Form\Annotation
     }
 }
 
+namespace MyConstant
+{
+    class Foo 
+    {
+        const MY_CONST = 'foobar';        
+    }
+}
 
 
