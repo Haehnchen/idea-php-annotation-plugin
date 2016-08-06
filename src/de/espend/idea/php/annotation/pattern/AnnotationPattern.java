@@ -202,8 +202,22 @@ public class AnnotationPattern {
 
     }
 
+    /**
+     * Pattern for @Foo(Foo::<caret>), @Foo(name=Foo::<caret>)
+     */
     public static ElementPattern<PsiElement> getClassConstant() {
-        return PlatformPatterns.psiElement().afterLeaf(PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STATIC)).withLanguage(PhpLanguage.INSTANCE);
+        return PlatformPatterns.psiElement().afterLeaf(getDocStaticPattern()).withLanguage(PhpLanguage.INSTANCE);
+    }
+
+    /**
+     * Pattern @Foo(Foo::<caret>), @Foo(name=Foo::<caret>)
+     */
+    @NotNull
+    public static ElementPattern<PsiElement> getDocStaticPattern() {
+        return PlatformPatterns.or(
+            PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STATIC),
+            PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText("::") // array lexer workaround having text element in array; WI-32801
+        );
     }
 
     private static class MyWhitespaceWorkaroundPatternCondition extends PatternCondition<PsiElement> {

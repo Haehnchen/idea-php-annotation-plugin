@@ -17,6 +17,7 @@ import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationDocTagGotoHandlerParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
+import de.espend.idea.php.annotation.util.PhpDocUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import de.espend.idea.php.annotation.util.PluginUtil;
 import org.jetbrains.annotations.Nullable;
@@ -50,12 +51,12 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
         }
 
         // @Route(name=<ClassName>::FOO)
-        if (PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).beforeLeaf(PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STATIC)).withLanguage(PhpLanguage.INSTANCE).accepts(psiElement)) {
+        if (PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).beforeLeaf(AnnotationPattern.getDocStaticPattern()).withLanguage(PhpLanguage.INSTANCE).accepts(psiElement)) {
             this.addStaticClassTargets(psiElement, psiElements);
         }
 
         // @Route(name=ClassName::<FOO>)
-        if (PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).afterLeaf(PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STATIC)).withLanguage(PhpLanguage.INSTANCE).accepts(psiElement)) {
+        if (AnnotationPattern.getClassConstant().accepts(psiElement)) {
             this.addStaticClassConstTargets(psiElement, psiElements);
         }
 
@@ -142,7 +143,7 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
         String constName = psiElement.getText();
 
         PsiElement docStatic = psiElement.getPrevSibling();
-        if(docStatic != null && docStatic.getNode().getElementType() == PhpDocTokenTypes.DOC_STATIC) {
+        if(docStatic != null && PhpDocUtil.isDocStaticElement(docStatic)) {
             PsiElement docIdentifier = docStatic.getPrevSibling();
             if(docIdentifier != null && docIdentifier.getNode().getElementType() == PhpDocTokenTypes.DOC_IDENTIFIER) {
                 String className = docIdentifier.getText();

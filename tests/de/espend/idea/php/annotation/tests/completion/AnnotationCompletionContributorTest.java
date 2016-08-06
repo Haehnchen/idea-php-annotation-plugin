@@ -98,6 +98,19 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
         );
     }
 
+    public void testCompletionOfClassConstantsInsideArray() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "use \\My\\Annotations\\All;" +
+                "use \\My\\Annotations\\Constants\n" +
+                "/**\n" +
+                "* @All(name={Constants::<caret>})\n" +
+                "*/\n" +
+                "class Foo {}\n" +
+                "",
+            "FOO"
+        );
+    }
+
     public void testThatAnnotationCompletionInsertUseAndClassNameWithRoundBracket() {
         assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
                 "namespace {\n" +

@@ -24,10 +24,7 @@ import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationCompletionProviderParameter;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
-import de.espend.idea.php.annotation.util.AnnotationUtil;
-import de.espend.idea.php.annotation.util.PhpElementsUtil;
-import de.espend.idea.php.annotation.util.PhpIndexUtil;
-import de.espend.idea.php.annotation.util.PluginUtil;
+import de.espend.idea.php.annotation.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -340,7 +337,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
             }
 
             PsiElement docStatic = psiElement.getPrevSibling();
-            if(docStatic != null && docStatic.getNode().getElementType() == PhpDocTokenTypes.DOC_STATIC) {
+            if(docStatic != null && PhpDocUtil.isDocStaticElement(docStatic)) {
                 PsiElement docIdentifier = docStatic.getPrevSibling();
                 if(docIdentifier != null && docIdentifier.getNode().getElementType() == PhpDocTokenTypes.DOC_IDENTIFIER) {
                     String className = docIdentifier.getText();

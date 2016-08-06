@@ -159,4 +159,12 @@ public class PhpDocUtil {
     }
 
 
+    /**
+     * Workaround for STATIC node element: @Foo(foo::bar) and @Foo(name={foo::bar});
+     * see: WI-32801
+     */
+    public static boolean isDocStaticElement(@NotNull PsiElement psiElement) {
+        return PhpPsiUtil.isOfType(psiElement, PhpDocTokenTypes.DOC_STATIC) ||
+            (PhpPsiUtil.isOfType(psiElement, PhpDocTokenTypes.DOC_TEXT) && "::".equals(psiElement.getText()));
+    }
 }

@@ -97,4 +97,54 @@ public class AnnotationGoToDeclarationHandlerTest extends AnnotationLightCodeIns
             PlatformPatterns.psiElement(Field.class).withName("foo")
         );
     }
+
+    public void testThatClassContainsProvidesNavigation() {
+        assertNavigationMatch(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace Bar;\n" +
+                "\n" +
+                "use \\My\\Bar;\n" +
+                "\n" +
+                "class Foo\n" +
+                "{\n" +
+                "  /** @Foo(Bar::MY_<caret>VAR) */" +
+                "}\n",
+            PlatformPatterns.psiElement(Field.class).withName("MY_VAR")
+        );
+
+        assertNavigationMatch(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace Bar;\n" +
+                "\n" +
+                "use \\My\\Bar;\n" +
+                "\n" +
+                "class Foo\n" +
+                "{\n" +
+                "  /** @Foo(B<caret>ar::MY_VAR) */" +
+                "}\n",
+            PlatformPatterns.psiElement(PhpClass.class).withName("Bar")
+        );
+
+        assertNavigationMatch(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace Bar;\n" +
+                "\n" +
+                "use \\My\\Bar;\n" +
+                "\n" +
+                "class Foo\n" +
+                "{\n" +
+                "  /** @Foo(name={Bar::MY_<caret>VAR}) */" +
+                "}\n",
+            PlatformPatterns.psiElement(Field.class).withName("MY_VAR")
+        );
+
+        assertNavigationMatch(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace Bar;\n" +
+                "\n" +
+                "use \\My\\Bar;\n" +
+                "\n" +
+                "class Foo\n" +
+                "{\n" +
+                "  /** @Foo(name={B<caret>ar::MY_VAR}) */" +
+                "}\n",
+            PlatformPatterns.psiElement(PhpClass.class).withName("Bar")
+        );
+    }
 }

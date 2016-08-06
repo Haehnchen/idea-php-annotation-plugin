@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
+import de.espend.idea.php.annotation.util.PhpDocUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import de.espend.idea.php.annotation.util.PluginUtil;
 import org.apache.commons.lang.StringUtils;
@@ -68,10 +69,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                     }
 
                     // @Foo(Foobar::CONST) and workaround for @Foo(name{Foobar::CONST}) as this are text elements
-                    PsiElement[] psiElements = PsiTreeUtil.collectElements(element, psiElement ->
-                        PhpPsiUtil.isOfType(psiElement, PhpDocTokenTypes.DOC_STATIC) ||
-                            (PhpPsiUtil.isOfType(psiElement, PhpDocTokenTypes.DOC_TEXT) && "::".equals(psiElement.getText()))
-                    );
+                    PsiElement[] psiElements = PsiTreeUtil.collectElements(element, PhpDocUtil::isDocStaticElement);
 
                     for (PsiElement psiElement : psiElements) {
                         PsiElement prevSibling = psiElement.getPrevSibling();
