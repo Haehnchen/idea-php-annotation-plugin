@@ -26,7 +26,7 @@ import java.util.Arrays;
 public class AnnotationPropertyValueReferenceContributor extends PsiReferenceContributor {
 
     @Override
-    public void registerReferenceProviders(PsiReferenceRegistrar psiReferenceRegistrar) {
+    public void registerReferenceProviders(@NotNull PsiReferenceRegistrar psiReferenceRegistrar) {
         psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getDefaultPropertyValueString(), new PropertyValueDefaultReferences());
         psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getPropertyValueString(), new PropertyValueReferences());
     }

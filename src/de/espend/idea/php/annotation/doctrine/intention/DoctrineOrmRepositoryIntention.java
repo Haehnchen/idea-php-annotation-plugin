@@ -75,6 +75,9 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
             templateVars.put("class", phpClass.getName() + "Repository");
 
             String content = RepositoryClassAnnotationAnnotator.createEntityRepositoryContent(templateVars);
+            if(content == null) {
+                return;
+            }
 
             String fileName = phpClass.getName() + "Repository.php";
             PsiDirectory dir = phpClass.getContainingFile().getContainingDirectory();

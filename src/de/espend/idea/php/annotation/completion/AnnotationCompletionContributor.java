@@ -343,11 +343,9 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                     String className = docIdentifier.getText();
                     PhpClass phpClass = PhpElementsUtil.getClassByContext(psiElement, className);
                     if(phpClass != null) {
-                        for(Field field: phpClass.getFields()) {
-                            if(field.isConstant()) {
-                                result.addElement(LookupElementBuilder.create(field.getName()).withIcon(PhpIcons.FIELD).withTypeText(phpClass.getName(), true));
-                            }
-                        }
+                        phpClass.getFields().stream().filter(Field::isConstant).forEach(field ->
+                            result.addElement(LookupElementBuilder.create(field.getName()).withIcon(PhpIcons.FIELD).withTypeText(phpClass.getName(), true))
+                        );
                     }
                 }
             }

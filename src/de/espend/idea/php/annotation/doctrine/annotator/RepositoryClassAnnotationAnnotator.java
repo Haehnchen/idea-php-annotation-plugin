@@ -23,6 +23,7 @@ import de.espend.idea.php.annotation.util.IdeUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -157,6 +158,7 @@ public class RepositoryClassAnnotationAnnotator implements PhpAnnotationDocTagAn
         }
     }
 
+    @Nullable
     public static String createEntityRepositoryContent(Map<String, String> templateVars) {
         String content;
 

@@ -51,9 +51,7 @@ public class DoctrineUtil {
         return "string";
     }
 
-    public static boolean isOrmColumnProperty(@NotNull Field field)
-    {
-
+    public static boolean isOrmColumnProperty(@NotNull Field field) {
         PhpDocComment docComment = field.getDocComment();
         if(docComment == null) {
             return false;
@@ -65,9 +63,7 @@ public class DoctrineUtil {
     }
 
     @Nullable
-    public static PhpDocTagAnnotation getOrmEntityPhpDocBlock(@NotNull PhpClass phpClass)
-    {
-
+    public static PhpDocTagAnnotation getOrmEntityPhpDocBlock(@NotNull PhpClass phpClass) {
         PhpDocComment docComment = phpClass.getDocComment();
         if(docComment == null) {
             return null;
@@ -79,7 +75,6 @@ public class DoctrineUtil {
         }
 
         return container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Entity");
-
     }
 
     public static String underscore(String camelCasedWord) {
@@ -119,12 +114,9 @@ public class DoctrineUtil {
             }
         }
 
-        for (String s : Arrays.asList("id", "string", "integer", "smallint", "bigint", "boolean", "decimal", "date", "time", "datetime", "text", "array", "float")) {
-            if(!found.contains(s)) {
-                visitor.visit(s, null, null);
-            }
-        }
-
+        Arrays.asList("id", "string", "integer", "smallint", "bigint", "boolean", "decimal", "date", "time", "datetime", "text", "array", "float").stream()
+            .filter(s -> !found.contains(s))
+            .forEach(s -> visitor.visit(s, null, null));
     }
 
     public interface ColumnTypeVisitor {

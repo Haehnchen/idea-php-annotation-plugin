@@ -13,7 +13,6 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

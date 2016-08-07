@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -36,14 +37,9 @@ public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean b) {
-
-        List<PsiElement> psiElementList = new ArrayList<>();
-
-        for(Field field: this.phpClass.getFields()) {
-            if(!field.isConstant() && content.equals(field.getName())) {
-                psiElementList.add(field);
-            }
-        }
+        List<PsiElement> psiElementList = this.phpClass.getFields().stream()
+            .filter(field -> !field.isConstant() && content.equals(field.getName()))
+            .collect(Collectors.toList());
 
         return PhpResolveResult.createResults(psiElementList);
     }

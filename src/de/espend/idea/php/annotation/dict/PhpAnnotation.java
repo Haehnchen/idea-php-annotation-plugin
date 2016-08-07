@@ -3,7 +3,7 @@ package de.espend.idea.php.annotation.dict;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,7 +20,7 @@ public class PhpAnnotation {
     }
 
     public PhpAnnotation(PhpClass phpClass, AnnotationTarget annotationTargets) {
-        this(phpClass, Arrays.asList(annotationTargets));
+        this(phpClass, Collections.singletonList(annotationTargets));
     }
 
     public PhpClass getPhpClass() {

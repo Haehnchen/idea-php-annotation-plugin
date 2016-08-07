@@ -22,42 +22,40 @@ public class PhpAnnotationTypeCompletionProvider implements PhpAnnotationComplet
 
     @Override
     public void getPropertyValueCompletions(AnnotationPropertyParameter annotationPropertyParameter, AnnotationCompletionProviderParameter completionParameter) {
-
         String propertyName = annotationPropertyParameter.getPropertyName();
-
         if(!annotationPropertyParameter.getType().equals(AnnotationPropertyParameter.Type.PROPERTY_VALUE) && propertyName == null) {
             return;
         }
 
         Set<String> values = new HashSet<>();
         for(Field field: annotationPropertyParameter.getPhpClass().getFields()) {
-            if(field.getName().equals(propertyName)) {
+            if(!field.getName().equals(propertyName)) {
+                continue;
+            }
 
-                String typeName = field.getType().toString();
-                if(typeName.equals("bool") || typeName.equals("boolean")) {
-                    values.addAll(Arrays.asList("false", "true"));
-                }
+            String typeName = field.getType().toString();
+            if(typeName.equals("bool") || typeName.equals("boolean")) {
+                values.addAll(Arrays.asList("false", "true"));
+            }
 
-                // @Enum({"AUTO", "SEQUENCE"})
-                PhpDocComment docComment = field.getDocComment();
-                if(docComment != null) {
-                    PhpDocTag[] phpDocTags = docComment.getTagElementsByName("@Enum");
-                    for(PhpDocTag phpDocTag: phpDocTags) {
-                        PhpPsiElement phpDocAttrList = phpDocTag.getFirstPsiChild();
-                        if(phpDocAttrList != null) {
-                            String enumArrayString = phpDocAttrList.getText();
-                            Pattern targetPattern = Pattern.compile("\"(\\w+)\"");
+            // @Enum({"AUTO", "SEQUENCE"})
+            PhpDocComment docComment = field.getDocComment();
+            if(docComment != null) {
+                PhpDocTag[] phpDocTags = docComment.getTagElementsByName("@Enum");
+                for(PhpDocTag phpDocTag: phpDocTags) {
+                    PhpPsiElement phpDocAttrList = phpDocTag.getFirstPsiChild();
+                    if(phpDocAttrList != null) {
+                        String enumArrayString = phpDocAttrList.getText();
+                        Pattern targetPattern = Pattern.compile("\"(\\w+)\"");
 
-                            Matcher matcher = targetPattern.matcher(enumArrayString);
-                            while (matcher.find()) {
-                                values.add(matcher.group(1));
-                             }
-
+                        Matcher matcher = targetPattern.matcher(enumArrayString);
+                        while (matcher.find()) {
+                            values.add(matcher.group(1));
                         }
 
                     }
-                }
 
+                }
             }
         }
 

@@ -135,9 +135,7 @@ public class UseAliasListForm implements Configurable {
     public void apply() throws ConfigurationException {
         List<UseAliasOption> options = new ArrayList<>();
 
-        for(UseAliasOption option :this.tableView.getListTableModel().getItems()) {
-            options.add(option);
-        }
+        options.addAll(this.tableView.getListTableModel().getItems());
 
         ApplicationSettings.getInstance().useAliasOptions = options;
         ApplicationSettings.getInstance().provideDefaults = false;

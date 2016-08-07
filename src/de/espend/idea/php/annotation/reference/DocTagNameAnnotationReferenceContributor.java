@@ -30,7 +30,7 @@ import java.util.Collection;
 public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContributor {
 
     @Override
-    public void registerReferenceProviders(PsiReferenceRegistrar psiReferenceRegistrar) {
+    public void registerReferenceProviders(@NotNull PsiReferenceRegistrar psiReferenceRegistrar) {
 
         /**
          * Our main reference provider to attach DocBlocTag to their use declaration

@@ -183,7 +183,7 @@ public class PhpDocUtil {
         }
 
         PsiElement child = psiElement.getPrevSibling();
-        List<String> namespaces = new ArrayList<>(Collections.singletonList(psiElement.getText()));;
+        List<String> namespaces = new ArrayList<>(Collections.singletonList(psiElement.getText()));
         while (child != null) {
             if(!isValidClassText(child)) {
                 Collections.reverse(namespaces);

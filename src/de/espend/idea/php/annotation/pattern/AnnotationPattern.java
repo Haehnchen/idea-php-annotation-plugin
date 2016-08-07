@@ -219,18 +219,4 @@ public class AnnotationPattern {
             PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText("::") // array lexer workaround having text element in array; WI-32801
         );
     }
-
-    private static class MyWhitespaceWorkaroundPatternCondition extends PatternCondition<PsiElement> {
-        public MyWhitespaceWorkaroundPatternCondition() {
-            super("Whitespace fix");
-        }
-
-        @Override
-        public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext processingContext) {
-            // nested issue
-            String text = psiElement.getText();
-            boolean blank = StringUtils.isBlank(text);
-            return blank;
-        }
-    }
 }
