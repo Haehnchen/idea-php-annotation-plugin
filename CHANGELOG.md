@@ -6,7 +6,11 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
-# 4.0.1
+## 4.1
+* Add class constant support for import optimization and provide references. [#22](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/22), [#26](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/26), [#38](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/38), [#40](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/40)
+* Implement workaround for class constant usage in doc array [WI-32801](https://youtrack.jetbrains.com/issue/WI-32801)
+
+## 4.0.1
 * Fails to recognize import useful for PHPDoc Annotation(s), PHPStorm 2016.2 [#59](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/59), [#63](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/63) @artspb
 
 ## 4.0

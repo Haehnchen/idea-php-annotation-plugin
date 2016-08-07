@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>4.0.1</version>
+  <version>4.1</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -45,6 +45,12 @@
 3.x: PhpStorm 2016.1+<br/>
 2.x: PhpStorm9, 10<br/>
 1.x: PhpStorm8<br/>
+
+<h2>4.1</h2>
+<ul>
+    <li>Add class constant support for import optimization and provide references. <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/22">#22</a>, <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/26">#26</a>, <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/38">#38</a>, <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/40">#40</a></li>
+    <li>Implement workaround for class constant usage in doc array <a href="https://youtrack.jetbrains.com/issue/WI-32801">WI-32801</a></li>
+</ul>
 
 <h2>4.0.1</h2>
 <ul>
