@@ -5,6 +5,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
 import com.jetbrains.php.lang.PhpLangUtil;
@@ -18,8 +19,13 @@ import com.jetbrains.php.lang.psi.PhpPsiUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -158,7 +164,6 @@ public class PhpDocUtil {
         return null;
     }
 
-
     /**
      * Workaround for STATIC node element: @Foo(foo::bar) and @Foo(name={foo::bar});
      * see: WI-32801
@@ -166,5 +171,49 @@ public class PhpDocUtil {
     public static boolean isDocStaticElement(@NotNull PsiElement psiElement) {
         return PhpPsiUtil.isOfType(psiElement, PhpDocTokenTypes.DOC_STATIC) ||
             (PhpPsiUtil.isOfType(psiElement, PhpDocTokenTypes.DOC_TEXT) && "::".equals(psiElement.getText()));
+    }
+
+    /**
+     * Extract namespace+class @DateTime(Foo\Ker<caret>nel::VERSION)
+     */
+    @Nullable
+    public static String getNamespaceForDocIdentifier(@NotNull PsiElement psiElement) {
+        if(psiElement.getNode().getElementType() != PhpDocTokenTypes.DOC_IDENTIFIER) {
+            return null;
+        }
+
+        PsiElement child = psiElement.getPrevSibling();
+        List<String> namespaces = new ArrayList<>(Collections.singletonList(psiElement.getText()));;
+        while (child != null) {
+            if(!isValidClassText(child)) {
+                Collections.reverse(namespaces);
+                return StringUtils.stripStart(StringUtils.join(namespaces, null), "\\");
+            }
+
+            namespaces.add(child.getText());
+            child = child.getPrevSibling();
+        }
+
+        return StringUtils.stripStart(StringUtils.join(namespaces, null), "\\");
+    }
+
+    private static boolean isValidClassText(@NotNull PsiElement psiElement) {
+        IElementType elementType = psiElement.getNode().getElementType();
+        if(elementType == PhpDocTokenTypes.DOC_NAMESPACE) {
+            return true;
+        }
+
+        // non textual chars
+        if(!(elementType == PhpDocTokenTypes.DOC_TEXT || elementType == PhpDocTokenTypes.DOC_IDENTIFIER)){
+            return false;
+        }
+
+        // NAMESPACE fix inside array: @FOO(a={Foo\Foo})
+        String text = psiElement.getText();
+        if(elementType == PhpDocTokenTypes.DOC_TEXT && "\\".equals(text)) {
+            return true;
+        }
+
+        return text.matches("^\\w+$");
     }
 }
