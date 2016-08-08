@@ -258,7 +258,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
 
             String classByContext = PhpElementsUtil.getFqnForClassNameByContext(element, text);
             if(classByContext != null) {
-                return StringUtils.stripStart(((PhpClass) psiElement).getFQN(), "\\")
+                return StringUtils.stripStart(((PhpNamedElement) psiElement).getFQN(), "\\")
                     .equalsIgnoreCase(StringUtils.stripStart(fqn, "\\"));
             }
 
