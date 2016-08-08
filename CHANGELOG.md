@@ -6,6 +6,9 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 4.1.1
+* Fix class cast issue for reference contributor [#64](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/64)
+
 ## 4.1
 * Add class constant support for import optimization and provide references. [#22](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/22), [#26](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/26), [#38](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/38), [#40](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/40)
 * Implement workaround for class constant usage in doc array [WI-32801](https://youtrack.jetbrains.com/issue/WI-32801)
