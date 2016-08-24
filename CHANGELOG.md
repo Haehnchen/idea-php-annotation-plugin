@@ -6,6 +6,9 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 4.1.2
+* PhpStorm 2016.3: Switch from PhpResolveResult#create to PsiElementResolveResult#createResults [#66](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/66)
+
 ## 4.1.1
 * Fix class cast issue for reference contributor [#64](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/64)
 

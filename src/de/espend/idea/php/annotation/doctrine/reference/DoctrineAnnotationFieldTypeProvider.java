@@ -61,7 +61,7 @@ public class DoctrineAnnotationFieldTypeProvider implements PhpAnnotationReferen
                 return new ResolveResult[0];
             }
 
-            return PhpResolveResult.create(DoctrineUtil.getColumnTypesTargets(psiElement.getProject(), contents));
+            return PhpResolveResult.createResults(DoctrineUtil.getColumnTypesTargets(psiElement.getProject(), contents));
         }
 
         @NotNull
