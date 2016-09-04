@@ -26,10 +26,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiRecursiveElementVisitor;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
@@ -43,7 +40,6 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpReference;
-import de.espend.idea.php.annotation.Settings;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -320,6 +316,52 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
         }
 
         assertEquals(typeSignature, ((PhpReference) psiElement).getSignature());
+    }
+
+    public void assertReferenceMatchOnParent(@NotNull FileType fileType, @NotNull String contents, @NotNull ElementPattern<?> pattern) {
+        myFixture.configureByText(fileType, contents);
+        PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+        if(psiElement == null) {
+            fail("Fail to find element in caret");
+        }
+
+        PsiElement parent = psiElement.getParent();
+        if(parent == null) {
+            fail("Fail to find parent element in caret");
+        }
+
+        assertReferences(pattern, parent);
+    }
+
+    public void assertReferenceMatch(@NotNull FileType fileType, @NotNull String contents, @NotNull ElementPattern<?> pattern) {
+        myFixture.configureByText(fileType, contents);
+        PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+        if(psiElement == null) {
+            fail("Fail to find element in caret");
+        }
+
+        assertReferences(pattern, psiElement);
+    }
+
+    private void assertReferences(@NotNull ElementPattern<?> pattern, PsiElement psiElement) {
+        for (PsiReference reference : psiElement.getReferences()) {
+            // single resolve; should also match first multi by design
+            PsiElement element = reference.resolve();
+            if (pattern.accepts(element)) {
+                return;
+            }
+
+            // multiResolve support
+            if(element instanceof PsiPolyVariantReference) {
+                for (ResolveResult resolveResult : ((PsiPolyVariantReference) element).multiResolve(true)) {
+                    if (pattern.accepts(resolveResult.getElement())) {
+                        return;
+                    }
+                }
+            }
+        }
+
+        fail(String.format("Fail that '%s' match given pattern", psiElement.toString()));
     }
 
     public void assertCompletionResultEquals(String filename, String complete, String result) {
