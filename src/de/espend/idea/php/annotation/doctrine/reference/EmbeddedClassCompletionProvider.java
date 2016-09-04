@@ -22,10 +22,7 @@ public class EmbeddedClassCompletionProvider implements PhpAnnotationReferencePr
     @Nullable
     @Override
     public PsiReference[] getPropertyReferences(AnnotationPropertyParameter parameter, PhpAnnotationReferenceProviderParameter referencesByElementParameter) {
-        if(parameter.getType() != AnnotationPropertyParameter.Type.PROPERTY_VALUE ||
-           !"class".equals(parameter.getPropertyName()) ||
-           !PhpLangUtil.equalsClassNames(parameter.getPhpClass().getPresentableFQN(), "Doctrine\\ORM\\Mapping\\Embedded")
-           ) {
+        if(!isEmbeddedClassProperty(parameter)) {
             return new PsiReference[0];
         }
 
@@ -41,10 +38,7 @@ public class EmbeddedClassCompletionProvider implements PhpAnnotationReferencePr
 
     @Override
     public void getPropertyValueCompletions(AnnotationPropertyParameter parameter, AnnotationCompletionProviderParameter completionParameter) {
-        if(parameter.getType() != AnnotationPropertyParameter.Type.PROPERTY_VALUE ||
-            !"class".equals(parameter.getPropertyName()) ||
-            !PhpLangUtil.equalsClassNames(parameter.getPhpClass().getPresentableFQN(), "Doctrine\\ORM\\Mapping\\Embedded")
-            ) {
+        if(!isEmbeddedClassProperty(parameter)) {
             return;
         }
 
@@ -56,5 +50,12 @@ public class EmbeddedClassCompletionProvider implements PhpAnnotationReferencePr
 
         PhpIndex phpIndex = PhpIndex.getInstance(parameter.getProject());
         PhpCompletionUtil.addClasses(className, completionParameter.getResult(), phpIndex, null);
+    }
+
+    private boolean isEmbeddedClassProperty(AnnotationPropertyParameter parameter) {
+        return
+            parameter.getType() == AnnotationPropertyParameter.Type.PROPERTY_VALUE &&
+            "class".equals(parameter.getPropertyName()) &&
+            PhpLangUtil.equalsClassNames(StringUtils.stripStart(parameter.getPhpClass().getFQN(), "\\"), "Doctrine\\ORM\\Mapping\\Embedded");
     }
 }
