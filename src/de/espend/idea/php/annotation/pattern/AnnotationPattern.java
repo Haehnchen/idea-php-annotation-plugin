@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class AnnotationPattern {
-
-
     public static ElementPattern<PsiElement> getDocBlockTagAfterBackslash() {
         return PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TAG_NAME);
     }
@@ -218,5 +216,71 @@ public class AnnotationPattern {
             PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STATIC),
             PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText("::") // array lexer workaround having text element in array; WI-32801
         );
+    }
+
+    /**
+     * Route("/", methods={"<caret>", "POST"})
+     * Route("/", methods={"GET", "<caret>"})
+     */
+    public static ElementPattern<PsiElement> getEnumPattern() {
+
+        // "methods={"
+        PsiElementPattern.Capture<PsiElement> propertyPattern = PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LBRACE)
+            .afterLeafSkipping(
+                PlatformPatterns.or(
+                    PlatformPatterns.psiElement(PsiWhiteSpace.class)
+                ),
+            PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText("=").afterLeafSkipping(
+                PlatformPatterns.psiElement(PsiWhiteSpace.class),
+                PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
+            )
+        );
+
+        return PlatformPatterns.or(
+            // methods={"<caret>", "POST"}
+            PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STRING)
+                .withParent(StringLiteralExpression.class)
+                .afterLeafSkipping(
+                    PlatformPatterns.or(
+                        PlatformPatterns.psiElement(PsiWhiteSpace.class),
+                        PlatformPatterns.psiElement().with(new MyWhiteSpaceAsTextPatternCondition())
+                    ),
+                    propertyPattern
+                ),
+            // methods={"POST" , "<caret>"}
+            PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STRING)
+                .withParent(StringLiteralExpression.class)
+                .afterLeafSkipping(
+                    PlatformPatterns.or(
+                        PlatformPatterns.psiElement(PsiWhiteSpace.class),
+                        PlatformPatterns.psiElement().with(new MyWhiteSpaceAsTextPatternCondition())
+                    ),
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_COMMA).afterLeafSkipping(
+                            PlatformPatterns.or(
+                                PlatformPatterns.psiElement(PsiWhiteSpace.class),
+                                PlatformPatterns.psiElement().with(new MyWhiteSpaceAsTextPatternCondition()),
+                                PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_STRING),
+                                PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_COMMA)
+                            ),
+                        propertyPattern
+                    )
+                )
+            );
+    }
+
+    /**
+     * On array whitespace element is DOC_TEXT element
+     *
+     * Route("/", methods={ "GET", "<caret>"})
+     */
+    private static class MyWhiteSpaceAsTextPatternCondition extends PatternCondition<PsiElement> {
+        public MyWhiteSpaceAsTextPatternCondition() {
+            super("Whitespace as DOC_TEXT fix");
+        }
+
+        @Override
+        public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext processingContext) {
+            return psiElement.getNode().getElementType() == PhpDocTokenTypes.DOC_TEXT && StringUtils.isBlank(psiElement.getText());
+        }
     }
 }
