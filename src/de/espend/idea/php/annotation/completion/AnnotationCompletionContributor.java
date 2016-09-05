@@ -50,6 +50,9 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
         // @Route(name=ClassName::<FOO>)
         extend(CompletionType.BASIC, AnnotationPattern.getClassConstant(), new PhpDocClassConstantCompletion());
+
+        // @Foo(name={"FOOBAR", "<caret>"})
+        extend(CompletionType.BASIC, AnnotationPattern.getPropertyArrayPattern(), new PhpDocArrayPropertyCompletion());
     }
 
     private class PhpDocDefaultValue extends CompletionProvider<CompletionParameters> {
@@ -71,6 +74,45 @@ public class AnnotationCompletionContributor extends CompletionContributor {
             AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(parameters.getOriginalPosition(), phpClass, AnnotationPropertyParameter.Type.DEFAULT);
             providerWalker(parameters, context, result, annotationPropertyParameter);
 
+        }
+    }
+
+    /**
+     * "@FOO(property={"FOO", "FOO"})"
+     */
+    private class PhpDocArrayPropertyCompletion extends CompletionProvider<CompletionParameters> {
+
+        @Override
+        protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
+            PsiElement psiElement = parameters.getOriginalPosition();
+            if(psiElement == null | !PluginUtil.isEnabled(psiElement)) {
+                return;
+            }
+
+            PsiElement parent = psiElement.getParent();
+            if(!(parent instanceof StringLiteralExpression)) {
+                return;
+            }
+
+            PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PhpDocTag.class);
+            PhpClass phpClass = AnnotationUtil.getAnnotationReference(phpDocTag);
+            if(phpClass == null) {
+                return;
+            }
+
+            PsiElement propertyForEnum = AnnotationUtil.getPropertyForArray((StringLiteralExpression) parent);
+            if(propertyForEnum == null) {
+                return;
+            }
+
+            AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(
+                parameters.getOriginalPosition(),
+                phpClass,
+                propertyForEnum.getText(),
+                AnnotationPropertyParameter.Type.PROPERTY_ARRAY
+            );
+
+            providerWalker(parameters, context, result, annotationPropertyParameter);
         }
     }
 

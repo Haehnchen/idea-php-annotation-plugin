@@ -12,9 +12,9 @@ import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTest
 public class AnnotationPatternTest extends AnnotationLightCodeInsightFixtureTestCase {
 
     /**
-     * @see AnnotationPattern#getEnumPattern()
+     * @see AnnotationPattern#getPropertyArrayPattern()
      */
-    public void testGetEnumPattern() {
+    public void testGetPropertyArrayPattern() {
         for (String s : new String[]{"methods={\"<caret>\"}", "methods={ \"<caret>\" }", "methods    =    {       \"<caret>\" }"}) {
             myFixture.configureByText(PhpFileType.INSTANCE, "<?php class Foo\n" +
                 "{\n" +
@@ -26,14 +26,14 @@ public class AnnotationPatternTest extends AnnotationLightCodeInsightFixtureTest
             );
 
             PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
-            assertTrue(AnnotationPattern.getEnumPattern().accepts(psiElement));
+            assertTrue(AnnotationPattern.getPropertyArrayPattern().accepts(psiElement));
         }
     }
 
     /**
-     * @see AnnotationPattern#getEnumPattern()
+     * @see AnnotationPattern#getPropertyArrayPattern()
      */
-    public void testGetEnumPatternForList() {
+    public void testGetPropertyArrayPatternForList() {
         myFixture.configureByText(PhpFileType.INSTANCE, "<?php class Foo\n" +
             "{\n" +
             "    /**\n" +
@@ -44,6 +44,23 @@ public class AnnotationPatternTest extends AnnotationLightCodeInsightFixtureTest
         );
 
         PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
-        assertTrue(AnnotationPattern.getEnumPattern().accepts(psiElement));
+        assertTrue(AnnotationPattern.getPropertyArrayPattern().accepts(psiElement));
+    }
+
+    /**
+     * @see AnnotationPattern#getPropertyNameOfArrayValuePattern()
+     */
+    public void testGetEnumPropertyPattern() {
+        myFixture.configureByText(PhpFileType.INSTANCE, "<?php class Foo\n" +
+            "{\n" +
+            "    /**\n" +
+            "     * @Route(met<caret>hods  =  {   \"foobar\" , \"foo-bar\"  ,  \"\"})\n" +
+            "     */\n" +
+            "    private $foo;\n" +
+            "}"
+        );
+
+        PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+        assertTrue(AnnotationPattern.getPropertyNameOfArrayValuePattern().accepts(psiElement));
     }
 }

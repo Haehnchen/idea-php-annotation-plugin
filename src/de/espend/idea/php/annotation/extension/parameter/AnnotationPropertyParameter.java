@@ -63,7 +63,7 @@ public class AnnotationPropertyParameter {
     }
 
     public enum Type {
-        DEFAULT, PROPERTY_VALUE
+        DEFAULT, PROPERTY_VALUE, PROPERTY_ARRAY
     }
 
 }

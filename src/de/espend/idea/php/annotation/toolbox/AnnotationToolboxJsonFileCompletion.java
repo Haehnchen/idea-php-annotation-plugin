@@ -12,6 +12,7 @@ public class AnnotationToolboxJsonFileCompletion implements ToolboxJsonFileCompl
     public void addCompletions(@NotNull ToolboxJsonFileCompletionArguments arguments) {
         if(arguments.getType().equals(ToolboxJsonFileCompletionArguments.TYPE.SIGNATURE_TYPE)) {
             arguments.addLookupString("annotation");
+            arguments.addLookupString("annotation_array");
         }
     }
 }

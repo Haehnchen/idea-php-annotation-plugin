@@ -24,6 +24,7 @@ import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler;
 import de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider;
+import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -361,6 +362,13 @@ public class AnnotationUtil {
         return phpClasses;
     }
 
+    /**
+     * '@Foo(name={"FOOBAR", "FOOBAR2"})'
+     */
+    @Nullable
+    public static PsiElement getPropertyForArray(@NotNull StringLiteralExpression psiElement) {
+        return PhpElementsUtil.getPrevSiblingOfPatternMatch(psiElement, AnnotationPattern.getPropertyNameOfArrayValuePattern());
+    }
 }
 
 

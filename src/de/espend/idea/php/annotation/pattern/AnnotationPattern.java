@@ -222,7 +222,7 @@ public class AnnotationPattern {
      * Route("/", methods={"<caret>", "POST"})
      * Route("/", methods={"GET", "<caret>"})
      */
-    public static ElementPattern<PsiElement> getEnumPattern() {
+    public static ElementPattern<PsiElement> getPropertyArrayPattern() {
 
         // "methods={"
         PsiElementPattern.Capture<PsiElement> propertyPattern = PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LBRACE)
@@ -266,6 +266,28 @@ public class AnnotationPattern {
                     )
                 )
             );
+    }
+
+    /**
+     * Get property of enum array eg "methods"
+     *
+     * Route("/", methods={"<caret>", "POST"})
+     * Route("/", methods={"GET", "<caret>"})
+     */
+    public static ElementPattern<PsiElement> getPropertyNameOfArrayValuePattern() {
+        return PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).beforeLeafSkipping(
+            PlatformPatterns.or(
+                PlatformPatterns.psiElement(PsiWhiteSpace.class),
+                PlatformPatterns.psiElement().with(new MyWhiteSpaceAsTextPatternCondition())
+            ),
+            PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText("=").beforeLeafSkipping(
+                PlatformPatterns.or(
+                    PlatformPatterns.psiElement(PsiWhiteSpace.class),
+                    PlatformPatterns.psiElement().with(new MyWhiteSpaceAsTextPatternCondition())
+                ),
+                PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LBRACE)
+            )
+        );
     }
 
     /**
