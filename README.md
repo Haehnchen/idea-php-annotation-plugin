@@ -193,8 +193,10 @@ class Foo { }
 
 Provides integration for [PHP Toolbox](https://github.com/Haehnchen/idea-php-toolbox)
 
+#### Default and property values
+
 ```php
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\\Component\\Routing\\Annotation\\Route;
 
 /**
  * @Route("<caret>")
@@ -208,11 +210,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
     {
       "signatures":[
         {
-          "class": "Sensio\\Bundle\\FrameworkExtraBundle\\Configuration\\Route",
+          "class": "Symfony\\Component\\Routing\\Annotation\\Route",
           "type": "annotation"
         },
         {
-          "class": "Sensio\\Bundle\\FrameworkExtraBundle\\Configuration\\Route",
+          "class": "Symfony\\Component\\Routing\\Annotation\\Route",
           "field": "condition",
           "type": "annotation"
         }
@@ -221,5 +223,43 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
       "language":"php"
     }
   ],
+}
+```
+
+#### Property array values
+
+```php
+use Symfony\\Component\\Routing\\Annotation\\Route;
+
+/**
+ * @Route(methods={"<caret>"})
+ */
+```
+
+```
+{
+  "registrar":[
+    {
+      "language":"php",
+      "provider":"methods",
+      "signatures":[
+        {
+          "class": "Symfony\\Component\\Routing\\Annotation\\Route",
+          "type": "annotation_array",
+          "field": "methods"
+        }
+      ]
+    }
+  ],
+  "providers": [
+    {
+      "name": "methods",
+      "items":[
+        {
+          "lookup_string": "POST"
+        }
+      ]
+    }
+  ]
 }
 ```
