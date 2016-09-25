@@ -196,7 +196,7 @@ Provides integration for [PHP Toolbox](https://github.com/Haehnchen/idea-php-too
 #### Default and property values
 
 ```php
-use Symfony\\Component\\Routing\\Annotation\\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("<caret>")
@@ -229,7 +229,7 @@ use Symfony\\Component\\Routing\\Annotation\\Route;
 #### Property array values
 
 ```php
-use Symfony\\Component\\Routing\\Annotation\\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route(methods={"<caret>"})
