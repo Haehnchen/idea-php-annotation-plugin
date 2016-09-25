@@ -6,6 +6,13 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 4.2
+* Add alias for VichUploadableBundle [#69](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/69) @Koc
+* Add references for Doctrine @ORM\Embedded.class [#68](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/68)
+* Add autocomplete for array values of properties as extension point [#62](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/62)
+* Add Symfony internal route array completion provider [#62](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/62)
+* Add PHP-Toolbox provider for new array annotations as "annotation_array" [#62](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/62)
+
 ## 4.1.2
 * PhpStorm 2016.3: Switch from PhpResolveResult#create to PsiElementResolveResult#createResults [#66](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/66)
 

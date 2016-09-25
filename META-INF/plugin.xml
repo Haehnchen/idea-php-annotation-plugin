@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>4.1.2</version>
+  <version>4.2</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -45,6 +45,15 @@
 3.x: PhpStorm 2016.1+<br/>
 2.x: PhpStorm9, 10<br/>
 1.x: PhpStorm8<br/>
+
+<h2>4.2</h2>
+<ul>
+    <li>Add alias for VichUploadableBundle <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/69">#69</a> @Koc</li>
+    <li>Add references for Doctrine @ORM\Embedded.class <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/68">#68</a></li>
+    <li>Add autocomplete for array values of properties as extension point <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/62">#62</a></li>
+    <li>Add Symfony internal route array completion provider <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/62">#62</a></li>
+    <li>Add PHP-Toolbox provider for new array annotations as "annotation_array" <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/62">#62</a></li>
+</ul>
 
 <h2>4.1.2</h2>
 <ul>
