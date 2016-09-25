@@ -67,7 +67,7 @@ public class PropertyRegistrarMatcher implements LanguageRegistrarMatcherInterfa
 
             PhpClass phpClass = AnnotationUtil.getAnnotationReference(PsiTreeUtil.getParentOfType(phpDocString, PhpDocTag.class));
             if(phpClass == null) {
-                return false;
+                continue;
             }
 
             if(StringUtils.stripStart(phpClass.getFQN(), "\\").equals(StringUtils.stripStart(signature.getClassName(), "\\"))) {
