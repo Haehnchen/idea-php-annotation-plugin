@@ -10,6 +10,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.ID;
+import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
@@ -160,26 +161,18 @@ public class AnnotationUtil {
     */
     @NotNull
     public static Map<String, String> getUseImportMap(@Nullable PhpDocComment phpDocComment) {
-
-        // search for use alias in local file
-        final Map<String, String> useImports = new HashMap<>();
-
         if(phpDocComment == null) {
-            return useImports;
+            return Collections.emptyMap();
         }
 
-        PsiElement scope = null;
-        PhpNamespace phpNamespace = PsiTreeUtil.getParentOfType(phpDocComment, PhpNamespace.class);
-        if(phpNamespace != null) {
-            scope = phpNamespace.getStatements();
-        }
-
-        // file without namespace statement
+        PhpPsiElement scope = PhpCodeInsightUtil.findScopeForUseOperator(phpDocComment);
         if(scope == null) {
-            scope = PsiTreeUtil.getChildOfType(phpDocComment.getContainingFile(), GroupStatement.class);
+            return Collections.emptyMap();
         }
 
-        for(PhpUseList phpUseList : PsiTreeUtil.getChildrenOfTypeAsList(scope, PhpUseList.class)) {
+        Map<String, String> useImports = new HashMap<>();
+
+        for (PhpUseList phpUseList : PhpCodeInsightUtil.collectImports(scope)) {
             for(PhpUse phpUse : phpUseList.getDeclarations()) {
                 String alias = phpUse.getAliasName();
                 if (alias != null) {
