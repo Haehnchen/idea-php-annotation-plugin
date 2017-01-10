@@ -7,9 +7,9 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
+import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.stubs.indexes.PhpConstantNameIndex;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -94,7 +94,7 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
     @NotNull
     @Override
     public FileBasedIndex.InputFilter getInputFilter() {
-        return PhpConstantNameIndex.PHP_INPUT_FILTER;
+        return virtualFile -> virtualFile.getFileType() == PhpFileType.INSTANCE;
     }
 
     @Override
