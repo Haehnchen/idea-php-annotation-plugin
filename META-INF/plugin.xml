@@ -309,12 +309,13 @@
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineAnnotationTypeProvider"/>
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineAnnotationFieldTypeProvider"/>
       <PhpAnnotationDocTagAnnotator implementation="de.espend.idea.php.annotation.doctrine.annotator.RepositoryClassAnnotationAnnotator"/>
+      <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.EmbeddedClassCompletionProvider"/>
+      <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.doctrine.reference.EmbeddedClassCompletionProvider"/>
+      <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineCustomIdGenerator"/>
+      <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineCustomIdGenerator"/>
 
       <!-- Symfony -->
       <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.symfony.SymfonyCompletionProvider"/>
-
-      <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.EmbeddedClassCompletionProvider"/>
-      <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.doctrine.reference.EmbeddedClassCompletionProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="de.espend.idea.php.toolbox.extension">

@@ -9,6 +9,14 @@ namespace Doctrine\ORM\Mapping
     final class Embedded implements Annotation
     {
     }
+
+    /**
+     * @Annotation
+     * @Target("PROPERTY")
+     */
+    final class CustomIdGenerator implements Annotation
+    {
+    }
 }
 
 namespace My\FooClass
