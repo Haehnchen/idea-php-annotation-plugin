@@ -3,12 +3,16 @@
 ideaVersion="2016.1"
 if [ "$PHPSTORM_ENV" == "2016.1.2" ]; then
     ideaVersion="2016.1.4"
-elif [ "$PHPSTORM_ENV" == "2016.2" ]; then
-    ideaVersion="2016.2"
 elif [ "$PHPSTORM_ENV" == "2016.2.1" ]; then
-    ideaVersion="2016.2.3"
+    ideaVersion="2016.2.5"
+elif [ "$PHPSTORM_ENV" == "2016.3" ]; then
+    ideaVersion="2016.3"
+elif [ "$PHPSTORM_ENV" == "2016.3.1" ]; then
+    ideaVersion="2016.3.1"
+elif [ "$PHPSTORM_ENV" == "2016.3.2" ]; then
+    ideaVersion="2016.3.2"
 elif [ "$PHPSTORM_ENV" == "eap" ]; then
-    ideaVersion="163.3512.7"
+    ideaVersion="163.5644.15"
 fi
 
 travisCache=".cache"
@@ -58,17 +62,8 @@ if [ -d ./plugins ]; then
   echo "created plugin dir"  
 fi
 
-if [ "$PHPSTORM_ENV" == "2016.1" ]; then
 
-    #php
-    download "https://plugins.jetbrains.com/files/6610/24752/php-145.258.2.zip"
-    unzip -qo $travisCache/php-145.258.2.zip -d ./plugins
-
-    #twig
-    download "https://plugins.jetbrains.com/files/7303/24757/twig-145.258.2.zip"
-    unzip -qo $travisCache/twig-145.258.2.zip -d ./plugins
-
-elif [ "$PHPSTORM_ENV" == "2016.1.2" ]; then
+if [ "$PHPSTORM_ENV" == "2016.1.2" ]; then
 
     #php
     download "https://plugins.jetbrains.com/files/6610/25793/php-145.970.40.zip"
@@ -98,20 +93,45 @@ elif [ "$PHPSTORM_ENV" == "2016.2.1" ]; then
     download "https://plugins.jetbrains.com/files/7303/27028/twig-162.1121.34.zip"
     unzip -qo $travisCache/twig-162.1121.34.zip -d ./plugins
 
+elif [ "$PHPSTORM_ENV" == "2016.3" ]; then
+
+    #php
+    #download "https://plugins.jetbrains.com/files/6610/30482/php-163.7743.54.zip"
+    #unzip -qo $travisCache/php-163.7743.54.zip -d ./plugins
+
+    download "http://phpstorm.espend.de/files/proxy/phpstorm-2016.3-php.zip"
+    unzip -qo $travisCache/phpstorm-2016.3-php.zip -d ./plugins
+
+    #twig
+    download "http://phpstorm.espend.de/files/proxy/phpstorm-2016.3-twig.zip"
+    unzip -qo $travisCache/phpstorm-2016.3-twig.zip -d ./plugins
+
+elif [ "$PHPSTORM_ENV" == "2016.3.1" ]; then
+
+    #php
+    download "http://phpstorm.espend.de/files/proxy/phpstorm-2016.3.1-php.zip"
+    unzip -qo $travisCache/phpstorm-2016.3.1-php.zip -d ./plugins
+
+    #twig
+    download "http://phpstorm.espend.de/files/proxy/phpstorm-2016.3.1-twig.zip"
+    unzip -qo $travisCache/phpstorm-2016.3.1-twig.zip -d ./plugins
+
+elif [ "$PHPSTORM_ENV" == "2016.3.2" ]; then
+
+    #php
+    download "http://phpstorm.espend.de/files/proxy/phpstorm-2016.3.2-php.zip"
+    unzip -qo $travisCache/phpstorm-2016.3.2-php.zip -d ./plugins
+
+    #twig
+    download "http://phpstorm.espend.de/files/proxy/phpstorm-2016.3.2-twig.zip"
+    unzip -qo $travisCache/phpstorm-2016.3.2-twig.zip -d ./plugins
+
+
 elif [ "$PHPSTORM_ENV" == "eap" ]; then
 
     #php
     download "https://plugins.jetbrains.com/files/6610/28124/php-163.3512.10.zip"
     unzip -qo $travisCache/php-163.3512.10.zip -d ./plugins
-
-    #twig
-    download "https://plugins.jetbrains.com/files/7303/28092/twig-163.3512.10.zip"
-    unzip -qo $travisCache/twig-163.3512.10.zip -d ./plugins
-
-    # TODO: extract latest builds for plugins from eap site they are not public
-    # https://confluence.jetbrains.com/display/PhpStorm/PhpStorm+Early+Access+Program
-    # echo "No configuration for PhpStorm: $PHPSTORM_ENV"
-    # exit 1
 
 else
     echo "Unknown PHPSTORM_ENV value: $PHPSTORM_ENV"
