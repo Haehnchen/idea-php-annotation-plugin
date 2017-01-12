@@ -54,6 +54,30 @@ use Doctrine\ORM\Mapping as ORM;
 class Foo {}
 ```
 
+#### Class LineMarker
+
+LineMarker which provide navigation to annotation class usages
+
+```php
+namespace Doctrine\ORM\Mapping;
+
+/**
+ * @Annotation
+ */
+final class Entity implements Annotation
+{
+}
+```
+
+Targeting
+
+```php
+
+/**
+ * @ORM\Entity()
+ */
+```
+
 ### Annotation Class Detection
 
 * Every class with `@Annotation` inside class doc block is detected on file indexing

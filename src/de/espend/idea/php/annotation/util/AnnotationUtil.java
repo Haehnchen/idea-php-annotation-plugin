@@ -3,9 +3,12 @@ package de.espend.idea.php.annotation.util;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -14,6 +17,7 @@ import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.ID;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
+import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
@@ -22,6 +26,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import de.espend.idea.php.annotation.AnnotationStubIndex;
+import de.espend.idea.php.annotation.AnnotationUsageIndex;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
@@ -504,6 +509,55 @@ public class AnnotationUtil {
         }
 
         return null;
+    }
+
+    @NotNull
+    private static Collection<PsiFile> getFilesImplementingAnnotation(@NotNull Project project, @NotNull String phpClassName) {
+        Collection<VirtualFile> files = new HashSet<>();
+
+        FileBasedIndex.getInstance().getFilesWithKey(AnnotationUsageIndex.KEY, new HashSet<>(Collections.singletonList(phpClassName)), virtualFile -> {
+            files.add(virtualFile);
+            return true;
+        }, GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(project), PhpFileType.INSTANCE));
+
+        Collection<PsiFile> elements = new ArrayList<>();
+
+        for (VirtualFile file : files) {
+            PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+
+            if(psiFile == null) {
+                continue;
+            }
+
+            elements.add(psiFile);
+        }
+
+        return elements;
+    }
+
+    /**
+     * Find all annotation usages for given class name
+     *
+     * Doctrine\ORM\Mapping\Entity => ORM\Entity(), Entity()
+     *
+     * @param project current Project
+     * @param fqnClassName Foobar\ClassName
+     * @return targets
+     */
+    public static Collection<PhpDocTag> getImplementationsForAnnotation(@NotNull Project project, @NotNull String fqnClassName) {
+        Collection<PhpDocTag> psiElements = new HashSet<>();
+
+        for (PsiFile psiFile : getFilesImplementingAnnotation(project, fqnClassName)) {
+            psiFile.accept(new PhpDocTagAnnotationRecursiveElementWalkingVisitor(pair -> {
+                if(StringUtils.stripStart(pair.getFirst(), "\\").equalsIgnoreCase(StringUtils.stripStart(fqnClassName, "\\"))) {
+                    psiElements.add(pair.getSecond());
+                }
+
+                return false;
+            }));
+        }
+
+        return psiElements;
     }
 
     /**
