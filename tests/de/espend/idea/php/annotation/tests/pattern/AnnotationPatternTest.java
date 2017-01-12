@@ -63,4 +63,42 @@ public class AnnotationPatternTest extends AnnotationLightCodeInsightFixtureTest
         PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
         assertTrue(AnnotationPattern.getPropertyNameOfArrayValuePattern().accepts(psiElement));
     }
+
+    /**
+     * @see AnnotationPattern#getDefaultPropertyValue()
+     */
+    public void testGetDefaultPropertyValue() {
+        myFixture.configureByText(PhpFileType.INSTANCE, "<?php class Foo\n" +
+            "{\n" +
+            "    /**\n" +
+            "     * @Route(\"<caret>\")\n" +
+            "     */\n" +
+            "    private $foo;\n" +
+            "}"
+        );
+
+        assertTrue(AnnotationPattern.getDefaultPropertyValue().accepts(myFixture.getFile().findElementAt(myFixture.getCaretOffset())));
+
+        myFixture.configureByText(PhpFileType.INSTANCE, "<?php class Foo\n" +
+            "{\n" +
+            "    /**\n" +
+            "     * @Route(foobar=\"aaa\", \"<caret>\")\n" +
+            "     */\n" +
+            "    private $foo;\n" +
+            "}"
+        );
+
+        assertTrue(AnnotationPattern.getDefaultPropertyValue().accepts(myFixture.getFile().findElementAt(myFixture.getCaretOffset())));
+
+        myFixture.configureByText(PhpFileType.INSTANCE, "<?php class Foo\n" +
+            "{\n" +
+            "    /**\n" +
+            "     * @Route(\"<caret>\", foobar=\"aaa\")\n" +
+            "     */\n" +
+            "    private $foo;\n" +
+            "}"
+        );
+
+        assertTrue(AnnotationPattern.getDefaultPropertyValue().accepts(myFixture.getFile().findElementAt(myFixture.getCaretOffset())));
+    }
 }

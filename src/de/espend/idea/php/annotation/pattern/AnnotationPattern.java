@@ -144,22 +144,16 @@ public class AnnotationPattern {
 
     /**
      * matches "@Callback("<value>", foo...)"
-     * TODO: is this also valid "@Callback(key="", "<value>")"?
      */
-    public static ElementPattern<PsiElement> getDefaultPropertyValue() {
-
+    public static PsiElementPattern.Capture<PsiElement> getDefaultPropertyValue() {
         return PlatformPatterns
-            .psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).afterLeaf(
-                PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText(PlatformPatterns.string().equalTo("\"")).afterLeaf(
-                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LPAREN)
-                )
-            )
-            .withParent(PlatformPatterns
-                .psiElement(PhpDocElementTypes.phpDocTagValue)
+            .psiElement(PhpDocTokenTypes.DOC_STRING)
+            .withParent(PlatformPatterns.psiElement(StringLiteralExpression.class).withParent(PlatformPatterns
+                .psiElement(PhpDocElementTypes.phpDocAttributeList)
                 .withParent(PlatformPatterns
                     .psiElement(PhpDocElementTypes.phpDocTag)
                 )
-            )
+            ))
             .withLanguage(PhpLanguage.INSTANCE);
     }
 
