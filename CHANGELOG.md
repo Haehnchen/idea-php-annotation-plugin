@@ -6,6 +6,11 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 4.3
+* Index issue on YAML File; drop usage of DefaultFileTypeSpecificInputFilter [#72](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/72)
+* Add autosuggest and ctrl+click for Doctrine CustomIdGenerator [#48](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/48)
+* Add extension point to register global namespace prefixes [#81](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/81)
+
 ## 4.2
 * Add alias for VichUploadableBundle [#69](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/69) @Koc
 * Add references for Doctrine @ORM\Embedded.class [#68](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/68)
