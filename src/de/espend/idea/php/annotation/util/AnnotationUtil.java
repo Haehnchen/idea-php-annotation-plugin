@@ -21,10 +21,8 @@ import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
-import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
-import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator;
-import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler;
-import de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider;
+import de.espend.idea.php.annotation.extension.*;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationGlobalNamespacesLoaderParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +41,7 @@ public class AnnotationUtil {
 
     public static final ExtensionPointName<PhpAnnotationDocTagGotoHandler> EP_DOC_TAG_GOTO = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationDocTagGotoHandler");
     public static final ExtensionPointName<PhpAnnotationDocTagAnnotator> EP_DOC_TAG_ANNOTATOR = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationDocTagAnnotator");
+    public static final ExtensionPointName<PhpAnnotationGlobalNamespacesLoader> EXTENSION_POINT_GLOBAL_NAMESPACES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationGlobalNamespacesLoader");
 
     public static Set<String> NON_ANNOTATION_TAGS = new HashSet<String>() {{
         addAll(Arrays.asList(PhpDocUtil.ALL_TAGS));
@@ -230,6 +229,21 @@ public class AnnotationUtil {
             PhpClass phpClass = PhpElementsUtil.getClass(phpDocTag.getProject(), tagName);
             if(phpClass != null && isAnnotationClass(phpClass)) {
                 return phpClass;
+            }
+
+            // global namespace support
+            AnnotationGlobalNamespacesLoaderParameter parameter = null;
+            for (PhpAnnotationGlobalNamespacesLoader loader : EXTENSION_POINT_GLOBAL_NAMESPACES.getExtensions()) {
+                if(parameter == null) {
+                    parameter = new AnnotationGlobalNamespacesLoaderParameter(phpDocTag.getProject());
+                }
+
+                for (String ns : loader.getGlobalNamespaces(parameter)) {
+                    PhpClass globalPhpClass = PhpElementsUtil.getClassInterface(phpDocTag.getProject(), ns + "\\" + className);
+                    if(globalPhpClass != null) {
+                        return globalPhpClass;
+                    }
+                }
             }
 
             return null;
