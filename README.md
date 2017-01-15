@@ -114,8 +114,13 @@ Example for extension points.
       <extensionPoint name="PhpAnnotationDocTagGotoHandler" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler"/>
       <extensionPoint name="PhpAnnotationDocTagAnnotator" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator"/>
       <extensionPoint name="PhpAnnotationGlobalNamespacesLoader" interface="de.espend.idea.php.annotation.extension.PhpAnnotationGlobalNamespacesLoader"/>
+      <extensionPoint name="PhpAnnotationVirtualProperties" interface="de.espend.idea.php.annotation.extension.PhpAnnotationVirtualProperties"/>
 </extensionPoints>
+```
 
+Usage
+
+```xml
 <extensions defaultExtensionNs="de.espend.idea.php.annotation">
   <PhpAnnotationExtension implementation="de.espend.idea.php.annotation.completion.PhpAnnotationTypeCompletionProvider"/>
 </extensions>

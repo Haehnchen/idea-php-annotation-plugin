@@ -21,8 +21,10 @@ import de.espend.idea.php.annotation.dict.AnnotationPropertyEnum;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
+import de.espend.idea.php.annotation.extension.PhpAnnotationVirtualProperties;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationCompletionProviderParameter;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationVirtualPropertyCompletionParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.*;
 import org.apache.commons.lang.StringUtils;
@@ -156,6 +158,9 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         }
     }
 
+    /**
+     * "@Foo(<caret>)" provides attribute so field properties of annotation
+     */
     private class PhpDocAttributeList extends CompletionProvider<CompletionParameters> {
 
         @Override
@@ -180,6 +185,29 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                 attachLookupElement(completionResultSet, field);
             }
 
+            // extension point for virtual properties
+            AnnotationVirtualPropertyCompletionParameter virtualPropertyParameter = null;
+            AnnotationCompletionProviderParameter parameter = null;
+
+            for (PhpAnnotationVirtualProperties ep : AnnotationUtil.EP_VIRTUAL_PROPERTIES.getExtensions()) {
+                if(virtualPropertyParameter == null) {
+                    virtualPropertyParameter = new AnnotationVirtualPropertyCompletionParameter(phpClass);
+                }
+
+                if(parameter == null) {
+                    parameter = new AnnotationCompletionProviderParameter(completionParameters, processingContext, completionResultSet);
+                }
+
+                ep.addCompletions(virtualPropertyParameter, parameter);
+            }
+
+            if(virtualPropertyParameter != null) {
+                for (Map.Entry<String, AnnotationPropertyEnum> pair : virtualPropertyParameter.getLookupElements().entrySet()) {
+                    completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(
+                        new AnnotationProperty(pair.getKey(), pair.getValue()))
+                    );
+                }
+            }
         }
 
         private void attachLookupElement(CompletionResultSet completionResultSet, Field field) {

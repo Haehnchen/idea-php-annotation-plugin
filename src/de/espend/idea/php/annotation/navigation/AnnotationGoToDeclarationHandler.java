@@ -14,12 +14,15 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler;
+import de.espend.idea.php.annotation.extension.PhpAnnotationVirtualProperties;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationDocTagGotoHandlerParameter;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationVirtualPropertyTargetsParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpDocUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import de.espend.idea.php.annotation.util.PluginUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -97,7 +100,6 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
      * @param targets Goto targets
      */
     private void addPropertyGoto(PsiElement psiElement, List<PsiElement> targets) {
-
         PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(psiElement, PhpDocTag.class);
         if(phpDocTag == null) {
             return;
@@ -108,11 +110,29 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
             return;
         }
 
+        String property = psiElement.getText();
+        if(StringUtils.isBlank(property)) {
+            return;
+        }
+
         for(Field field: phpClass.getFields()) {
-            if(field.getName().equals(psiElement.getText())) {
+            if(field.getName().equals(property)) {
                 targets.add(field);
-                return;
             }
+        }
+
+        // extension point to provide virtual properties / fields targets
+        AnnotationVirtualPropertyTargetsParameter parameter = null;
+        for (PhpAnnotationVirtualProperties ep : AnnotationUtil.EP_VIRTUAL_PROPERTIES.getExtensions()) {
+            if(parameter == null) {
+                parameter = new AnnotationVirtualPropertyTargetsParameter(phpClass, psiElement, property);
+            }
+
+            ep.getTargets(parameter);
+        }
+
+        if(parameter != null) {
+            targets.addAll(parameter.getTargets());
         }
     }
 
