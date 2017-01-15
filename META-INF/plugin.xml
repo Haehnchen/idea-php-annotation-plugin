@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>4.3</version>
+  <version>4.3.1</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -36,6 +36,12 @@
   <li>Auto alias import for annotation class</li>
 </ul>
 
+<h2>Related Plugins</h2>
+<ul>
+    <li><a href="http://plugins.jetbrains.com/plugin/8133">PHP Toolbox</a></li>
+    <li><a href="http://plugins.jetbrains.com/plugin/7487">Drupal Symfony2 Bridge</a></li>
+</ul>
+
       ]]>
   </description>
 
@@ -45,6 +51,11 @@
 3.x: PhpStorm 2016.1+<br/>
 2.x: PhpStorm9, 10<br/>
 1.x: PhpStorm8<br/>
+
+<h2>4.3.1</h2>
+<ul>
+    <li>Add virtual annotation classes properties / fields <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/80">#80</a></li>
+</ul>
 
 <h2>4.3</h2>
 <ul>
@@ -92,127 +103,9 @@
     <li>Use newest api level and migrate internal code usage</li>    
 </ul>
 
-<h2>3.0.1</h2>
-<ul>
-    <li>Custom use aliases do not work after restarting the IDE <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/54">#54</a></li>
-</ul>
-
-<h2>3.0</h2>
-<ul>
-    <li>Change minimal api level to PhpStorm 2016.1</li>
-    <li>Replace deprecated PhpUse usages <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/52">#52</a> @artspb</li>
-    <li>Add application level settings to set auto-complete without "()" <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/42">#42</a></li>
-    <li>Add option to always use an aliased import for some annotations or namespaces <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/50">#50</a></li>
-    <li>Doctrine orm class initialize should add an use alias</li>
-    <li>Fix inline annotations are not recognized <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/24">#24</a></li>
-    <li>Replace deprecated PhpStorm method calls <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/31">#31</a></li>
-    <li>Doctrine repository creation intention is now available in attribute value</li>
-</ul>
-
-<h2>2.6.2</h2>
-<ul>
-    <li>Add PHP Toolbox support <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/49">#49</a></li>
-    <li>Implement integration tests for main plugin functionality</li>
-</ul>
-
-<h2>2.6.1</h2>
-<ul>
-    <li>Replace Doctrine static column types with parser to support simple_array and json_array <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/39">#39</a></li>
-    <li>On ORM annotations generation missing ORM alias will add automatically</li>
-</ul>
-
-<h2>2.6 / 1.6</h2>
-<ul>
-    <li>Add Doctrine repository create quickfix</li>
-    <li>Add intention creation for Doctrine: @Column properties</li>
-    <li>Add generator for Doctrine entity class and properties</li>
-</ul>
-
-<h2>1.5.1</h2>
-<ul>
-    <li>fix "missing import" inspection highlights all doc blocks #25</li>
-</ul>
-
-<h2>1.5</h2>
-<ul>
-    <li>Fix property value pattern completion for PhpStorm8</li>
-    <li>Add whitelist for annotation PhpDoc on next siblings, to filter inline doc blocks <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/24">#24</a></li>
-    <li>Move "Missing Import" annotator to inspection <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/19">#19</a></li>
-</ul>
-
-<h2>1.4</h2>
-<ul>
-    <li>API: add new proxy method "getPropertyValue" to get representing psielements</li>
-    <li>Completion and goto for class constants inside doctags <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/18">#18</a></li>
-    <li>Annotation are now valid in namespace less files; this also brings some performance improvements because of lower search scope</li>
-</ul>
-
-<h2>1.3</h2>
-<ul>
-    <li>Typo fix that class completion are detected as method</li>
-    <li>Attach annotation insertHandler for alias completion</li>
-    <li>Rename getRootValue to more naming getDefaultPropertyValue</li>
-    <li>Remove unused configuration form <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/15">#15</a></li>
-    <li>Fix that docblock completion confidence is valid in comments and provides autopopup</li>
-</ul>
-
-<h2>1.2</h2>
-<ul>
-    <li>Fix annotation class inside composer libraries where not autocompleted <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/13">#13</a></li>
-    <li>Support fqn classes annotation <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/17">#17</a></li>
-    <li>Add java annotations for all extension points</li>
-    <li>Pipe additional util methods in extension parameters</li>
-</ul>
-
-<h2>1.1</h2>
-<ul>
-    <li>Add doc tag property value utils and dicts</li>
-    <li>Add alias annotation class completion</li>
-    <li>Improve performance on annotation class completion</li>
-    <li>Use php class statement scope instead of file scope for namespace collection</li>
-</ul>
-
-<h2>1.0.1</h2>
-<ul>
-    <li>Detect annotation classes in same namespace</li>
-</ul>
-
-<h2>1.0</h2>
-<ul>
-    <li>Remove all PhpStorm6 hacks, support new Api and only allow PhpStorm7 builds</li>
-    <li>Add more property value type detections</li>
-    <li>Add and change extension points to reflect latest api features</li>
-    <li>Add class import annotator</li>
-    <li>Add docblock property value provider for @Enum</li>
-    <li>Add Doctrine providers for: targetEntity, repositoryClass, mappedBy, inversedBy</li>
-    <li>Migrate pattern to allow multiple docblocks  <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/12">#12</a>, <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/8">#8</a></li>
-    <li>Plugin dont need to explicit enable</li>
-</ul>
-
-<h2>0.4</h2>
-<ul>
-    <li>Only support PhpStorm > 7</li>
-    <li>Activate annotation class reference provider and use it where possible</li>
-</ul>
-
-<h2>0.3</h2>
-<ul>
-    <li>Pattern fix to support eap 131.235</li>
-    <li>Support "@" completion WI-20265</li>
-    <li>Optimize doc tag name insert handler</li>
-</ul>
-
-<h2>0.2</h2>
-<ul>
-    <li>Better property completion pattern and type detection</li>
-    <li>Optimize property value insert handler</li>
-    <li>Extension points for property goto and completion eg @Template("file.html.twig")</li>
-</ul>
-
-<h2>0.1</h2>
-<ul>
-    <li>Init version support PhpStorm6 and 7</li>
-</ul>
+<br/>
+<a href="https://github.com/Haehnchen/idea-php-annotation-plugin/blob/master/CHANGELOG.md">open full changelog</a>
+<br/>
 
       ]]>
   </change-notes>

@@ -6,6 +6,9 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 4.3.1
+* Add virtual annotation classes properties / fields [#80](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/80)
+
 ## 4.3
 * Index issue on YAML File; drop usage of DefaultFileTypeSpecificInputFilter [#72](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/72)
 * Add autosuggest and ctrl+click for Doctrine CustomIdGenerator [#48](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/48)
