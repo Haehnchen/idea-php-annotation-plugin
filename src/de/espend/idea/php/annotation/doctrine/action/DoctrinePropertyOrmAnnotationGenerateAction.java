@@ -34,6 +34,11 @@ public class DoctrinePropertyOrmAnnotationGenerateAction extends CodeInsightActi
             super.invoke(project, editor, file);
         }
 
+        protected PhpAccessorMethodData[] createAccessors(PsiElement field) {
+            // deprecated signature
+            return createAccessors(null, field);
+        }
+
         protected PhpAccessorMethodData[] createAccessors(PhpClass phpClass, PsiElement field)
         {
             if(field instanceof Field) {
