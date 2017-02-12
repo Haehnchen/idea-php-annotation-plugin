@@ -6,6 +6,9 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 4.3.2
+* Replace deprecated api usages
+
 ## 4.3.1
 * Add virtual annotation classes properties / fields [#80](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/80)
 
