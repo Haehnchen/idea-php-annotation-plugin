@@ -34,7 +34,7 @@ public class DoctrinePropertyOrmAnnotationGenerateAction extends CodeInsightActi
             super.invoke(project, editor, file);
         }
 
-        protected PhpAccessorMethodData[] createAccessors(PsiElement field)
+        protected PhpAccessorMethodData[] createAccessors(PhpClass phpClass, PsiElement field)
         {
             if(field instanceof Field) {
                 DoctrineUtil.importOrmUseAliasIfNotExists((Field) field);

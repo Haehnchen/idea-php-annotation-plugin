@@ -3,13 +3,13 @@ package de.espend.idea.php.annotation.doctrine.reference.references;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.jetbrains.php.lang.psi.resolve.PhpResolveResult;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
@@ -41,7 +41,7 @@ public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<
             .filter(field -> !field.isConstant() && content.equals(field.getName()))
             .collect(Collectors.toList());
 
-        return PhpResolveResult.createResults(psiElementList);
+        return PsiElementResolveResult.createResults(psiElementList);
     }
 
     @NotNull

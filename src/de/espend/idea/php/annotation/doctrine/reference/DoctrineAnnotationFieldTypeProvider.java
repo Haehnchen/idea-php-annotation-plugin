@@ -1,11 +1,7 @@
 package de.espend.idea.php.annotation.doctrine.reference;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPolyVariantReferenceBase;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.*;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.jetbrains.php.lang.psi.resolve.PhpResolveResult;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
 import de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
@@ -61,7 +57,9 @@ public class DoctrineAnnotationFieldTypeProvider implements PhpAnnotationReferen
                 return new ResolveResult[0];
             }
 
-            return PhpResolveResult.createResults(DoctrineUtil.getColumnTypesTargets(psiElement.getProject(), contents));
+            return PsiElementResolveResult.createResults(
+                DoctrineUtil.getColumnTypesTargets(psiElement.getProject(), contents)
+            );
         }
 
         @NotNull
