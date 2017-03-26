@@ -50,6 +50,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
         options.add(new UseAliasOption("JMS\\Serializer\\Annotation", "Serializer", true));
         options.add(new UseAliasOption("Gedmo\\Mapping\\Annotation", "Gedmo", true));
         options.add(new UseAliasOption("Vich\\UploaderBundle\\Mapping\\Annotation", "Vich", true));
+        options.add(new UseAliasOption("FOS\\RestBundle\\Controller\\Annotations", "Rest", true));
 
         return options;
     }
