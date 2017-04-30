@@ -1,10 +1,15 @@
 # Changelog
 
 ## Versions
+* 5.x: PhpStorm 2017.1+
 * 4.x: PhpStorm 2016.1.2+
 * 3.x: PhpStorm 2016.1+
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
+
+## 5.0
+* PhpStorm 2017.1 build
+* Add FOSRest alias [#87](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/87) @Koc
 
 ## 4.3.2
 * Replace deprecated api usages
