@@ -2,6 +2,7 @@ package de.espend.idea.php.annotation.tests.util;
 
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.PhpFileType;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
@@ -10,6 +11,7 @@ import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTest
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -77,5 +79,22 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
 
         assertNotNull(propertyForEnum);
         assertEquals("name", propertyForEnum.getText());
+    }
+
+    public void testGetUseImportMap() {
+        PhpDocTag phpDocTag = PhpPsiElementFactory.createFromText(getProject(), PhpDocTag.class, "<?php\n" +
+            "use Foobar;\n" +
+            "use Bar as MyFoo" +
+            "\n" +
+            "/**\n" +
+            " * @Foo()\n" +
+            " **/\n" +
+            "class Foo() {}\n"
+        );
+
+        Map<String, String> propertyForEnum = AnnotationUtil.getUseImportMap(phpDocTag);
+
+        assertEquals("\\Foobar", propertyForEnum.get("Foobar"));
+        assertEquals("\\Bar", propertyForEnum.get("MyFoo"));
     }
 }

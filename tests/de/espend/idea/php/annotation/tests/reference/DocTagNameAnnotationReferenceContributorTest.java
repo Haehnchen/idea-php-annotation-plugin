@@ -77,7 +77,7 @@ public class DocTagNameAnnotationReferenceContributorTest extends AnnotationLigh
             "class Foo\n" +
             "{\n" +
             "  /**\n" +
-            "   * @Car\n" +
+            "   * @ORM\n" +
             "   */\n" +
             "  public function foo()\n" +
             "  {\n" +
