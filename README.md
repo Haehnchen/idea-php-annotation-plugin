@@ -20,6 +20,7 @@ Changelog   | [CHANGELOG](CHANGELOG.md)
 
 ### Versions
 
+* 5.x: PhpStorm 2017.1+
 * 4.x: PhpStorm 2016.1.2+
 * 3.x: PhpStorm 2016.1
 * 2.x: PhpStorm9
@@ -69,7 +70,7 @@ class NotBlank extends Constraint {
     public $groups = array();
 
     /**
-     * @var Boolean
+     * @var bool|boolean
      */
     public $option = false;
 
@@ -83,7 +84,11 @@ class NotBlank extends Constraint {
      * @var array<string>
      */
     public $cascade;
-
+    
+    /**
+     * @var mixed|foobar|bool
+     */
+    public $mixed;
 }
 ```
 

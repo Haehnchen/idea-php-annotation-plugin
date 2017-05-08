@@ -5,9 +5,10 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationCompletionProviderParameter;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
-import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,9 +34,15 @@ public class PhpAnnotationTypeCompletionProvider implements PhpAnnotationComplet
                 continue;
             }
 
-            String typeName = field.getType().toString();
-            if(typeName.equals("bool") || typeName.equals("boolean")) {
-                values.addAll(Arrays.asList("false", "true"));
+            for (String s : field.getType().getTypes()) {
+                // _BOOLEAN, _BOOL are private so rebuild a boolean check
+                s = StringUtils.stripStart(s,"\\");
+                if(s.equalsIgnoreCase("bool") || s.equalsIgnoreCase("boolean")) {
+                    values.addAll(Arrays.asList("false", "true"));
+
+                    // stop on first match
+                    break;
+                }
             }
 
             // @Enum({"AUTO", "SEQUENCE"})
@@ -52,9 +59,7 @@ public class PhpAnnotationTypeCompletionProvider implements PhpAnnotationComplet
                         while (matcher.find()) {
                             values.add(matcher.group(1));
                         }
-
                     }
-
                 }
             }
         }
@@ -62,7 +67,5 @@ public class PhpAnnotationTypeCompletionProvider implements PhpAnnotationComplet
         for(String s: values) {
             completionParameter.getResult().addElement(LookupElementBuilder.create(s));
         }
-
     }
-
 }

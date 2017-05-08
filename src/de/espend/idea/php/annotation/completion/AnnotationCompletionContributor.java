@@ -244,12 +244,12 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                                 return;
                             }
 
-                            if(typeText.equals("integer") || typeText.equals("int")) {
+                            if(typeText.equalsIgnoreCase("integer") || typeText.equalsIgnoreCase("int")) {
                                 completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.INTEGER)));
                                 return;
                             }
 
-                            if(typeText.equals("boolean") || typeText.equals("bool")) {
+                            if(typeText.equalsIgnoreCase("boolean") || typeText.equalsIgnoreCase("bool")) {
                                 completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.BOOLEAN)));
                                 return;
                             }

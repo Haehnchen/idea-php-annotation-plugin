@@ -14,11 +14,15 @@ namespace My\Annotations
          */
         public $cascade;
 
-
         /**
          * @var Boolean
          */
         public $option = false;
+
+        /**
+         * @var mixed|array|boolean
+         */
+        public $mixed;
 
         /**
          *

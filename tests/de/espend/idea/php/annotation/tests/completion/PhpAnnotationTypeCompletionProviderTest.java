@@ -134,6 +134,18 @@ public class PhpAnnotationTypeCompletionProviderTest extends AnnotationLightCode
         );
     }
 
+    public void testPropertyValueCompletionForMultipleTypes() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "use \\My\\Annotations\\All;\n" +
+                "/**\n" +
+                "* @All(mixed=\"<caret>\")\n" +
+                "*/\n" +
+                "class Foo {}\n" +
+                "",
+            "true", "false"
+        );
+    }
+
     /**
      * in nested doc tag we have TEXT elements instead of WHITESPACE
      * 
