@@ -2,7 +2,7 @@
 
 ideaVersion="2017.1"
 if [ "$PHPSTORM_ENV" == "2017.1" ]; then
-    ideaVersion="2017.1"
+    ideaVersion="2017.1.3"
 elif [ "$PHPSTORM_ENV" == "eap" ]; then
     ideaVersion="163.5644.15"
 fi
@@ -84,9 +84,8 @@ else
     exit 1
 fi
 
-
 rm -f $travisCache/php-toolbox.jar
-download "https://plugins.jetbrains.com/files/8133/23695/php-toolbox.jar"
+download "http://phpstorm.espend.de/files/proxy/plugins/php-toolbox.jar"
 cp $travisCache/php-toolbox.jar ./plugins
 
 # Run the tests
