@@ -7,6 +7,13 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 5.1
+* Allow multiple PhpTypes declaration for bool type detection
+* Add PhpStorm 2017.2 travis environment
+* Fix npe in Doctrine repository annotator [#83](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/83)
+* Replace deprecation usage of annotation indexer externalizer
+* Imported interfaces @Query(FooInterface::class) are marked as unused when used for constant [#82](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/82)
+
 ## 5.0
 * PhpStorm 2017.1 build
 * Add FOSRest alias [#87](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/87) @Koc

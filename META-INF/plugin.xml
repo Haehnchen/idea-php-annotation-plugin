@@ -1,7 +1,7 @@
 <idea-plugin url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>5.0</version>
+  <version>5.1</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -52,6 +52,15 @@
 3.x: PhpStorm 2016.1+<br/>
 2.x: PhpStorm9, 10<br/>
 1.x: PhpStorm8<br/>
+
+<h2>5.1</h2>
+<ul>
+    <li>Allow multiple PhpTypes declaration for bool type detection</li>
+    <li>Add PhpStorm 2017.2 travis environment</li>
+    <li>Fix npe in Doctrine repository annotator <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/83">#83</a></li>
+    <li>Replace deprecation usage of annotation indexer externalizer</li>
+    <li>Imported interfaces @Query(FooInterface::class) are marked as unused when used for constant <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/82">#82</a></li>
+</ul>
 
 <h2>5.0</h2>
 <ul>
