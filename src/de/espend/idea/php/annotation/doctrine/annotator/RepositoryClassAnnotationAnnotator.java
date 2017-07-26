@@ -92,9 +92,17 @@ public class RepositoryClassAnnotationAnnotator implements PhpAnnotationDocTagAn
         String targetClassName = targetClass.substring(targetClass.lastIndexOf("\\") + 1);
         String filename = targetClassName  + ".php";
 
-        PsiDirectory directory = phpClassContext.getContainingFile().getContainingDirectory();
-        TextRange textRange = repositoryClass.getTextRange();
+        PsiFile containingFile = phpClassContext.getContainingFile();
+        if(containingFile == null) {
+            return;
+        }
 
+        PsiDirectory directory = containingFile.getContainingDirectory();
+        if(directory == null) {
+            return;
+        }
+
+        TextRange textRange = repositoryClass.getTextRange();
         Annotation warningAnnotation = parameter.getHolder().createWarningAnnotation(
             new TextRange(textRange.getStartOffset() + 1, textRange.getEndOffset() - 1),
             "Missing Repository Class"
