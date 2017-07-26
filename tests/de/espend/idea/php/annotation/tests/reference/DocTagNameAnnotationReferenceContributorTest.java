@@ -162,6 +162,29 @@ public class DocTagNameAnnotationReferenceContributorTest extends AnnotationLigh
         assertFalse(optimized.contains("use MyConstant\\Foo;"));
     }
 
+    public void testThatClassInterfaceIsSupportedForImportOptimization() {
+        String optimized = optimizeImports("<?php\n" +
+            "\n" +
+            "namespace My;\n" +
+            "\n" +
+            "use FooBar\\FoobarInterface;\n" +
+            "use FooBar\\Apple;\n" +
+            "\n" +
+            "class Foo\n" +
+            "{\n" +
+            "  /**\n" +
+            "   * @Car(FoobarInterface::class)" +
+            "   */\n" +
+            "  public function foo()\n" +
+            "  {\n" +
+            "  }\n" +
+            "}\n"
+        );
+
+        assertTrue(optimized.contains("use FooBar\\FoobarInterface;"));
+        assertFalse(optimized.contains("use FooBar\\Apple;"));
+    }
+
     @NotNull
     private String optimizeImports(@NotNull String content) {
         PsiFile psiFile = myFixture.configureByText(PhpFileType.INSTANCE, content);

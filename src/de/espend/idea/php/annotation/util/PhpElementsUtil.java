@@ -147,10 +147,9 @@ public class PhpElementsUtil {
     /**
      * Get a PhpClass on some possible context like namespace or use imports
      * TODO there must be some core utils
-     *
      */
     @Nullable
-    public static PhpClass getClassByContext(PsiElement psiElement, String className) {
+    public static PhpClass getClassByContext(@NotNull PsiElement psiElement, @NotNull String className) {
 
         PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(psiElement, PhpDocTag.class);
         if(phpDocTag == null) {
@@ -159,15 +158,15 @@ public class PhpElementsUtil {
 
         Map<String, String> map = AnnotationUtil.getUseImportMap(phpDocTag);
         if(map.containsKey(className)) {
-            return PhpElementsUtil.getClass(psiElement.getProject(), map.get(className));
+            return PhpElementsUtil.getClassInterface(psiElement.getProject(), map.get(className));
         }
 
         PhpNamespace phpNamespace = PsiTreeUtil.getParentOfType(psiElement, PhpNamespace.class);
         if(phpNamespace != null) {
-            return PhpElementsUtil.getClass(psiElement.getProject(), phpNamespace.getFQN() + "\\" + className);
+            return PhpElementsUtil.getClassInterface(psiElement.getProject(), phpNamespace.getFQN() + "\\" + className);
         }
 
-        return PhpElementsUtil.getClass(psiElement.getProject(), className);
+        return PhpElementsUtil.getClassInterface(psiElement.getProject(), className);
     }
 
     /**

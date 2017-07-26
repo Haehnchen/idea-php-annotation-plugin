@@ -9,6 +9,10 @@ namespace FooBar
     class Apple
     {
     }
+
+    interface FoobarInterface
+    {
+    }
 }
 
 namespace FooBar\Car
