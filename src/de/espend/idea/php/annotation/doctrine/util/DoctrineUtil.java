@@ -83,9 +83,7 @@ public class DoctrineUtil {
 
     public static boolean isDoctrineOrmInVendor(@NotNull Project project)
     {
-        // backward compatibility
         return
-            PhpIndex.getInstance(project).getInterfacesByFQN("\\Doctrine\\ORM\\Mapping\\Annotation").size() > 0 ||
             PhpIndex.getInstance(project).getInterfacesByFQN("Doctrine\\ORM\\Mapping\\Annotation").size() > 0;
     }
 
