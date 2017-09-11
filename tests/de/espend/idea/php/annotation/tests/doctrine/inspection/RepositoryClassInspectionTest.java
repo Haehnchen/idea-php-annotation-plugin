@@ -19,15 +19,60 @@ public class RepositoryClassInspectionTest extends AnnotationLightCodeInsightFix
         return new File(this.getClass().getResource("fixtures").getFile()).getAbsolutePath();
     }
 
-    public void testFoo() {
+    public void testThatInspectionForMissingClassIsProvided() {
         assertLocalInspectionContains("test.php", "<?php\n" +
                 "\n" +
                 "use Doctrine\\ORM\\Mapping as ORM;\n" +
                 "\n" +
                 "/**\n" +
-                " * @ORM\\En<caret>tity(repositoryClass=\"Foobar\")\n" +
+                " * @ORM\\Entity(repositoryClass=\"Foo<caret>bar\")\n" +
                 " */\n" +
                 "class Foo\n" +
+                "{\n" +
+                "}",
+            RepositoryClassInspection.MESSAGE
+        );
+
+        assertLocalInspectionContains("test.php", "<?php\n" +
+                "\n" +
+                "use Doctrine\\ORM\\Mapping as ORM;\n" +
+                "\n" +
+                "/**\n" +
+                " * @ORM\\Entity(\"Foobar\", repositoryClass=\"Foo<caret>bar\")\n" +
+                " */\n" +
+                "class Foo\n" +
+                "{\n" +
+                "}",
+            RepositoryClassInspection.MESSAGE
+        );
+    }
+
+    public void testThatExistingClassIsNotHighlighted() {
+        assertLocalInspectionContainsNotContains("test.php", "<?php\n" +
+                "\n" +
+                "use Doctrine\\ORM\\Mapping as ORM;\n" +
+                "\n" +
+                "/**\n" +
+                " * @ORM\\Entity(repositoryClass=\"Foob<caret>ar\\Foo\")\n" +
+                " */\n" +
+                "class Foo\n" +
+                "{\n" +
+                "}",
+            RepositoryClassInspection.MESSAGE
+        );
+    }
+
+    public void testThatExistingClassInSameNamespaceIsNotHighlighted() {
+        assertLocalInspectionContainsNotContains("test.php", "<?php\n" +
+                "\n" +
+                "namespace Foobar;" +
+                "" +
+                "use Doctrine\\ORM\\Mapping as ORM;\n" +
+                "\n" +
+                "/**\n" +
+                " * @ORM\\Entity(repositoryClass=\"F<caret>oo\")\n" +
+                " */\n" +
+                "class Bar\n" +
                 "{\n" +
                 "}",
             RepositoryClassInspection.MESSAGE
