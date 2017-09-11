@@ -11,6 +11,8 @@ import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTest
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -96,5 +98,35 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
 
         assertEquals("\\Foobar", propertyForEnum.get("Foobar"));
         assertEquals("\\Bar", propertyForEnum.get("MyFoo"));
+    }
+
+    public void testGetPropertyValueOrDefault() {
+        Collection<String[]> dataProvider = new ArrayList<String[]>() {{
+            add(new String[] {"/** @Template(\"Foobar\") */", "property", "Foobar"});
+            add(new String[] {"/** @Template(name=\"Foo\") */", "name", "Foo"});
+            add(new String[] {"/** @Template(\"Foobar\", name=\"Foo\") */", "name", "Foo"});
+            add(new String[] {"/** @Template(\"Foobar\", foo=\"Foo\") */", "name", "Foobar"});
+            add(new String[] {"/** @Template() */", "property", null});
+        }};
+
+        for (String[] strings : dataProvider) {
+            PhpDocTag phpDocTag = PhpPsiElementFactory.createPhpPsiFromText(getProject(), PhpDocTag.class, "<?php\n" + strings[0]);
+            assertEquals(strings[2], AnnotationUtil.getPropertyValueOrDefault(phpDocTag, strings[1]));
+        }
+    }
+
+    public void testGetPropertyValue() {
+        Collection<String[]> dataProvider = new ArrayList<String[]>() {{
+            add(new String[] {"/** @Template(\"Foobar\") */", "property", null});
+            add(new String[] {"/** @Template(name=\"Foo\") */", "name", "Foo"});
+            add(new String[] {"/** @Template(\"Foobar\", name=\"Foo\") */", "name", "Foo"});
+            add(new String[] {"/** @Template(\"Foobar\", foo=\"Foo\") */", "name", null});
+            add(new String[] {"/** @Template(\"Foobar\", foo=FOO::class) */", "foo", null});
+        }};
+
+        for (String[] strings : dataProvider) {
+            PhpDocTag phpDocTag = PhpPsiElementFactory.createPhpPsiFromText(getProject(), PhpDocTag.class, "<?php\n" + strings[0]);
+            assertEquals(strings[2], AnnotationUtil.getPropertyValue(phpDocTag, strings[1]));
+        }
     }
 }

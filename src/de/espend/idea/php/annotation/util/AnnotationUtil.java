@@ -3,7 +3,10 @@ package de.espend.idea.php.annotation.util;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.patterns.PlatformPatterns;
+import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
@@ -12,6 +15,8 @@ import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.ID;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil;
+import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
+import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
@@ -24,6 +29,7 @@ import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
 import de.espend.idea.php.annotation.extension.*;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationGlobalNamespacesLoaderParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -378,6 +384,103 @@ public class AnnotationUtil {
     @Nullable
     public static PsiElement getPropertyForArray(@NotNull StringLiteralExpression psiElement) {
         return PhpElementsUtil.getPrevSiblingOfPatternMatch(psiElement, AnnotationPattern.getPropertyNameOfArrayValuePattern());
+    }
+
+    /**
+     * Extract property value or fallback on default annotation pattern
+     *
+     * "@Template("foobar.html.twig")"
+     * "@Template(template="foobar.html.twig")"
+     */
+    @Nullable
+    public static String getPropertyValueOrDefault(@NotNull PhpDocTag phpDocTag, @NotNull String property) {
+        PhpPsiElement attributeList = phpDocTag.getFirstPsiChild();
+        if(attributeList == null || attributeList.getNode().getElementType() != PhpDocElementTypes.phpDocAttributeList) {
+            return null;
+        }
+
+        // @Template(template="foobar.html.twig")
+        PsiElement psiProperty = Arrays.stream(attributeList.getChildren())
+            .filter(psiElement1 -> getPropertyIdentifierValue(property).accepts(psiElement1))
+            .findFirst()
+            .orElse(null);
+
+        String contents = null;
+
+        // find property value: template="foobar.html.twig"
+        if(psiProperty != null) {
+            if(!(psiProperty instanceof StringLiteralExpression)) {
+                return null;
+            }
+
+            contents = ((StringLiteralExpression) psiProperty).getContents();
+        }
+
+        // default value: @Template("foobar.html.twig")
+        if(contents == null) {
+            PsiElement defaultItem = attributeList.getFirstChild();
+            if(defaultItem != null) {
+                PsiElement defaultValue = defaultItem.getNextSibling();
+                if(defaultValue instanceof StringLiteralExpression) {
+                    contents = ((StringLiteralExpression) defaultValue).getContents();
+                }
+            }
+        }
+
+        if(StringUtils.isNotBlank(contents)) {
+            return contents;
+        }
+
+        return contents;
+    }
+
+    /**
+     * Get the property value by given name
+     *
+     * "@Template(template="foobar.html.twig")"
+     */
+    @Nullable
+    public static String getPropertyValue(@NotNull PhpDocTag phpDocTag, @NotNull String property) {
+        PhpPsiElement attributeList = phpDocTag.getFirstPsiChild();
+        if(attributeList == null || attributeList.getNode().getElementType() != PhpDocElementTypes.phpDocAttributeList) {
+            return null;
+        }
+
+        PsiElement lParen = attributeList.getFirstChild();
+        if(lParen == null) {
+            return null;
+        }
+
+        PsiElement psiProperty = Arrays.stream(attributeList.getChildren())
+            .filter(psiElement1 -> getPropertyIdentifierValue(property).accepts(psiElement1))
+            .findFirst()
+            .orElse(null);
+
+        if(!(psiProperty instanceof StringLiteralExpression)) {
+            return null;
+        }
+
+        String contents = ((StringLiteralExpression) psiProperty).getContents();
+        if(StringUtils.isNotBlank(contents)) {
+            return contents;
+        }
+
+        return null;
+    }
+
+    /**
+     * matches "@Callback(propertyName="<value>")"
+     */
+    private static PsiElementPattern.Capture<StringLiteralExpression> getPropertyIdentifierValue(String propertyName) {
+        return PlatformPatterns.psiElement(StringLiteralExpression.class)
+            .afterLeafSkipping(
+                PlatformPatterns.or(
+                    PlatformPatterns.psiElement(PsiWhiteSpace.class),
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText("=")
+                ),
+                PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).withText(propertyName)
+            )
+            .withParent(PlatformPatterns.psiElement(PhpDocElementTypes.phpDocAttributeList));
     }
 }
 
