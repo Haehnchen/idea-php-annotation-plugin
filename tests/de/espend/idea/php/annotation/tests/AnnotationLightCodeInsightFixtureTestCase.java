@@ -20,7 +20,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,9 +31,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.FileBasedIndexImpl;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.php.lang.psi.elements.Function;
@@ -394,12 +392,9 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
 
             final Collection<VirtualFile> virtualFiles = new ArrayList<VirtualFile>();
 
-            FileBasedIndexImpl.getInstance().getFilesWithKey(id, new HashSet<String>(Arrays.asList(key)), new Processor<VirtualFile>() {
-                @Override
-                public boolean process(VirtualFile virtualFile) {
-                    virtualFiles.add(virtualFile);
-                    return true;
-                }
+            FileBasedIndex.getInstance().getFilesWithKey(id, new HashSet<>(Collections.singletonList(key)), virtualFile -> {
+                virtualFiles.add(virtualFile);
+                return true;
             }, GlobalSearchScope.allScope(getProject()));
 
             if(notCondition && virtualFiles.size() > 0) {
@@ -411,11 +406,11 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
     }
 
     public void assertIndexContainsKeyWithValue(@NotNull ID<String, String> id, @NotNull String key, @NotNull String value) {
-        assertContainsElements(FileBasedIndexImpl.getInstance().getValues(id, key, GlobalSearchScope.allScope(getProject())), value);
+        assertContainsElements(FileBasedIndex.getInstance().getValues(id, key, GlobalSearchScope.allScope(getProject())), value);
     }
 
     public <T> void assertIndexContainsKeyWithValue(@NotNull ID<String, T> id, @NotNull String key, @NotNull IndexValue.Assert<T> tAssert) {
-        List<T> values = FileBasedIndexImpl.getInstance().getValues(id, key, GlobalSearchScope.allScope(getProject()));
+        List<T> values = FileBasedIndex.getInstance().getValues(id, key, GlobalSearchScope.allScope(getProject()));
         for (T t : values) {
             if(tAssert.match(t)) {
                 return;
@@ -527,7 +522,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
         final List<PsiElement> elements = collectPsiElementsRecursive(psiElement);
 
         for (LineMarkerProvider lineMarkerProvider : LineMarkerProviders.INSTANCE.allForLanguage(psiElement.getLanguage())) {
-            Collection<LineMarkerInfo> lineMarkerInfos = new ArrayList<LineMarkerInfo>();
+            Collection<LineMarkerInfo> lineMarkerInfos = new ArrayList<>();
             lineMarkerProvider.collectSlowLineMarkers(elements, lineMarkerInfos);
 
             if(lineMarkerInfos.size() == 0) {
@@ -549,7 +544,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
         final List<PsiElement> elements = collectPsiElementsRecursive(psiElement);
 
         for (LineMarkerProvider lineMarkerProvider : LineMarkerProviders.INSTANCE.allForLanguage(psiElement.getLanguage())) {
-            Collection<LineMarkerInfo> lineMarkerInfos = new ArrayList<LineMarkerInfo>();
+            Collection<LineMarkerInfo> lineMarkerInfos = new ArrayList<>();
             lineMarkerProvider.collectSlowLineMarkers(elements, lineMarkerInfos);
 
             if(lineMarkerInfos.size() > 0) {
@@ -654,41 +649,33 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
 
         @Override
         public void run() {
-            CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
-                @Override
-                public void run() {
-                    final CodeCompletionHandlerBase handler = new CodeCompletionHandlerBase(CompletionType.BASIC) {
+            CommandProcessor.getInstance().executeCommand(getProject(), () -> {
+                final CodeCompletionHandlerBase handler = new CodeCompletionHandlerBase(CompletionType.BASIC) {
 
-                        @Override
-                        protected void completionFinished(final CompletionProgressIndicator indicator, boolean hasModifiers) {
+                    @Override
+                    protected void completionFinished(final CompletionProgressIndicator indicator, boolean hasModifiers) {
 
-                            // find our lookup element
-                            final LookupElement lookupElement = ContainerUtil.find(indicator.getLookup().getItems(), new Condition<LookupElement>() {
-                                @Override
-                                public boolean value(LookupElement lookupElement) {
-                                    return insert.match(lookupElement);
-                                }
-                            });
+                        // find our lookup element
+                        final LookupElement lookupElement = ContainerUtil.find(indicator.getLookup().getItems(), insert::match);
 
-                            if(lookupElement == null) {
-                                fail("No matching lookup element found");
-                            }
-
-                            // overwrite behavior and force completion + insertHandler
-                            CommandProcessor.getInstance().executeCommand(indicator.getProject(), new Runnable() {
-                                @Override
-                                public void run() {
-                                    indicator.setMergeCommand();
-                                    indicator.getLookup().finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR, lookupElement);
-                                }
-                            }, "Autocompletion", null);
+                        if(lookupElement == null) {
+                            fail("No matching lookup element found");
                         }
-                    };
 
-                    Editor editor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(getEditor(), getFile());
-                    handler.invokeCompletion(getProject(), editor);
-                    PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
-                }
+                        // overwrite behavior and force completion + insertHandler
+                        CommandProcessor.getInstance().executeCommand(indicator.getProject(), new Runnable() {
+                            @Override
+                            public void run() {
+                                indicator.setMergeCommand();
+                                indicator.getLookup().finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR, lookupElement);
+                            }
+                        }, "Autocompletion", null);
+                    }
+                };
+
+                Editor editor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(getEditor(), getFile());
+                handler.invokeCompletion(getProject(), editor);
+                PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
             }, null, null);
         }
     }
