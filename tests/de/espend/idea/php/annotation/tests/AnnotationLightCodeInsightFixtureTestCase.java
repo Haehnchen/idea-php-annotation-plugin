@@ -465,7 +465,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
         }
     }
 
-    private Pair<List<ProblemDescriptor>, Integer> getLocalInspectionsAtCaret(String filename, String content) {
+    private Pair<List<ProblemDescriptor>, Integer> getLocalInspectionsAtCaret(@NotNull String filename, @NotNull String content) {
 
         PsiElement psiFile = myFixture.configureByText(filename, content);
 
@@ -482,10 +482,20 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
                 continue;
             }
 
-            ((LocalInspectionTool) object).buildVisitor(problemsHolder, false);
+            final PsiElementVisitor psiElementVisitor = ((LocalInspectionTool) object).buildVisitor(problemsHolder, false);
+
+            psiFile.acceptChildren(new PsiRecursiveElementVisitor() {
+                @Override
+                public void visitElement(PsiElement element) {
+                    psiElementVisitor.visitElement(element);
+                    super.visitElement(element);
+                }
+            });
+
+            psiElementVisitor.visitFile(psiFile.getContainingFile());;
         }
 
-        return new Pair<List<ProblemDescriptor>, Integer>(problemsHolder.getResults(), caretOffset);
+        return Pair.create(problemsHolder.getResults(), caretOffset);
     }
 
     protected void assertLocalInspectionIsEmpty(String filename, String content) {

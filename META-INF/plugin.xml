@@ -178,8 +178,17 @@
 
       <localInspection groupPath="PHP" shortName="AnnotationMissingUseInspection" displayName="Missing Import"
                        groupName="Annotation"
-                       enabledByDefault="true" level="WARNING"
+                       enabledByDefault="true"
+                       level="WARNING"
+                       language="PHP"
                        implementationClass="de.espend.idea.php.annotation.inspection.AnnotationMissingUseInspection"/>
+
+      <localInspection groupPath="PHP" shortName="RepositoryClassInspection" displayName="Missing Repository Class"
+                       groupName="Annotation"
+                       enabledByDefault="true"
+                       level="WARNING"
+                       language="PHP"
+                       implementationClass="de.espend.idea.php.annotation.doctrine.inspection.RepositoryClassInspection"/>
 
       <applicationService serviceImplementation="de.espend.idea.php.annotation.ApplicationSettings"/>
 
@@ -231,7 +240,11 @@
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineAnnotationFieldProvider"/>
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineAnnotationTypeProvider"/>
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineAnnotationFieldTypeProvider"/>
+
+      <!--
       <PhpAnnotationDocTagAnnotator implementation="de.espend.idea.php.annotation.doctrine.annotator.RepositoryClassAnnotationAnnotator"/>
+      -->
+
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.EmbeddedClassCompletionProvider"/>
       <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.doctrine.reference.EmbeddedClassCompletionProvider"/>
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineCustomIdGenerator"/>

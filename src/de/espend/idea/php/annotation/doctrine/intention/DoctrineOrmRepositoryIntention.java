@@ -16,7 +16,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
-import de.espend.idea.php.annotation.doctrine.annotator.RepositoryClassAnnotationAnnotator;
+import de.espend.idea.php.annotation.doctrine.inspection.CreateEntityRepositoryIntentionAction;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
@@ -74,7 +74,7 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
             templateVars.put("namespace", DoctrineUtil.trimBlackSlashes(phpClass.getNamespaceName()));
             templateVars.put("class", phpClass.getName() + "Repository");
 
-            String content = RepositoryClassAnnotationAnnotator.createEntityRepositoryContent(templateVars);
+            String content = CreateEntityRepositoryIntentionAction.createEntityRepositoryContent(templateVars);
             if(content == null) {
                 return;
             }
@@ -186,5 +186,4 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
     public String getText() {
         return "Add Doctrine Repository";
     }
-
 }

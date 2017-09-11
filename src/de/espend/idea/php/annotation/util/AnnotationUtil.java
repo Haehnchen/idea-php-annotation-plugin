@@ -451,18 +451,43 @@ public class AnnotationUtil {
             return null;
         }
 
+        StringLiteralExpression psiProperty = getPropertyValueAsPsiElement(phpDocTag, property);
+        if(psiProperty == null) {
+            return null;
+        }
+
+        String contents = psiProperty.getContents();
+        if(StringUtils.isNotBlank(contents)) {
+            return contents;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the property value by given name
+     *
+     * "@Template(template="foobar.html.twig")"
+     */
+    @Nullable
+    public static StringLiteralExpression getPropertyValueAsPsiElement(@NotNull PhpDocTag phpDocTag, @NotNull String property) {
+        PhpPsiElement attributeList = phpDocTag.getFirstPsiChild();
+        if(attributeList == null || attributeList.getNode().getElementType() != PhpDocElementTypes.phpDocAttributeList) {
+            return null;
+        }
+
+        PsiElement lParen = attributeList.getFirstChild();
+        if(lParen == null) {
+            return null;
+        }
+
         PsiElement psiProperty = Arrays.stream(attributeList.getChildren())
             .filter(psiElement1 -> getPropertyIdentifierValue(property).accepts(psiElement1))
             .findFirst()
             .orElse(null);
 
-        if(!(psiProperty instanceof StringLiteralExpression)) {
-            return null;
-        }
-
-        String contents = ((StringLiteralExpression) psiProperty).getContents();
-        if(StringUtils.isNotBlank(contents)) {
-            return contents;
+        if(psiProperty instanceof StringLiteralExpression) {
+            return (StringLiteralExpression) psiProperty;
         }
 
         return null;
