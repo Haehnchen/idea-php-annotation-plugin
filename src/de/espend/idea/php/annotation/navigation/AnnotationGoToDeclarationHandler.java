@@ -36,11 +36,6 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
     @Nullable
     @Override
     public PsiElement[] getGotoDeclarationTargets(PsiElement psiElement, int i, Editor editor) {
-
-        if(!PluginUtil.isEnabled(psiElement)) {
-            return null;
-        }
-
         // @Test(<foo>=)
         List<PsiElement> psiElements = new ArrayList<>();
         if(AnnotationPattern.getDocAttribute().accepts(psiElement)) {

@@ -61,9 +61,8 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
-
             PsiElement psiElement = parameters.getOriginalPosition();
-            if(psiElement == null | !PluginUtil.isEnabled(psiElement)) {
+            if(psiElement == null) {
                 return;
             }
 
@@ -87,7 +86,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
             PsiElement psiElement = parameters.getOriginalPosition();
-            if(psiElement == null | !PluginUtil.isEnabled(psiElement)) {
+            if(psiElement == null) {
                 return;
             }
 
@@ -130,9 +129,8 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
-
             PsiElement psiElement = parameters.getOriginalPosition();
-            if(psiElement == null | !PluginUtil.isEnabled(psiElement)) {
+            if(psiElement == null) {
                 return;
             }
 
@@ -166,8 +164,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         @Override
         protected void addCompletions(@NotNull CompletionParameters completionParameters, ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
             PsiElement psiElement = completionParameters.getOriginalPosition();
-
-            if(psiElement == null || !PluginUtil.isEnabled(psiElement)) {
+            if(psiElement == null) {
                 return;
             }
 
@@ -275,10 +272,8 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters completionParameters, ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
-
             PsiElement psiElement = completionParameters.getOriginalPosition();
-
-            if(psiElement == null || !PluginUtil.isEnabled(psiElement)) {
+            if(psiElement == null) {
                 return;
             }
 
@@ -400,9 +395,8 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
-
             PsiElement psiElement = parameters.getOriginalPosition();
-            if(psiElement == null | !PluginUtil.isEnabled(psiElement)) {
+            if(psiElement == null) {
                 return;
             }
 

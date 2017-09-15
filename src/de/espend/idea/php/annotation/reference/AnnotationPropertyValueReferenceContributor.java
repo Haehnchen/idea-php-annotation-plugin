@@ -40,11 +40,6 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
         @NotNull
         @Override
         public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
-
-            if(!PluginUtil.isEnabled(psiElement)) {
-                return new PsiReference[0];
-            }
-
             PhpClass phpClass = getValidAnnotationClass(psiElement);
             if(phpClass == null) {
                 return new PsiReference[0];
@@ -64,11 +59,6 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
         @NotNull
         @Override
         public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
-
-            if(!PluginUtil.isEnabled(psiElement)) {
-                return new PsiReference[0];
-            }
-
             PhpClass phpClass = getValidAnnotationClass(psiElement);
             if(phpClass == null) {
                 return new PsiReference[0];
