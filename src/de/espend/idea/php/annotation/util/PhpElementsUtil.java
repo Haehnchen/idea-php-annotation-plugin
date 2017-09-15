@@ -38,7 +38,6 @@ public class PhpElementsUtil {
 
     @Nullable
     static public AnnotationTarget findAnnotationTarget(@Nullable PhpDocComment phpDocComment) {
-
         if(phpDocComment == null) {
             return null;
         }
@@ -79,13 +78,7 @@ public class PhpElementsUtil {
     }
 
     @Nullable
-    static public PhpClass getClassInterface(Project project, @NotNull String className) {
-
-        // api workaround for at least interfaces
-        if(!className.startsWith("\\")) {
-            className = "\\" + className;
-        }
-
+    static public PhpClass getClassInterface(@NotNull Project project, @NotNull String className) {
         Collection<PhpClass> phpClasses = PhpIndex.getInstance(project).getAnyByFQN(className);
         return phpClasses.size() == 0 ? null : phpClasses.iterator().next();
     }
@@ -186,13 +179,12 @@ public class PhpElementsUtil {
     }
 
     @Nullable
-    public static String getStringValue(@Nullable PsiElement psiElement) {
+    private static String getStringValue(@Nullable PsiElement psiElement) {
         return getStringValue(psiElement, 0);
     }
 
     @Nullable
     private static String getStringValue(@Nullable PsiElement psiElement, int depth) {
-
         if(psiElement == null || ++depth > 5) {
             return null;
         }
@@ -204,14 +196,12 @@ public class PhpElementsUtil {
             }
 
             return resolvedString;
-        }
-
-        if(psiElement instanceof Field) {
+        } else if(psiElement instanceof Field) {
             return getStringValue(((Field) psiElement).getDefaultValue(), depth);
-        }
-
-        if(psiElement instanceof PhpReference) {
-
+        } else if(psiElement instanceof ClassConstantReference && "class".equals(((ClassConstantReference) psiElement).getName())) {
+            // Foobar::class
+            return getClassConstantPhpFqn((ClassConstantReference) psiElement);
+        } else if(psiElement instanceof PhpReference) {
             PsiReference psiReference = psiElement.getReference();
             if(psiReference == null) {
                 return null;
@@ -223,17 +213,24 @@ public class PhpElementsUtil {
             }
 
             if(ref instanceof Field) {
-                PsiElement resolved = ((Field) ref).getDefaultValue();
-
-                if(resolved instanceof StringLiteralExpression) {
-                    return ((StringLiteralExpression) resolved).getContents();
-                }
+                return getStringValue(((Field) ref).getDefaultValue());
             }
-
         }
 
         return null;
+    }
 
+    /**
+     * Foo::class to its class fqn include namespace
+     */
+    private static String getClassConstantPhpFqn(@NotNull ClassConstantReference classConstant) {
+        PhpExpression classReference = classConstant.getClassReference();
+        if(!(classReference instanceof PhpReference)) {
+            return null;
+        }
+
+        String typeName = ((PhpReference) classReference).getFQN();
+        return typeName != null && StringUtils.isNotBlank(typeName) ? StringUtils.stripStart(typeName, "\\") : null;
     }
 
     /**
@@ -303,5 +300,4 @@ public class PhpElementsUtil {
             PhpAliasImporter.insertUseStatement(nsClass, alias, scopeForUseOperator);
         }
     }
-
 }
