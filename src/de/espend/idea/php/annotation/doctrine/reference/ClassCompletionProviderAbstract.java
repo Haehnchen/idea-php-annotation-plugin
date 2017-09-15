@@ -4,7 +4,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.completion.PhpCompletionUtil;
-import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
 import de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider;
