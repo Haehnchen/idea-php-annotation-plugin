@@ -14,21 +14,21 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
-public class DoctrineClassOrmAnnotationGenerateAction extends DoctrineClassGeneratorAction {
+public class DoctrineEmbeddedClassAnnotationGenerateAction extends DoctrineClassGeneratorAction {
     @NotNull
     @Override
     protected String supportedClass() {
-        return "Doctrine\\ORM\\Mapping\\Table";
+        return "Doctrine\\ORM\\Mapping\\Embedded";
     }
 
     protected void execute(@NotNull Editor editor, @NotNull PhpClass phpClass, @NotNull PsiFile psiFile) {
         // insert ORM alias
         PhpPsiElement scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(phpClass.getFirstChild());
         if(scopeForUseOperator != null) {
-            PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, DoctrineUtil.DOCTRINE_ORM_MAPPING, "ORM");
+            PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, DoctrineUtil.DOCTRINE_ORM_MAPPING, "Embedded");
             PsiDocumentManager.getInstance(psiFile.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument());
         }
 
-        PhpDocUtil.addClassOrmDocs(phpClass, editor.getDocument(), psiFile);
+        PhpDocUtil.addClassEmbeddedDocs(phpClass, editor.getDocument(), psiFile);
     }
 }

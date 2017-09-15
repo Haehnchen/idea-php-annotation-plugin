@@ -154,10 +154,19 @@
           <add-to-group group-id="GenerateGroup" anchor="last" />
       </action>
 
-      <action icon="PhpAnnotationIcons.DOCTRINE" id="PhpAnnotation.Doctrine.Orm.ClassGenerator" class="de.espend.idea.php.annotation.doctrine.action.DoctrineClassOrmAnnotationGenerateAction" text="ORM Class">
+      <action icon="PhpAnnotationIcons.DOCTRINE"
+              id="PhpAnnotation.Doctrine.Orm.ClassGenerator"
+              class="de.espend.idea.php.annotation.doctrine.action.DoctrineClassOrmAnnotationGenerateAction"
+              text="ORM Class">
           <add-to-group group-id="GenerateGroup" anchor="last" />
       </action>
 
+      <action icon="PhpAnnotationIcons.DOCTRINE"
+              id="PhpAnnotation.Doctrine.Embedded.ClassGenerator"
+              class="de.espend.idea.php.annotation.doctrine.action.DoctrineEmbeddedClassAnnotationGenerateAction"
+              text="Embedded Class">
+          <add-to-group group-id="GenerateGroup" anchor="last" />
+      </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">

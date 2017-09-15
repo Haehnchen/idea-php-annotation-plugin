@@ -94,5 +94,4 @@ public class DoctrinePropertyOrmAnnotationGenerateAction extends CodeInsightActi
     protected CodeInsightActionHandler getHandler() {
         return myHandler;
     }
-
 }

@@ -61,7 +61,6 @@ public class PhpDocUtil {
 
     public static void addClassOrmDocs(@NotNull PhpClass forElement, @NotNull Document document, @NotNull PsiFile file)
     {
-
         String repositoryClass = null;
         String entityName = forElement.getPresentableFQN() + "Repository";
         PhpClass phpClass = PhpElementsUtil.getClass(forElement.getProject(), entityName);
@@ -71,6 +70,11 @@ public class PhpDocUtil {
 
         addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Entity", repositoryClass);
         addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Table", "name=\"" + DoctrineUtil.underscore(forElement.getName()) + "\"");
+    }
+
+    public static void addClassEmbeddedDocs(@NotNull PhpClass forElement, @NotNull Document document, @NotNull PsiFile file)
+    {
+        addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Embedded", null);
     }
 
     private static void addPhpDocTag(@NotNull PhpNamedElement forElement, @NotNull Document document, @NotNull PsiFile file, @NotNull  PsiElement beforeElement, @NotNull String annotationClass, @Nullable String tagParameter) {
