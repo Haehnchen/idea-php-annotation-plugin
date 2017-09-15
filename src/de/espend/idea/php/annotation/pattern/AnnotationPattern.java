@@ -32,20 +32,6 @@ public class AnnotationPattern {
                          .withParent(PhpDocComment.class)
                 .withLanguage(PhpLanguage.INSTANCE)
             ,
-                // eap:
-                // * @<completion>
-                //
-                // "@" char is not detected on lexer, so provider additional asterisk check for more secured pattern filter
-                PlatformPatterns.psiElement()
-                    .afterLeafSkipping(
-                        PlatformPatterns.or(
-                            PlatformPatterns.psiElement(PsiWhiteSpace.class)
-                        ),
-                        PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_LEADING_ASTERISK)
-
-                    ).withSuperParent(1, PhpDocPsiElement.class)
-                .withLanguage(PhpLanguage.INSTANCE),
-
                 // all "@<caret>"
                 PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TAG_NAME)
                     .withLanguage(PhpLanguage.INSTANCE)
