@@ -18,9 +18,6 @@ import org.jetbrains.annotations.NotNull;
  * Intention: "private $id<carpet>;", @TODO: "private $id;<carpet>"
  */
 public class DoctrineOrmFieldIntention extends PsiElementBaseIntentionAction {
-
-    private Editor editor;
-
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
 

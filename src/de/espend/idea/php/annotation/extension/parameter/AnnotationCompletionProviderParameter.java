@@ -9,27 +9,33 @@ import org.jetbrains.annotations.NotNull;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class AnnotationCompletionProviderParameter {
+    @NotNull
+    final private CompletionParameters parameters;
 
-    private CompletionParameters parameters;
-    private ProcessingContext context;
-    private CompletionResultSet result;
+    @NotNull
+    final private ProcessingContext context;
 
-    public AnnotationCompletionProviderParameter(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
+    @NotNull
+    final private CompletionResultSet result;
+
+    public AnnotationCompletionProviderParameter(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
         this.parameters = parameters;
         this.context = context;
         this.result = result;
     }
 
+    @NotNull
     public CompletionParameters getParameters() {
         return parameters;
     }
 
+    @NotNull
     public ProcessingContext getContext() {
         return context;
     }
 
+    @NotNull
     public CompletionResultSet getResult() {
         return result;
     }
-
 }

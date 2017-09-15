@@ -15,7 +15,7 @@ public class AnnotationVirtualPropertyCompletionParameter {
     private final PhpClass phpClass;
 
     @NotNull
-    private Map<String, AnnotationPropertyEnum> lookupElements = new HashMap<>();
+    final private Map<String, AnnotationPropertyEnum> lookupElements = new HashMap<>();
 
     public AnnotationVirtualPropertyCompletionParameter(@NotNull PhpClass phpClass) {
         this.phpClass = phpClass;

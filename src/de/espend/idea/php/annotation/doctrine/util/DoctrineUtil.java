@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -112,7 +113,7 @@ public class DoctrineUtil {
             }
         }
 
-        Arrays.asList("id", "string", "integer", "smallint", "bigint", "boolean", "decimal", "date", "time", "datetime", "text", "array", "float").stream()
+        Stream.of("id", "string", "integer", "smallint", "bigint", "boolean", "decimal", "date", "time", "datetime", "text", "array", "float")
             .filter(s -> !found.contains(s))
             .forEach(s -> visitor.visit(s, null, null));
     }

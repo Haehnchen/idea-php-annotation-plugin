@@ -1,6 +1,6 @@
 package de.espend.idea.php.annotation.util;
 
-import com.intellij.util.indexing.FileBasedIndexImpl;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
 import de.espend.idea.php.annotation.AnnotationStubIndex;
 import de.espend.idea.php.annotation.AnnotationUsageIndex;
@@ -19,8 +19,8 @@ public class PluginUtil {
         };
 
         for(ID<?,?> id: indexIds) {
-            FileBasedIndexImpl.getInstance().requestRebuild(id);
-            FileBasedIndexImpl.getInstance().scheduleRebuild(id, new Throwable());
+            FileBasedIndex.getInstance().requestRebuild(id);
+            FileBasedIndex.getInstance().scheduleRebuild(id, new Throwable());
         }
     }
 }

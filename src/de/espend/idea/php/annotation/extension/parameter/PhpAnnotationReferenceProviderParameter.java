@@ -9,20 +9,21 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PhpAnnotationReferenceProviderParameter {
 
-    private PsiElement psiElement;
-    private ProcessingContext processingContext;
+    final private PsiElement psiElement;
+    final private ProcessingContext processingContext;
 
     public PhpAnnotationReferenceProviderParameter(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
         this.psiElement = psiElement;
         this.processingContext = processingContext;
     }
 
+    @NotNull
     public PsiElement getPsiElement() {
         return psiElement;
     }
 
+    @NotNull
     public ProcessingContext getProcessingContext() {
         return processingContext;
     }
-
 }

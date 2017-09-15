@@ -21,7 +21,6 @@ import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpDocUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
-import de.espend.idea.php.annotation.util.PluginUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 

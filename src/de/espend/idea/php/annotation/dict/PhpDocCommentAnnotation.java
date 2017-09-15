@@ -22,7 +22,7 @@ public class PhpDocCommentAnnotation {
     @Nullable
     public PhpDocTagAnnotation getPhpDocBlock(String className) {
         if(className.startsWith("\\")) className = className.substring(1);
-        return annotationReferences.containsKey(className) ? annotationReferences.get(className) : null;
+        return annotationReferences.getOrDefault(className, null);
     }
 
     @Nullable

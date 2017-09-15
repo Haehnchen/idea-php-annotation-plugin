@@ -10,6 +10,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @author Daniel Espendiller <daniel@espendiller.net>
+ */
 public class DoctrineAnnotationFieldTypeProvider implements PhpAnnotationReferenceProvider {
     @Nullable
     @Override

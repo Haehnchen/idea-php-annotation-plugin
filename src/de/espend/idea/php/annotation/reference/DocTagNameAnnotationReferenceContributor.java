@@ -17,7 +17,6 @@ import com.jetbrains.php.lang.psi.elements.PhpUse;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpDocUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
-import de.espend.idea.php.annotation.util.PluginUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +31,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar psiReferenceRegistrar) {
 
-        /**
+        /*
          * Our main reference provider to attach DocBlocTag to their use declaration
          * This one resolve the "Optimize Usage" issues
          *

@@ -1,8 +1,8 @@
 package de.espend.idea.php.annotation.dict;
 
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,10 +11,13 @@ import java.util.List;
  */
 public class PhpAnnotation {
 
-    private PhpClass phpClass;
-    private List<AnnotationTarget> targets = new ArrayList<>();
+    @NotNull
+    final private PhpClass phpClass;
 
-    public PhpAnnotation(PhpClass phpClass, List<AnnotationTarget> annotationTargets) {
+    @NotNull
+    final private List<AnnotationTarget> targets;
+
+    public PhpAnnotation(@NotNull PhpClass phpClass, @NotNull List<AnnotationTarget> annotationTargets) {
         this.phpClass = phpClass;
         this.targets = annotationTargets;
     }
@@ -23,6 +26,7 @@ public class PhpAnnotation {
         this(phpClass, Collections.singletonList(annotationTargets));
     }
 
+    @NotNull
     public PhpClass getPhpClass() {
         return phpClass;
     }
@@ -38,6 +42,7 @@ public class PhpAnnotation {
         return false;
     }
 
+    @NotNull
     public List<AnnotationTarget> getTargets() {
         return targets;
     }
@@ -51,5 +56,4 @@ public class PhpAnnotation {
 
         return false;
     }
-
 }

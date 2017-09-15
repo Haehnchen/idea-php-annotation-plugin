@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PhpAnnotationPropertyLookupElement extends LookupElement {
 
-    private AnnotationProperty annotationProperty;
+    final private AnnotationProperty annotationProperty;
 
-    public PhpAnnotationPropertyLookupElement(AnnotationProperty annotationProperty) {
+    public PhpAnnotationPropertyLookupElement(@NotNull AnnotationProperty annotationProperty) {
         this.annotationProperty = annotationProperty;
     }
 

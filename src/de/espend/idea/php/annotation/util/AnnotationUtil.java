@@ -56,7 +56,7 @@ public class AnnotationUtil {
 
     public static final ExtensionPointName<PhpAnnotationVirtualProperties> EP_VIRTUAL_PROPERTIES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationVirtualProperties");
 
-    public static Set<String> NON_ANNOTATION_TAGS = new HashSet<String>() {{
+    final public static Set<String> NON_ANNOTATION_TAGS = new HashSet<String>() {{
         addAll(Arrays.asList(PhpDocUtil.ALL_TAGS));
         add("@Annotation");
         add("@inheritDoc");

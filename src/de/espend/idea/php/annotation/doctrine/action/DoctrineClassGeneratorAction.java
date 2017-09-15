@@ -5,20 +5,15 @@ import com.intellij.codeInsight.actions.CodeInsightAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PlatformPatterns;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
-import de.espend.idea.php.annotation.util.PhpDocUtil;
-import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**

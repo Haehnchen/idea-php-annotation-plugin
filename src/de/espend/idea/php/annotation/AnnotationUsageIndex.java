@@ -27,7 +27,7 @@ import java.util.Set;
 public class AnnotationUsageIndex extends FileBasedIndexExtension<String, Set<String>> {
     public static final ID<String, Set<String>> KEY = ID.create("espend.php.annotation.usage");
     private final KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();
-    private static StringSetDataExternalizer EXTERNALIZER = new StringSetDataExternalizer();
+    final private static StringSetDataExternalizer EXTERNALIZER = new StringSetDataExternalizer();
 
     @NotNull
     @Override
