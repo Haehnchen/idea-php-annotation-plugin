@@ -553,7 +553,7 @@ public class AnnotationUtil {
                     psiElements.add(pair.getSecond());
                 }
 
-                return false;
+                return true;
             }));
         }
 
