@@ -243,11 +243,6 @@
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineAnnotationFieldProvider"/>
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineAnnotationTypeProvider"/>
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineAnnotationFieldTypeProvider"/>
-
-      <!--
-      <PhpAnnotationDocTagAnnotator implementation="de.espend.idea.php.annotation.doctrine.annotator.RepositoryClassAnnotationAnnotator"/>
-      -->
-
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.EmbeddedClassCompletionProvider"/>
       <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.doctrine.reference.EmbeddedClassCompletionProvider"/>
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.doctrine.reference.DoctrineCustomIdGenerator"/>
