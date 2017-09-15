@@ -90,8 +90,12 @@ public class AnnotationUtil {
         return phpClasses.toArray(new PhpClass[phpClasses.size()]);
     }
 
+    /**
+     * Provide a annotation class container. Allows easy access to @Target attributes
+     * Array and single value supported: @Target("PROPERTY", "METHOD"), @Target("CLASS")
+     */
     @Nullable
-    public static PhpAnnotation getClassAnnotation(PhpClass phpClass) {
+    public static PhpAnnotation getClassAnnotation(@NotNull PhpClass phpClass) {
         if(!AnnotationUtil.isAnnotationClass(phpClass)) {
             return null;
         }
@@ -101,34 +105,43 @@ public class AnnotationUtil {
             return null;
         }
 
-        PhpDocTag[] targetTag = phpDocComment.getTagElementsByName("@Target");
-        if(targetTag.length == 0) {
-            return new PhpAnnotation(phpClass, AnnotationTarget.UNDEFINED);
-        }
+        List<AnnotationTarget> targets = new ArrayList<>();
 
-        ArrayList<AnnotationTarget> targets = new ArrayList<>();
+        PhpDocTag[] tagElementsByName = phpDocComment.getTagElementsByName("@Target");
 
-        // @Target("PROPERTY", "METHOD")
-        // @Target("CLASS")
-        // @Target("ALL")
-        Pattern targetPattern = Pattern.compile("\"(\\w+)\"");
+        if(tagElementsByName.length > 0) {
+            for (PhpDocTag phpDocTag : tagElementsByName) {
+                // @Target("PROPERTY", "METHOD")
+                // @Target("CLASS")
+                // @Target("ALL")
+                String text = phpDocTag.getText();
+                Matcher matcher = Pattern.compile("\"(\\w+)\"").matcher(text);
 
-        // @TODO: remove on stable api
-        // getTagValue is empty on eap; fallback to text
-        String tagValue = targetTag[0].getTagValue();
-        if(tagValue.length() == 0) {
-            tagValue = targetTag[0].getText();
-        }
+                // regex matched; on invalid we at target to UNKNOWN condition
+                boolean isMatched = false;
 
-        Matcher matcher = targetPattern.matcher(tagValue);
+                // match enum value
+                while (matcher.find()) {
+                    isMatched = true;
+                    try {
+                        targets.add(AnnotationTarget.valueOf(matcher.group(1).toUpperCase()));
+                    } catch (IllegalArgumentException e) {
+                        targets.add(AnnotationTarget.UNKNOWN);
+                    }
+                }
 
-        while (matcher.find()) {
-            try {
-                targets.add(AnnotationTarget.valueOf(matcher.group(1).toUpperCase()));
-            } catch (IllegalArgumentException e) {
-                targets.add(AnnotationTarget.UNKNOWN);
+                // regex failed provide UNKNOWN target
+                if(!isMatched) {
+                    targets.add(AnnotationTarget.UNKNOWN);
+                }
             }
+        } else {
+            // no target attribute so UNDEFINED target
+            targets.add(AnnotationTarget.UNDEFINED);
+        }
 
+        if(targets.size() == 0) {
+            return null;
         }
 
         return new PhpAnnotation(phpClass, targets);

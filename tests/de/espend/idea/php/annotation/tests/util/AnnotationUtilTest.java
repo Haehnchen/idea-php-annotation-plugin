@@ -7,12 +7,14 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
+import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,6 +57,9 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
             "*/\n" +
             "class Foo() {}\n"
         )));
+    }
+    public void testGetAnnotationsOnTargetMap1() {
+        assertTrue(AnnotationUtil.getAnnotationsOnTargetMap(getProject(), AnnotationTarget.UNDEFINED).containsKey("My\\Annotations\\Undefined"));
     }
 
     public void testGetAnnotationsOnTargetMap() {
@@ -127,6 +132,60 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
         for (String[] strings : dataProvider) {
             PhpDocTag phpDocTag = PhpPsiElementFactory.createPhpPsiFromText(getProject(), PhpDocTag.class, "<?php\n" + strings[0]);
             assertEquals(strings[2], AnnotationUtil.getPropertyValue(phpDocTag, strings[1]));
+        }
+    }
+
+    public void testGetClassAnnotation() {
+        PhpClass phpClass = PhpPsiElementFactory.createFromText(getProject(), PhpClass.class, "<?php\n" +
+            "/**\n" +
+            "* @Annotation\n" +
+            "* @Target(\"PROPERTY\")\n" +
+            "*/\n" +
+            "class Foo {}\n"
+        );
+
+        PhpAnnotation classAnnotation = AnnotationUtil.getClassAnnotation(phpClass);
+        List<AnnotationTarget> targets = classAnnotation.getTargets();
+
+        assertContainsElements(targets, AnnotationTarget.PROPERTY);
+    }
+
+    public void testGetClassAnnotationAsArray() {
+        PhpClass phpClass = PhpPsiElementFactory.createFromText(getProject(), PhpClass.class, "<?php\n" +
+            "/**\n" +
+            "* @Annotation\n" +
+            "* @Target(\"PROPERTY\", \"METHOD\")\n" +
+            "* @Target(\"ALL\")\n" +
+            "*/\n" +
+            "class Foo {}\n"
+        );
+
+        PhpAnnotation classAnnotation = AnnotationUtil.getClassAnnotation(phpClass);
+        List<AnnotationTarget> targets = classAnnotation.getTargets();
+
+        assertContainsElements(targets, AnnotationTarget.PROPERTY, AnnotationTarget.METHOD, AnnotationTarget.ALL);
+    }
+
+    public void testGetClassAnnotationAsUnknown() {
+        Collection<Object[]> dataProvider = new ArrayList<Object[]>() {{
+            add(new Object[] {"@Target()", AnnotationTarget.UNKNOWN});
+            add(new Object[] {"@Target", AnnotationTarget.UNKNOWN});
+            add(new Object[] {"", AnnotationTarget.UNDEFINED});
+        }};
+
+        for (Object[] objects: dataProvider) {
+            PhpClass phpClass = PhpPsiElementFactory.createFromText(getProject(), PhpClass.class, "<?php\n" +
+                "/**\n" +
+                "* @Annotation\n" +
+                "* "+ objects[0] +"\n" +
+                "*/\n" +
+                "class Foo {}\n"
+            );
+
+            PhpAnnotation classAnnotation = AnnotationUtil.getClassAnnotation(phpClass);
+            List<AnnotationTarget> targets = classAnnotation.getTargets();
+
+            assertContainsElements(targets, objects[1]);
         }
     }
 }
