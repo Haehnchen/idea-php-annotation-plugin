@@ -5,7 +5,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.StreamUtil;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import de.espend.idea.php.annotation.util.IdeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -18,13 +17,17 @@ import java.util.Map;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class CreateEntityRepositoryIntentionAction extends IntentionAndQuickFixAction {
-
-    private final PsiDirectory psiDirectory;
+    @NotNull
     private final String fileName;
+
+    @NotNull
     private final Map<String, String> templateVars;
 
-    public CreateEntityRepositoryIntentionAction(@NotNull PsiDirectory psiDirectory, @NotNull String fileName, @NotNull Map<String, String> templateVars) {
-        this.psiDirectory = psiDirectory;
+    @NotNull
+    private final String targetPathRelative;
+
+    CreateEntityRepositoryIntentionAction(@NotNull String targetPathRelative, @NotNull String fileName, @NotNull Map<String, String> templateVars) {
+        this.targetPathRelative = targetPathRelative;
         this.fileName = fileName;
         this.templateVars = templateVars;
     }
@@ -38,20 +41,23 @@ public class CreateEntityRepositoryIntentionAction extends IntentionAndQuickFixA
     @NotNull
     @Override
     public String getFamilyName() {
-        return "PhpAnnotations";
+        return "Annotation";
     }
 
     @Override
     public void applyFix(@NotNull Project project, PsiFile psiFile, @Nullable Editor editor) {
-        ApplicationManager.getApplication().invokeLater(() -> {
+        String content = createEntityRepositoryContent(templateVars);
+        if(content == null) {
+            return;
+        }
 
-            IdeUtil.RunnableCreateAndOpenFile runnableCreateAndOpenFile = IdeUtil.getRunnableCreateAndOpenFile(project, psiDirectory, fileName);
-
-            String content = createEntityRepositoryContent(templateVars);
-            runnableCreateAndOpenFile.setContent(content);
-
-            ApplicationManager.getApplication().runWriteAction(runnableCreateAndOpenFile);
-        });
+        ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(
+            IdeUtil.createRunnableCreateAndOpenFile(
+            project,
+            this.targetPathRelative,
+            fileName,
+            content
+        )));
     }
 
     @Nullable

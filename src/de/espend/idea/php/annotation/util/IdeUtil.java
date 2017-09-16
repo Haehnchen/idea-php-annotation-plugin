@@ -2,8 +2,12 @@ package de.espend.idea.php.annotation.util;
 
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,42 +17,55 @@ import java.io.IOException;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class IdeUtil {
-
-    public static RunnableCreateAndOpenFile getRunnableCreateAndOpenFile(@NotNull Project project, @NotNull PsiDirectory directory, @NotNull String fileName) {
-        return new RunnableCreateAndOpenFile(project, directory, fileName);
+    public static RunnableCreateAndOpenFile createRunnableCreateAndOpenFile(@NotNull Project project, @NotNull String targetPathRelative, @NotNull String fileName, @NotNull String content) {
+        return new RunnableCreateAndOpenFile(project, targetPathRelative, fileName, content);
     }
 
     public static class RunnableCreateAndOpenFile implements Runnable {
-
-        private final PsiDirectory directory;
+        @NotNull
         private final String fileName;
+
+        @NotNull
         private final Project project;
+
+        @NotNull
+        private final String targetPathRelative;
+
+        @NotNull
         private String content;
 
-        public RunnableCreateAndOpenFile(Project project, PsiDirectory directory, String fileName) {
+        RunnableCreateAndOpenFile(@NotNull Project project, @NotNull String targetPathRelative, @NotNull String fileName, @NotNull String content) {
             this.project = project;
-            this.directory = directory;
+            this.targetPathRelative = targetPathRelative;
             this.fileName = fileName;
-        }
-
-        public RunnableCreateAndOpenFile setContent(@Nullable String content) {
             this.content = content;
-            return this;
         }
 
         @Override
         public void run() {
-            PsiFile virtualFile = createFile(directory, fileName, this.content);
-            if(virtualFile != null) {
-                new OpenFileDescriptor(project, virtualFile.getVirtualFile(), 0).navigate(true);
+            VirtualFile relativeDirectory = VfsUtil.findRelativeFile(targetPathRelative, project.getBaseDir());
+            if(relativeDirectory != null) {
+                PsiDirectory directory = PsiManager.getInstance(project).findDirectory(relativeDirectory);
+
+                if(directory != null) {
+                    PsiFile virtualFile = createFile(directory, fileName, this.content);
+                    if(virtualFile != null) {
+                        new OpenFileDescriptor(project, virtualFile.getVirtualFile(), 0).navigate(true);
+                    }
+                }
             }
         }
     }
 
     @Nullable
-    public static PsiFile createFile(@NotNull PsiDirectory directory, @NotNull String fileNameWithPath, @Nullable String content) {
+    private static PsiFile createFile(@NotNull PsiDirectory directory, @NotNull String fileNameWithPath, @Nullable String content) {
+        PsiFile psiFile;
 
-        PsiFile psiFile = directory.createFile(fileNameWithPath);
+        try {
+            psiFile = directory.createFile(fileNameWithPath);
+        } catch (IncorrectOperationException e) {
+            return null;
+        }
 
         if(content != null) {
             try {

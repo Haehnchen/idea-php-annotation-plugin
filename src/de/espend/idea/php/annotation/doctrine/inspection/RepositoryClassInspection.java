@@ -2,6 +2,7 @@ package de.espend.idea.php.annotation.doctrine.inspection;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
@@ -85,6 +86,11 @@ public class RepositoryClassInspection extends LocalInspectionTool {
                     return;
                 }
 
+                String relativePath = VfsUtil.getRelativePath(directory.getVirtualFile(), phpDocTag.getProject().getBaseDir(), '/');
+                if(relativePath == null) {
+                    return;
+                }
+
                 if(directory.findFile(filename) == null) {
                     Map<String, String> templateVars = new HashMap<>();
 
@@ -94,7 +100,7 @@ public class RepositoryClassInspection extends LocalInspectionTool {
                     holder.registerProblem(
                         repositoryClass,
                         MESSAGE,
-                        new CreateEntityRepositoryIntentionAction(directory, filename, templateVars)
+                        new CreateEntityRepositoryIntentionAction(relativePath, filename, templateVars)
                     );
                 }
             }
