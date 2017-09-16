@@ -86,22 +86,25 @@ public class RepositoryClassInspection extends LocalInspectionTool {
                     return;
                 }
 
-                String relativePath = VfsUtil.getRelativePath(directory.getVirtualFile(), phpDocTag.getProject().getBaseDir(), '/');
-                if(relativePath == null) {
-                    return;
-                }
-
                 if(directory.findFile(filename) == null) {
                     Map<String, String> templateVars = new HashMap<>();
 
                     templateVars.put("namespace", DoctrineUtil.trimBlackSlashes(ns));
                     templateVars.put("class", targetClassName);
 
-                    holder.registerProblem(
-                        repositoryClass,
-                        MESSAGE,
-                        new CreateEntityRepositoryIntentionAction(relativePath, filename, templateVars)
-                    );
+
+                    String relativePath = VfsUtil.getRelativePath(directory.getVirtualFile(), phpDocTag.getProject().getBaseDir(), '/');
+
+                    // wrong quick fix folder must not break inspection
+                    if(relativePath != null) {
+                        holder.registerProblem(
+                            repositoryClass,
+                            MESSAGE,
+                            new CreateEntityRepositoryIntentionAction(relativePath, filename, templateVars)
+                        );
+                    } else {
+                        holder.registerProblem(repositoryClass, MESSAGE);
+                    }
                 }
             }
         };
