@@ -244,7 +244,6 @@
   <extensions defaultExtensionNs="de.espend.idea.php.annotation">
       <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.completion.PhpAnnotationTypeCompletionProvider"/>
       <PhpAnnotationReferenceProvider implementation="de.espend.idea.php.annotation.reference.AnnotationClassProvider"/>
-      <PhpAnnotationDocTagAnnotator implementation="de.espend.idea.php.annotation.annotator.AnnotationImportAnnotator"/>
 
       <!-- Doctrine -->
       <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.doctrine.navigation.DoctrineAnnotationStaticCompletionProvider"/>

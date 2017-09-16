@@ -106,7 +106,7 @@ public class RepositoryClassInspection extends LocalInspectionTool {
         @NotNull
         private final String className;
 
-        public MyAnnotationPropertyPsiElementVisitor(@NotNull String className) {
+        MyAnnotationPropertyPsiElementVisitor(@NotNull String className) {
             this.className = className;
         }
 

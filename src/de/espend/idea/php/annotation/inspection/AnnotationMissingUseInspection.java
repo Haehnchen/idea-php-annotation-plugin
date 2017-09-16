@@ -5,41 +5,39 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
+import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
+ * Inspection DocTags and their imports
+ *
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class AnnotationMissingUseInspection extends LocalInspectionTool {
 
+    public static final String MESSAGE = "Missing import";
+
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
-
-        PsiFile psiFile = holder.getFile();
-
-        if(psiFile instanceof PhpFile) {
-            psiFile.acceptChildren(new PsiRecursiveElementWalkingVisitor() {
-                @Override
-                public void visitElement(PsiElement element) {
-                    if(element instanceof PhpDocTag && AnnotationUtil.isAnnotationPhpDocTag((PhpDocTag) element)) {
-                        visitAnnotationDocTag((PhpDocTag) element, holder);
-                    }
-                    super.visitElement(element);
+        return new PsiElementVisitor() {
+            @Override
+            public void visitElement(PsiElement element) {
+                if(element instanceof PhpDocTag && AnnotationUtil.isAnnotationPhpDocTag((PhpDocTag) element)) {
+                    visitAnnotationDocTag((PhpDocTag) element, holder);
                 }
-            });
-        }
 
-        return super.buildVisitor(holder, isOnTheFly);
+                super.visitElement(element);
+            }
+        };
     }
 
     private void visitAnnotationDocTag(PhpDocTag phpDocTag, @NotNull ProblemsHolder holder) {
@@ -49,9 +47,10 @@ public class AnnotationMissingUseInspection extends LocalInspectionTool {
             return;
         }
 
+        // Target for our inspection is DocTag name: @Foobar() => Foobar
+        // This prevent highlighting the complete DocTag
         PsiElement firstChild = phpDocTag.getFirstChild();
-         /* @TODO: not working  firstChild.getNode().getElementType() == PhpDocElementTypes.DOC_TAG_NAME */
-        if(firstChild == null) {
+        if(firstChild == null || firstChild.getNode().getElementType() != PhpDocElementTypes.DOC_TAG_NAME) {
             return;
         }
 
@@ -65,13 +64,20 @@ public class AnnotationMissingUseInspection extends LocalInspectionTool {
             return;
         }
 
-        holder.registerProblem(firstChild, "Missing import", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+        Set<String> collect = phpClasses.stream()
+            .map(phpClass -> StringUtils.stripStart(phpClass.getFQN(), "\\"))
+            .collect(Collectors.toSet());
 
+        holder.registerProblem(
+            firstChild,
+            MESSAGE,
+            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+            new ImportUseForAnnotationQuickFix(phpDocTag, collect)
+        );
     }
 
     @Override
     public boolean runForWholeFile() {
         return true;
     }
-
 }
