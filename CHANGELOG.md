@@ -7,6 +7,20 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 5.2
+* API: add annotation util to access property and default values of PhpDocTag attribute list
+* Move Doctrine repositoryClass class check to inspection and provide and help message to Symfony documentation
+* Drop PluginUtil.isEnabled checks
+* Drop old api workarounds for annotation @Targets and support some more edge cases in property extraction
+* Provide Annotation class usage linemarker [#79](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/79)
+* API: Provide an index with annotated elements stubs [#53](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/53)
+* Add Doctrine @Embedded class generator [#88](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/88) and refactoring of orm generator
+* Drop old workarounds for old PhpStorm in getDocBlockTag completion pattern
+* Drop workaround for class interface fqn class name of old PhpStorm
+* Update string value resolving to support class constants
+* Migration annotation import annotator to inspection; prevent memory leaks; use visitor pattern and provider better inspection overlay for multiple and single class
+* Prevent possible memory leaks issue in Doctrine repositoryClass quickfix
+
 ## 5.1
 * Allow multiple PhpTypes declaration for bool type detection
 * Add PhpStorm 2017.2 travis environment

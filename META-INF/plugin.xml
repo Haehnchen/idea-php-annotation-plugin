@@ -1,7 +1,7 @@
 <idea-plugin url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>5.1</version>
+  <version>5.2</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -39,96 +39,36 @@
 <h2>Related Plugins</h2>
 <ul>
     <li><a href="http://plugins.jetbrains.com/plugin/8133">PHP Toolbox</a></li>
-    <li><a href="http://plugins.jetbrains.com/plugin/7487">Drupal Symfony2 Bridge</a></li>
+    <li><a href="http://plugins.jetbrains.com/plugin/7487">Drupal Symfony Bridge</a></li>
 </ul>
 
       ]]>
   </description>
 
   <change-notes><![CDATA[
+<h2>5.2</h2>
 
-5.x: PhpStorm 2017.1+<br/>
-4.x: PhpStorm 2016.1.2+<br/>
-3.x: PhpStorm 2016.1+<br/>
-2.x: PhpStorm9, 10<br/>
-1.x: PhpStorm8<br/>
+<a href="https://www.paypal.me/DanielEspendiller">Donate</a>
 
-<h2>5.1</h2>
 <ul>
-    <li>Allow multiple PhpTypes declaration for bool type detection</li>
-    <li>Add PhpStorm 2017.2 travis environment</li>
-    <li>Fix npe in Doctrine repository annotator <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/83">#83</a></li>
-    <li>Replace deprecation usage of annotation indexer externalizer</li>
-    <li>Imported interfaces @Query(FooInterface::class) are marked as unused when used for constant <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/82">#82</a></li>
-</ul>
-
-<h2>5.0</h2>
-<ul>
-    <li>PhpStorm 2017.1 build</li>
-    <li>Add FOSRest alias <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/87">#87</a> @Koc</li>
-</ul>
-
-<h2>4.3.2</h2>
-<ul>
-    <li>Replace deprecated api usages</li>
-</ul>
-
-<h2>4.3.1</h2>
-<ul>
-    <li>Add virtual annotation classes properties / fields <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/80">#80</a></li>
-</ul>
-
-<h2>4.3</h2>
-<ul>
-    <li>Index issue on YAML File; drop usage of DefaultFileTypeSpecificInputFilter <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/72">#72</a></li>
-    <li>Add autosuggest and ctrl+click for Doctrine CustomIdGenerator <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/48">#48</a></li>
-    <li>Add extension point to register global namespace prefixes <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/81">#81</a></li>
-</ul>
-
-<h2>4.2</h2>
-<ul>
-    <li>Add alias for VichUploadableBundle <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/69">#69</a> @Koc</li>
-    <li>Add references for Doctrine @ORM\Embedded.class <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/68">#68</a></li>
-    <li>Add autocomplete for array values of properties as extension point <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/62">#62</a></li>
-    <li>Add Symfony internal route array completion provider <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/62">#62</a></li>
-    <li>Add PHP-Toolbox provider for new array annotations as "annotation_array" <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/62">#62</a></li>
-</ul>
-
-<h2>4.1.2</h2>
-<ul>
-    <li>PhpStorm 2016.3: Switch from PhpResolveResult#create to PsiElementResolveResult#createResults <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/66">#66</a></li>
-</ul>
-
-<h2>4.1.1</h2>
-<ul>
-    <li>Fix class cast issue for reference contributor <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/64">#64</a></li>
-</ul>
-
-<h2>4.1</h2>
-<ul>
-    <li>Add class constant support for import optimization and provide references. <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/22">#22</a>, <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/26">#26</a>, <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/38">#38</a>, <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/40">#40</a></li>
-    <li>Implement workaround for class constant usage in doc array <a href="https://youtrack.jetbrains.com/issue/WI-32801">WI-32801</a></li>
-</ul>
-
-<h2>4.0.1</h2>
-<ul>
-    <li>Fails to recognize import useful for PHPDoc Annotation(s), PHPStorm 2016.2 <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/59">#59</a>, <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/63">#63</a> @artspb</li>
-</ul>
-
-<h2>4.0</h2>
-<ul>
-    <li>Support nested annotations <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/8">#8</a>, <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/55">#55</a></li>
-    <li>Add button in settings form to force reindex of annotation classes <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/55">#55</a></li>
-    <li>Drop project references in settings form; prevent memory leaks</li>
-    <li>Java8 migration</li>
-    <li>Use newest api level and migrate internal code usage</li>    
+    <li>API: add annotation util to access property and default values of PhpDocTag attribute list</li>
+    <li>Move Doctrine repositoryClass class check to inspection and provide and help message to Symfony documentation</li>
+    <li>Drop PluginUtil.isEnabled checks</li>
+    <li>Drop old api workarounds for annotation @Targets and support some more edge cases in property extraction</li>
+    <li>Provide Annotation class usage linemarker <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/79">#79</a></li>
+    <li>API: Provide an index with annotated elements stubs <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/53">#53</a></li>
+    <li>Add Doctrine @Embedded class generator <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/88">#88</a> and refactoring of orm generator</li>
+    <li>Drop old workarounds for old PhpStorm in getDocBlockTag completion pattern</li>
+    <li>Drop workaround for class interface fqn class name of old PhpStorm</li>
+    <li>Update string value resolving to support class constants</li>
+    <li>Migration annotation import annotator to inspection; prevent memory leaks; use visitor pattern and provider better inspection overlay for multiple and single class</li>
+    <li>Prevent possible memory leaks issue in Doctrine repositoryClass quickfix</li>
 </ul>
 
 <br/>
-<a href="https://github.com/Haehnchen/idea-php-annotation-plugin/blob/master/CHANGELOG.md">open full changelog</a>
-<br/>
 
-      ]]>
+<a href="https://github.com/Haehnchen/idea-php-annotation-plugin/blob/master/CHANGELOG.md">see full changelog</a>
+]]>
   </change-notes>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
