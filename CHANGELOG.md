@@ -7,6 +7,10 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 5.2.1
+* Add extension point: Create use alias setting from third party plugin [#99](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/99) [#97](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/97)
+* Add alias for Swagger-PHP [#96](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/96) @derrabus
+
 ## 5.2
 * API: add annotation util to access property and default values of PhpDocTag attribute list
 * Move Doctrine repositoryClass class check to inspection and provide and help message to Symfony documentation

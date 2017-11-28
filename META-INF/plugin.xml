@@ -1,7 +1,7 @@
 <idea-plugin url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>5.2</version>
+  <version>5.2.1</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -46,23 +46,11 @@
   </description>
 
   <change-notes><![CDATA[
-<h2>5.2</h2>
-
 <a href="https://www.paypal.me/DanielEspendiller">Donate</a>
 
 <ul>
-    <li>API: add annotation util to access property and default values of PhpDocTag attribute list</li>
-    <li>Move Doctrine repositoryClass class check to inspection and provide and help message to Symfony documentation</li>
-    <li>Drop PluginUtil.isEnabled checks</li>
-    <li>Drop old api workarounds for annotation @Targets and support some more edge cases in property extraction</li>
-    <li>Provide Annotation class usage linemarker <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/79">#79</a></li>
-    <li>API: Provide an index with annotated elements stubs <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/53">#53</a></li>
-    <li>Add Doctrine @Embedded class generator <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/88">#88</a> and refactoring of orm generator</li>
-    <li>Drop old workarounds for old PhpStorm in getDocBlockTag completion pattern</li>
-    <li>Drop workaround for class interface fqn class name of old PhpStorm</li>
-    <li>Update string value resolving to support class constants</li>
-    <li>Migration annotation import annotator to inspection; prevent memory leaks; use visitor pattern and provider better inspection overlay for multiple and single class</li>
-    <li>Prevent possible memory leaks issue in Doctrine repositoryClass quickfix</li>
+    <li>Add extension point: Create use alias setting from third party plugin <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/99">#99</a> <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/97">#97</a></li>
+    <li>Add alias for Swagger-PHP <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/96">#96</a> @derrabus</li>
 </ul>
 
 <br/>
