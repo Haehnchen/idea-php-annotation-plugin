@@ -144,6 +144,9 @@ Example for extension points.
       <extensionPoint name="PhpAnnotationDocTagAnnotator" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator"/>
       <extensionPoint name="PhpAnnotationGlobalNamespacesLoader" interface="de.espend.idea.php.annotation.extension.PhpAnnotationGlobalNamespacesLoader"/>
       <extensionPoint name="PhpAnnotationVirtualProperties" interface="de.espend.idea.php.annotation.extension.PhpAnnotationVirtualProperties"/>
+      
+      <!-- Custom class alias mapping: "ORM" => "Doctrine\\ORM\\Mapping" -->
+      <extensionPoint name="PhpAnnotationUseAlias" interface="de.espend.idea.php.annotation.extension.PhpAnnotationUseAlias"/>
 </extensionPoints>
 ```
 

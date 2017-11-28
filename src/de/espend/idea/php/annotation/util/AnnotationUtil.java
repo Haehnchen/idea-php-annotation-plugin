@@ -55,6 +55,7 @@ public class AnnotationUtil {
     public static final ExtensionPointName<PhpAnnotationGlobalNamespacesLoader> EXTENSION_POINT_GLOBAL_NAMESPACES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationGlobalNamespacesLoader");
 
     public static final ExtensionPointName<PhpAnnotationVirtualProperties> EP_VIRTUAL_PROPERTIES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationVirtualProperties");
+    public static final ExtensionPointName<PhpAnnotationUseAlias> EP_USE_ALIASES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationUseAlias");
 
     final public static Set<String> NON_ANNOTATION_TAGS = new HashSet<String>() {{
         addAll(Arrays.asList(PhpDocUtil.ALL_TAGS));
