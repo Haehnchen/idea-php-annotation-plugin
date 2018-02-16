@@ -11,8 +11,8 @@ import org.jetbrains.annotations.Nullable;
 @State(
     name = "EspendPhpAnnotationSetting",
     storages = {
-        @Storage(id = "default", file = StoragePathMacros.PROJECT_FILE),
-        @Storage(id = "dir", file = StoragePathMacros.PROJECT_CONFIG_DIR + "/espend_php_annotation.xml", scheme = StorageScheme.DIRECTORY_BASED)
+        @Storage(file = StoragePathMacros.PROJECT_FILE),
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/espend_php_annotation.xml", scheme = StorageScheme.DIRECTORY_BASED)
     }
 )
 public class Settings implements PersistentStateComponent<Settings> {

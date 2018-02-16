@@ -4,11 +4,11 @@ ideaVersion="2017.1"
 if [ "$PHPSTORM_ENV" == "2017.1" ]; then
     ideaVersion="2017.1.4"
 elif [ "$PHPSTORM_ENV" == "2017.2" ]; then
-    ideaVersion="2017.2.5"
+    ideaVersion="2017.2.6"
 elif [ "$PHPSTORM_ENV" == "2017.2.4" ]; then
-    ideaVersion="2017.2.5"
+    ideaVersion="2017.2.6"
 elif [ "$PHPSTORM_ENV" == "eap" ]; then
-    ideaVersion="163.5644.15"
+    ideaVersion="181.3741.2"
 fi
 
 travisCache=".cache"
@@ -45,7 +45,7 @@ if [ -d ./idea  ]; then
 fi
 
 # Download main idea folder
-download "http://download.jetbrains.com/idea/ideaIU-${ideaVersion}.tar.gz"
+download "http://download-cf.jetbrains.com/idea/ideaIU-${ideaVersion}.tar.gz"
 tar zxf ${travisCache}/ideaIU-${ideaVersion}.tar.gz -C .
 
 # Move the versioned IDEA folder to a known location
@@ -91,15 +91,17 @@ elif [ "$PHPSTORM_ENV" == "2017.2.4" ]; then
 elif [ "$PHPSTORM_ENV" == "eap" ]; then
 
     #php
-    download "https://plugins.jetbrains.com/files/6610/28510/php-163.4830.18.zip"
-    unzip -qo $travisCache/php-163.4830.18.zip -d ./plugins
+    download "https://plugins.jetbrains.com/files/6610/43096/php-181.3494.16.zip"
+    unzip -qo $travisCache/php-181.3494.16.zip -d ./plugins
 
     #twig
-    download "https://plugins.jetbrains.com/files/7303/28516/twig-163.4830.18.zip"
-    unzip -qo $travisCache/twig-163.4830.18.zip -d ./plugins
+    download "https://plugins.jetbrains.com/files/7303/43344/twig-181.3741.23.zip"
+    unzip -qo $travisCache/twig-181.3741.23.zip -d ./plugins
 
     # TODO: extract latest builds for plugins from eap site they are not public
-    # https://confluence.jetbrains.com/display/PhpStorm/PhpStorm+Early+Access+Program
+    # You can extract them from pages:
+    # https://plugins.jetbrains.com/plugin/6610-php
+    # https://plugins.jetbrains.com/plugin/7303-twig-support
     # echo "No configuration for PhpStorm: $PHPSTORM_ENV"
     # exit 1
 
