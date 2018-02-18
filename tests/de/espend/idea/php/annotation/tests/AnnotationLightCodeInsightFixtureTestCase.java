@@ -666,7 +666,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
                         CommandProcessor.getInstance().executeCommand(indicator.getProject(), new Runnable() {
                             @Override
                             public void run() {
-                                indicator.setMergeCommand();
+                                //indicator.setMergeCommand(); Currently method has package level access
                                 indicator.getLookup().finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR, lookupElement);
                             }
                         }, "Autocompletion", null);
