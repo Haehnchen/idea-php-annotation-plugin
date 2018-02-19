@@ -7,6 +7,10 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 5.3
+* Support latest EAP version [#107](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/107) [#105](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/105) @vkhramtsov
+* Add new api to access class constants psi element in PhpDocTag properties
+
 ## 5.2.1
 * Add extension point: Create use alias setting from third party plugin [#99](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/99) [#97](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/97)
 * Add alias for Swagger-PHP [#96](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/96) @derrabus

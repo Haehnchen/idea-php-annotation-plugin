@@ -1,7 +1,7 @@
 <idea-plugin url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>5.2.1</version>
+  <version>5.3</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -49,8 +49,8 @@
 <a href="https://www.paypal.me/DanielEspendiller">Donate</a>
 
 <ul>
-    <li>Add extension point: Create use alias setting from third party plugin <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/99">#99</a> <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/97">#97</a></li>
-    <li>Add alias for Swagger-PHP <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/96">#96</a> @derrabus</li>
+    <li>Support latest EAP version <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/107">#107</a> <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/105">#105</a> @vkhramtsov</li>
+    <li>Add new api to access class constants psi element in PhpDocTag properties</li>
 </ul>
 
 <br/>
@@ -60,7 +60,7 @@
   </change-notes>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="171.3780"/>
+  <idea-version since-build="181.3741"/>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
