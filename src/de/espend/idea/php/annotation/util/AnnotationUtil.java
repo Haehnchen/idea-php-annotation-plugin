@@ -484,7 +484,7 @@ public class AnnotationUtil {
     }
 
     /**
-     * Get the property value by given name
+     * Get the property value as string by given name
      *
      * "@Template(template="foobar.html.twig")"
      */
@@ -505,11 +505,32 @@ public class AnnotationUtil {
             .findFirst()
             .orElse(null);
 
-        if(psiProperty instanceof StringLiteralExpression) {
-            return (StringLiteralExpression) psiProperty;
+        return psiProperty instanceof StringLiteralExpression ?
+            (StringLiteralExpression) psiProperty :
+            null;
+    }
+
+    /**
+     * Get the property value as PsiElement by given name
+     *
+     * "@Template(template=Foobar::class)"
+     */
+    @Nullable
+    public static PsiElement getPropertyValueAsElement(@NotNull PhpDocTag phpDocTag, @NotNull String property) {
+        PhpPsiElement attributeList = phpDocTag.getFirstPsiChild();
+        if(attributeList == null || attributeList.getNode().getElementType() != PhpDocElementTypes.phpDocAttributeList) {
+            return null;
         }
 
-        return null;
+        PsiElement lParen = attributeList.getFirstChild();
+        if(lParen == null) {
+            return null;
+        }
+
+        return Arrays.stream(attributeList.getChildren())
+            .filter(psiElement1 -> getPropertyIdentifierValueAsPsiElement(property).accepts(psiElement1))
+            .findFirst()
+            .orElse(null);
     }
 
     @NotNull
@@ -564,8 +585,23 @@ public class AnnotationUtil {
     /**
      * matches "@Callback(propertyName="<value>")"
      */
-    private static PsiElementPattern.Capture<StringLiteralExpression> getPropertyIdentifierValue(String propertyName) {
+    private static PsiElementPattern.Capture<StringLiteralExpression> getPropertyIdentifierValue(@NotNull String propertyName) {
         return PlatformPatterns.psiElement(StringLiteralExpression.class)
+            .afterLeafSkipping(
+                PlatformPatterns.or(
+                    PlatformPatterns.psiElement(PsiWhiteSpace.class),
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).withText("=")
+                ),
+                PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).withText(propertyName)
+            )
+            .withParent(PlatformPatterns.psiElement(PhpDocElementTypes.phpDocAttributeList));
+    }
+
+    /**
+     * matches "@Callback(propertyName="<value>")"
+     */
+    private static PsiElementPattern.Capture<PsiElement> getPropertyIdentifierValueAsPsiElement(@NotNull String propertyName) {
+        return PlatformPatterns.psiElement()
             .afterLeafSkipping(
                 PlatformPatterns.or(
                     PlatformPatterns.psiElement(PsiWhiteSpace.class),

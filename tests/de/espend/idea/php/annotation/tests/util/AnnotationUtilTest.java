@@ -135,6 +135,24 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
         }
     }
 
+    public void testGetPropertyValueAsPsiElement() {
+        PhpDocTag phpDocTag = PhpPsiElementFactory.createPhpPsiFromText(
+            getProject(),
+            PhpDocTag.class, "<?php\n /** @Template(\"Foobar\", name=\"Foo\") */"
+        );
+
+        assertEquals("Foo", AnnotationUtil.getPropertyValueAsPsiElement(phpDocTag, "name").getContents());
+    }
+
+    public void testGetPropertyValueAsElement() {
+        PhpDocTag phpDocTag = PhpPsiElementFactory.createPhpPsiFromText(
+            getProject(),
+            PhpDocTag.class, "<?php\n /** @Template(\"Foobar\", name=\"Foo\") */"
+        );
+
+        assertEquals("Foo", ((StringLiteralExpression) AnnotationUtil.getPropertyValueAsElement(phpDocTag, "name")).getContents());
+    }
+
     public void testGetClassAnnotation() {
         PhpClass phpClass = PhpPsiElementFactory.createFromText(getProject(), PhpClass.class, "<?php\n" +
             "/**\n" +
