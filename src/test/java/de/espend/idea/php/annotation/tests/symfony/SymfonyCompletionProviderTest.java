@@ -15,7 +15,7 @@ public class SymfonyCompletionProviderTest extends AnnotationLightCodeInsightFix
     }
 
     public String getTestDataPath() {
-        return new File(this.getClass().getResource("fixtures").getFile()).getAbsolutePath();
+        return "src/test/java/de/espend/idea/php/annotation/tests/symfony/fixtures";
     }
 
     public void testThatArrayCompletionForSymfonyRouteMethodsAreProvides() {

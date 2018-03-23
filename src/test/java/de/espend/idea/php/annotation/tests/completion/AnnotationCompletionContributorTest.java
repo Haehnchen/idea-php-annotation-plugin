@@ -20,7 +20,7 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
     }
 
     public String getTestDataPath() {
-        return new File(this.getClass().getResource("fixtures").getFile()).getAbsolutePath();
+        return "src/test/java/de/espend/idea/php/annotation/tests/completion/fixtures";
     }
 
     public void testDocTagCompletionInClassScope() {

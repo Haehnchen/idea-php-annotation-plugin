@@ -15,7 +15,7 @@ public class AnnotationUsageLineMarkerProviderTest extends AnnotationLightCodeIn
     }
 
     public String getTestDataPath() {
-        return new File(this.getClass().getResource("fixtures").getFile()).getAbsolutePath();
+        return "src/test/java/de/espend/idea/php/annotation/tests/navigation/fixtures";
     }
 
     public void testThatLineMarkerIsProvidedForAnnotationClass() {

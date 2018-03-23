@@ -17,7 +17,7 @@ public class PhpAnnotationTypeCompletionProviderTest extends AnnotationLightCode
     }
 
     public String getTestDataPath() {
-        return new File(this.getClass().getResource("fixtures").getFile()).getAbsolutePath();
+        return "src/test/java/de/espend/idea/php/annotation/tests/completion/fixtures";
     }
 
     public void testDocTagPropertyCompletionInClassMethodScope() {
@@ -148,7 +148,7 @@ public class PhpAnnotationTypeCompletionProviderTest extends AnnotationLightCode
 
     /**
      * in nested doc tag we have TEXT elements instead of WHITESPACE
-     * 
+     *
      * @see AnnotationPattern#getDocAttribute()
      */
     public void testNestedCompletionWithWhitespaceAsTextWorkaround() {
