@@ -2,8 +2,6 @@ package de.espend.idea.php.annotation.tests;
 
 import de.espend.idea.php.annotation.AnnotationStubIndex;
 
-import java.io.File;
-
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */

@@ -11,7 +11,6 @@ import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

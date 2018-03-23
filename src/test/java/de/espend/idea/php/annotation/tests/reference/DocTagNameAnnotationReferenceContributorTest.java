@@ -8,8 +8,6 @@ import com.jetbrains.php.lang.PhpFileType;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  * @see de.espend.idea.php.annotation.reference.DocTagNameAnnotationReferenceContributor

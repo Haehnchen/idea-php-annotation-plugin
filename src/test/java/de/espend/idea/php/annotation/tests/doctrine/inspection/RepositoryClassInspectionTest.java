@@ -3,8 +3,6 @@ package de.espend.idea.php.annotation.tests.doctrine.inspection;
 import de.espend.idea.php.annotation.doctrine.inspection.RepositoryClassInspection;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 
-import java.io.File;
-
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  * @see de.espend.idea.php.annotation.doctrine.inspection.RepositoryClassInspection

@@ -4,8 +4,6 @@ import com.jetbrains.php.lang.PhpFileType;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 
-import java.io.File;
-
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  * @see de.espend.idea.php.annotation.completion.PhpAnnotationTypeCompletionProvider

@@ -2,8 +2,6 @@ package de.espend.idea.php.annotation.tests;
 
 import de.espend.idea.php.annotation.AnnotationUsageIndex;
 
-import java.io.File;
-
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  * @see de.espend.idea.php.annotation.AnnotationUsageIndex

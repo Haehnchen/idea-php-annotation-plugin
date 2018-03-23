@@ -3,8 +3,6 @@ package de.espend.idea.php.annotation.tests.navigation;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 
-import java.io.File;
-
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */

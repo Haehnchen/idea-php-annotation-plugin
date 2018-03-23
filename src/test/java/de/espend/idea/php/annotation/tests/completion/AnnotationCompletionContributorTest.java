@@ -6,7 +6,6 @@ import de.espend.idea.php.annotation.dict.UseAliasOption;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**

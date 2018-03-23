@@ -3,8 +3,6 @@ package de.espend.idea.php.annotation.tests.inspection;
 import de.espend.idea.php.annotation.inspection.AnnotationMissingUseInspection;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 
-import java.io.File;
-
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  * @see de.espend.idea.php.annotation.inspection.AnnotationMissingUseInspection
