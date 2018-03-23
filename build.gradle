@@ -18,7 +18,14 @@ apply plugin: 'java'
 
 intellij {
     version ideaVersion
-    plugins = ["com.jetbrains.php:${phpPluginVersion}", "de.espend.idea.php.toolbox:${toolboxPluginVersion}", 'CSS', 'java-i18n', 'properties']
+    plugins = [
+            "com.jetbrains.php:${phpPluginVersion}",
+            "de.espend.idea.php.toolbox:${toolboxPluginVersion}",
+            "com.jetbrains.twig:${twigPluginVersion}",
+            'CSS',
+            'java-i18n',
+            'properties'
+    ]
     pluginName 'PHP Annotations'
 
     patchPluginXml {
