@@ -25,7 +25,7 @@ public class DoctrineEmbeddedClassAnnotationGenerateAction extends DoctrineClass
         // insert ORM alias
         PhpPsiElement scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(phpClass.getFirstChild());
         if(scopeForUseOperator != null) {
-            PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, DoctrineUtil.DOCTRINE_ORM_MAPPING, "Embedded");
+            PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, DoctrineUtil.DOCTRINE_ORM_MAPPING, "ORM");
             PsiDocumentManager.getInstance(psiFile.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument());
         }
 
