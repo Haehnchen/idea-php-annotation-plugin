@@ -3,17 +3,18 @@ package de.espend.idea.php.annotation;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 @State(
-    name = "EspendPhpAnnotationSetting",
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_FILE),
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/espend_php_annotation.xml", scheme = StorageScheme.DIRECTORY_BASED)
-    }
+        name = "EspendPhpAnnotationSetting",
+        storages = {
+                @Storage(file = StoragePathMacros.WORKSPACE_FILE),
+                @Storage(file = StoragePathMacros.MODULE_FILE + "/espend_php_annotation.xml", scheme = StorageScheme.DIRECTORY_BASED)
+        }
 )
 public class Settings implements PersistentStateComponent<Settings> {
 
@@ -28,7 +29,7 @@ public class Settings implements PersistentStateComponent<Settings> {
     }
 
     @Override
-    public void loadState(Settings settings) {
+    public void loadState(@NotNull Settings settings) {
         XmlSerializerUtil.copyBean(settings, this);
     }
 }
