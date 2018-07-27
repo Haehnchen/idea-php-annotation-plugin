@@ -1,5 +1,6 @@
 package de.espend.idea.php.annotation.util;
 
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -286,10 +287,10 @@ public class AnnotationUtil {
     }
 
     @NotNull
-    public static Collection<PhpClass> findReplacementForDeprecatedAnnotationClass(@NotNull PhpClass deprecatedClass) {
-        Collection<PhpClass> replacements = new ArrayList<>();
+    public static Collection<LocalQuickFix> findQuickFixesForDeprecatedAnnotationClass(PhpDocTag phpDocTag, @NotNull PhpClass deprecatedClass) {
+        Collection<LocalQuickFix> replacements = new ArrayList<>();
         for (PhpAnnotationDeprecatedReplacement extension : EP_DEPRECATED_REPLACEMENT.getExtensions()) {
-            replacements.addAll(extension.findReplacementsFor(deprecatedClass));
+            replacements.addAll(extension.findQuickFixesFor(phpDocTag, deprecatedClass));
         }
 
         return replacements;
