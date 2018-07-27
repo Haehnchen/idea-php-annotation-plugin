@@ -68,7 +68,7 @@ public class ReplaceImportForDeprecatedAnnotationQuickFix extends LocalQuickFixA
 
         // single item, directly run it
         if(this.classes.size() == 1) {
-            invoke(startElement, fqnToReplace,classes.iterator().next());
+            invoke(startElement, fqnToReplace, classes.iterator().next());
             return;
         }
 
