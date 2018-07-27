@@ -38,7 +38,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
     }
 
     @Override
-    public void loadState(ApplicationSettings insightApplicationSettings) {
+    public void loadState(@NotNull ApplicationSettings insightApplicationSettings) {
         XmlSerializerUtil.copyBean(insightApplicationSettings, this);
     }
 
