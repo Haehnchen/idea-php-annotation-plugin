@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +66,7 @@ public class AnnotationMissingUseInspection extends LocalInspectionTool {
         }
 
         Set<String> collect = phpClasses.stream()
-            .map(phpClass -> StringUtils.stripStart(phpClass.getFQN(), "\\"))
+            .map(PhpNamedElement::getFQN)
             .collect(Collectors.toSet());
 
         holder.registerProblem(
