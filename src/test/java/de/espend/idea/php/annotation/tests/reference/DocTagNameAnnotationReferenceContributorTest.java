@@ -183,6 +183,20 @@ public class DocTagNameAnnotationReferenceContributorTest extends AnnotationLigh
         assertFalse(optimized.contains("use FooBar\\Apple;"));
     }
 
+    public void testPhpDocTagsShouldNotBindToVariables() {
+        myFixture.configureByText("foo.php", "<?php\n" +
+                "/** @var $myVar string */\n" +
+                "$va<caret>r = 'foo';"
+        );
+
+        myFixture.renameElement(myFixture.getElementAtCaret(), "bar");
+
+        myFixture.checkResult("<?php\n" +
+                "/** @var $myVar string */\n" +
+                "$ba<caret>r = 'foo';"
+        );
+    }
+
     @NotNull
     private String optimizeImports(@NotNull String content) {
         PsiFile psiFile = myFixture.configureByText(PhpFileType.INSTANCE, content);
