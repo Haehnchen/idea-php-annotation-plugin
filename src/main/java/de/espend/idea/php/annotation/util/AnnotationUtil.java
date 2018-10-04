@@ -65,6 +65,8 @@ public class AnnotationUtil {
         add("@inheritdoc");
         add("@Target");
         add("@Required");
+        add("@Attributes");
+        add("@Attribute");
     }};
 
     public static boolean isAnnotationClass(@NotNull PhpClass phpClass) {
