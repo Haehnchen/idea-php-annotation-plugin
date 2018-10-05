@@ -35,7 +35,7 @@ intellij {
 
 patchPluginXml {
     changeNotes = htmlFixer('src/main/resources/META-INF/change-notes.html')
-    sinceBuild '173'
+    sinceBuild '181'
 }
 
 group 'de.espend.idea.php.annotation'
