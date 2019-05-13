@@ -175,23 +175,18 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
      * Adds support for references of "@Foobar(name=Fo<caret>oBar::Const)"
      */
     private static class PhpDocIdentifierReference extends PsiReferenceBase<PsiElement> {
-
-        @NotNull
-        private final PsiElement element;
-
         @NotNull
         private final String fqn;
 
         PhpDocIdentifierReference(@NotNull PsiElement element, @NotNull String fqn) {
             super(element);
-            this.element = element;
             this.fqn = fqn;
         }
 
         @NotNull
         @Override
         public TextRange getRangeInElement() {
-            return TextRange.create(0, element.getTextLength());
+            return TextRange.create(0, myElement.getTextLength());
         }
 
         @Nullable
@@ -216,13 +211,13 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                 return false;
             }
 
-            PsiElement namespace = element.getPrevSibling();
+            PsiElement namespace = myElement.getPrevSibling();
             if(PhpPsiUtil.isOfType(namespace, PhpDocTokenTypes.DOC_NAMESPACE)) {
                 // @TODO: namespace not supported
                 return false;
             }
 
-            String classByContext = PhpElementsUtil.getFqnForClassNameByContext(element, text);
+            String classByContext = PhpElementsUtil.getFqnForClassNameByContext(myElement, text);
             if(classByContext != null) {
                 return StringUtils.stripStart(((PhpNamedElement) psiElement).getFQN(), "\\")
                     .equalsIgnoreCase(StringUtils.stripStart(fqn, "\\"));
