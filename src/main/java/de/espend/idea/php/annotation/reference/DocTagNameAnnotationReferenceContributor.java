@@ -8,6 +8,7 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocToken;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpPsiUtil;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -43,50 +44,34 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                     if(!(element instanceof PhpDocTag)) {
                         return new PsiReference[0];
                     }
-
-                    final Collection<PsiReference> references = ContainerUtil.newSmartList(
-                        new PhpDocTagReference((PhpDocTag) element)
-                    );
-
-                    // @Foo(Fo<caret>o::FooBar)
-                    collectStaticDocClassNameElement(element, references);
-
-                    return references.toArray(new PsiReference[references.size()]);
-                }
-
-                /**
-                 * Collects static identifier elements: @Foo(F<caret>OO::BAR)
-                 */
-                private void collectStaticDocClassNameElement(@NotNull PsiElement element, @NotNull Collection<PsiReference> references) {
-                    PsiElement attributes = PhpPsiUtil.getChildOfType(element, PhpDocElementTypes.phpDocAttributeList);
-                    if (attributes == null) {
-                        return;
-                    }
-
-                    // @Foo(Foobar::CONST) and workaround for @Foo(name{Foobar::CONST}) as this are text elements
-                    PsiElement[] psiElements = PsiTreeUtil.collectElements(element, PhpDocUtil::isDocStaticElement);
-
-                    for (PsiElement psiElement : psiElements) {
-                        PsiElement prevSibling = psiElement.getPrevSibling();
-                        if(prevSibling == null) {
-                            continue;
-                        }
-
-                        String text = prevSibling.getText();
-                        if(StringUtils.isBlank(text)) {
-                            continue;
-                        }
-
-                        PhpClass phpClass = PhpElementsUtil.getClassByContext(psiElement, text);
-                        if(phpClass == null) {
-                            continue;
-                        }
-
-                        references.add(new PhpDocIdentifierReference(psiElement.getPrevSibling(), phpClass.getFQN()));
-                    }
+                    return new PsiReference[]{new PhpDocTagReference((PhpDocTag) element)};
                 }
             }
         );
+
+        /*
+          Collects static identifier elements: @Foo(F<caret>OO::BAR)
+         */
+        psiReferenceRegistrar.registerReferenceProvider(PlatformPatterns.psiElement(PhpDocToken.class), new PsiReferenceProvider() {
+            @NotNull
+            @Override
+            public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+                String text = element.getText();
+                if (StringUtils.isBlank(text)) return PsiReference.EMPTY_ARRAY;
+                if (!PhpDocUtil.isDocStaticElement(element.getNextSibling())) return PsiReference.EMPTY_ARRAY;
+
+                PsiElement docTag = PhpPsiUtil.getParentByCondition(element, PhpDocTag.INSTANCEOF);
+                if (docTag == null) return PsiReference.EMPTY_ARRAY;
+
+                PsiElement attributes = PhpPsiUtil.getChildOfType(docTag, PhpDocElementTypes.phpDocAttributeList);
+                if (attributes == null) return PsiReference.EMPTY_ARRAY;
+
+                PhpClass phpClass = PhpElementsUtil.getClassByContext(element.getNextSibling(), text);
+                if (phpClass == null) return PsiReference.EMPTY_ARRAY;
+
+                return new PsiReference[]{new PhpDocIdentifierReference(element, phpClass.getFQN())};
+            }
+        });
     }
 
     private static class PhpDocTagReference extends PsiPolyVariantReferenceBase<PhpDocTag> {
@@ -203,24 +188,10 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
             this.fqn = fqn;
         }
 
-        /**
-         * DocTag is our reference host; need to extract text range relatively from this element
-         * Given: @Foobar(name=Fo<caret>oBar::Const)
-         *
-         * @return suffixed range
-         */
+        @NotNull
         @Override
         public TextRange getRangeInElement() {
-            // every item is wrapped into attribute list first
-            PsiElement attributeList = element.getParent();
-            if(!(attributeList instanceof PhpPsiElement)) {
-                return null;
-            }
-
-            // offset of attribute list + docblock itself
-            int startOffsetInParent = element.getStartOffsetInParent() + attributeList.getStartOffsetInParent();
-
-            return new TextRange(startOffsetInParent, startOffsetInParent + element.getTextLength());
+            return TextRange.create(0, element.getTextLength());
         }
 
         @Nullable
