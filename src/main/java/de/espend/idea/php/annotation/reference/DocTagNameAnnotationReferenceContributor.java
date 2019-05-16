@@ -58,7 +58,8 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
             public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
                 String text = element.getText();
                 if (StringUtils.isBlank(text)) return PsiReference.EMPTY_ARRAY;
-                if (!PhpDocUtil.isDocStaticElement(element.getNextSibling())) return PsiReference.EMPTY_ARRAY;
+                PsiElement nextSibling = element.getNextSibling();
+                if (nextSibling == null || !PhpDocUtil.isDocStaticElement(nextSibling)) return PsiReference.EMPTY_ARRAY;
 
                 PsiElement docTag = PhpPsiUtil.getParentByCondition(element, PhpDocTag.INSTANCEOF);
                 if (docTag == null) return PsiReference.EMPTY_ARRAY;
@@ -66,7 +67,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                 PsiElement attributes = PhpPsiUtil.getChildOfType(docTag, PhpDocElementTypes.phpDocAttributeList);
                 if (attributes == null) return PsiReference.EMPTY_ARRAY;
 
-                PhpClass phpClass = PhpElementsUtil.getClassByContext(element.getNextSibling(), text);
+                PhpClass phpClass = PhpElementsUtil.getClassByContext(nextSibling, text);
                 if (phpClass == null) return PsiReference.EMPTY_ARRAY;
 
                 return new PsiReference[]{new PhpDocIdentifierReference(element, phpClass.getFQN())};
