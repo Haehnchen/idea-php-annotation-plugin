@@ -175,7 +175,6 @@
       <extensionPoint name="PhpAnnotationGlobalNamespacesLoader" interface="de.espend.idea.php.annotation.extension.PhpAnnotationGlobalNamespacesLoader"/>
       <extensionPoint name="PhpAnnotationVirtualProperties" interface="de.espend.idea.php.annotation.extension.PhpAnnotationVirtualProperties"/>
       <extensionPoint name="PhpAnnotationUseAlias" interface="de.espend.idea.php.annotation.extension.PhpAnnotationUseAlias"/>
-      <extensionPoint name="PhpDeprecatedAnnotationReplacement" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDeprecatedReplacement"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="de.espend.idea.php.annotation">
@@ -195,7 +194,6 @@
 
       <!-- Symfony -->
       <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.symfony.SymfonyCompletionProvider"/>
-      <PhpDeprecatedAnnotationReplacement implementation="de.espend.idea.php.annotation.symfony.SymfonyAnnotationReplacementProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="de.espend.idea.php.toolbox.extension">

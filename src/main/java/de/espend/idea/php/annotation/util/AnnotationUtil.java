@@ -1,6 +1,5 @@
 package de.espend.idea.php.annotation.util;
 
-import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -57,8 +56,6 @@ public class AnnotationUtil {
 
     public static final ExtensionPointName<PhpAnnotationVirtualProperties> EP_VIRTUAL_PROPERTIES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationVirtualProperties");
     public static final ExtensionPointName<PhpAnnotationUseAlias> EP_USE_ALIASES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationUseAlias");
-
-    public static final ExtensionPointName<PhpAnnotationDeprecatedReplacement> EP_DEPRECATED_REPLACEMENT = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpDeprecatedAnnotationReplacement");
 
     final public static Set<String> NON_ANNOTATION_TAGS = new HashSet<String>() {{
         addAll(Arrays.asList(PhpDocUtil.ALL_TAGS));
@@ -284,16 +281,6 @@ public class AnnotationUtil {
 
         return PhpElementsUtil.getClass(phpDocTag.getProject(), useImports.get(className) + subNamespaceName);
 
-    }
-
-    @NotNull
-    public static Collection<LocalQuickFix> findQuickFixesForDeprecatedAnnotationClass(PhpDocTag phpDocTag, @NotNull PhpClass deprecatedClass) {
-        Collection<LocalQuickFix> replacements = new ArrayList<>();
-        for (PhpAnnotationDeprecatedReplacement extension : EP_DEPRECATED_REPLACEMENT.getExtensions()) {
-            replacements.addAll(extension.findQuickFixesFor(phpDocTag, deprecatedClass));
-        }
-
-        return replacements;
     }
 
     public static class CollectProjectUniqueKeys implements Processor<String> {

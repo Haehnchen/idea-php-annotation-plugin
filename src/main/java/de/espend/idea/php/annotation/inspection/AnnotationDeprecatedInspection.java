@@ -34,26 +34,16 @@ public class AnnotationDeprecatedInspection extends LocalInspectionTool {
 
     private void visitAnnotationDocTag(PhpDocTag phpDocTag, @NotNull ProblemsHolder holder) {
         PhpClass phpClass = AnnotationUtil.getAnnotationReference(phpDocTag);
-        if (phpClass == null) {
+        if (phpClass == null || !phpClass.isDeprecated()) {
             return;
         }
 
-        if (phpClass.isDeprecated()) {
-            PsiElement firstChild = phpDocTag.getFirstChild();
-            if (firstChild == null || firstChild.getNode().getElementType() != PhpDocElementTypes.DOC_TAG_NAME) {
-                return;
-            }
-
-            Collection<LocalQuickFix> replacementForDeprecatedAnnotationClass = AnnotationUtil.findQuickFixesForDeprecatedAnnotationClass(phpDocTag, phpClass);
-            replacementForDeprecatedAnnotationClass.forEach(localQuickFix -> holder.registerProblem(
-                    firstChild,
-                    MESSAGE,
-                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                    localQuickFix
-            ));
-
-            holder.registerProblem(firstChild, MESSAGE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+        PsiElement firstChild = phpDocTag.getFirstChild();
+        if (firstChild == null || firstChild.getNode().getElementType() != PhpDocElementTypes.DOC_TAG_NAME) {
+            return;
         }
+
+        holder.registerProblem(firstChild, MESSAGE, ProblemHighlightType.LIKE_DEPRECATED);
     }
 
     @Override
