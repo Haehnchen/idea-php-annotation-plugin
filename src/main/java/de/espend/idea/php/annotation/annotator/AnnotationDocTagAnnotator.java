@@ -46,11 +46,6 @@ public class AnnotationDocTagAnnotator implements Annotator {
         for(PhpAnnotationDocTagAnnotator annotator: AnnotationUtil.EP_DOC_TAG_ANNOTATOR.getExtensions()) {
             annotator.annotate(parameter);
         }
-
-
     }
-
-
-
 }
 

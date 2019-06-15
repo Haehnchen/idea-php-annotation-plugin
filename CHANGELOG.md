@@ -1,11 +1,17 @@
 # Changelog
 
 ## Versions
+* 6.x: PhpStorm 2019.1+
 * 5.x: PhpStorm 2017.1+
 * 4.x: PhpStorm 2016.1.2+
 * 3.x: PhpStorm 2016.1+
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
+
+## 6.0
+* Replace deprecated code usages and drop support for old PhpStorm versions (Daniel Espendiller) [#148](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/148)
+* Add IntelliJ plugin icon (Daniel Espendiller) [#145](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/145)
+* WI-46553 Register PhpDocIdentifierReference on doc token instead of registering it on parent doc tag and adjusting the range (Kirill Smelov) [#143](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/143)
 
 ## 5.3
 * Support latest EAP version [#107](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/107) [#105](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/105) @vkhramtsov
