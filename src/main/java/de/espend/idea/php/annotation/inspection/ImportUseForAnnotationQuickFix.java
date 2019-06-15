@@ -8,15 +8,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.ui.components.JBList;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.refactoring.PhpAliasImporter;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -58,28 +60,25 @@ public class ImportUseForAnnotationQuickFix extends LocalQuickFixAndIntentionAct
             return;
         }
 
-        JBList<String> list = new JBList<>(this.classes);
-
         // single item, directly run it
         if(this.classes.size() == 1) {
             invoke(startElement, classes.iterator().next());
             return;
         }
 
-        // suggestion possible import
-        JBPopupFactory.getInstance().createListPopupBuilder(list)
-            .setTitle("Import: Annotation Suggestion")
-            .setItemChoosenCallback(() -> {
-                String selectedValue = list.getSelectedValue();
+        // strip first "\"
+        List<String> classes = this.classes.stream().map(s ->
+            StringUtils.stripStart(s, "\\")).collect(Collectors.toList()
+        );
 
-                // sub thread run our own action
-                new WriteCommandAction.Simple(editor.getProject(), "Import: " + selectedValue) {
-                    @Override
-                    protected void run() {
-                        invoke(startElement, selectedValue);
-                    }
-                }.execute();
-            })
+        // suggestion possible import
+        JBPopupFactory.getInstance().createPopupChooserBuilder(classes)
+            .setTitle("Import: Annotation Suggestion")
+            .setItemChosenCallback(selected ->
+                WriteCommandAction.writeCommandAction(editor.getProject())
+                    .withName("Import: " + selected)
+                    .run(() -> invoke(startElement, selected))
+            )
             .createPopup()
             .showInBestPositionFor(editor);
     }

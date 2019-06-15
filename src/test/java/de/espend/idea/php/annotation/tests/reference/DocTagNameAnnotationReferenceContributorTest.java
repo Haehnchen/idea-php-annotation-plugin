@@ -1,6 +1,5 @@
 package de.espend.idea.php.annotation.tests.reference;
 
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.php.codeInsight.PhpImportOptimizer;
@@ -200,19 +199,7 @@ public class DocTagNameAnnotationReferenceContributorTest extends AnnotationLigh
     @NotNull
     private String optimizeImports(@NotNull String content) {
         PsiFile psiFile = myFixture.configureByText(PhpFileType.INSTANCE, content);
-
-        new WriteCommandAction(getProject()) {
-            @Override
-            protected void run(@NotNull Result result) throws Throwable {
-                new PhpImportOptimizer().processFile(psiFile).run();
-            }
-
-            @Override
-            public String getGroupID() {
-                return "Optimize Imports";
-            }
-        }.execute();
-
+        WriteCommandAction.runWriteCommandAction(getProject(), () -> new PhpImportOptimizer().processFile(psiFile).run());
         return psiFile.getText();
     }
 }
