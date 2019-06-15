@@ -18,14 +18,6 @@ Changelog   | [CHANGELOG](CHANGELOG.md)
 * [Download plugin](http://plugins.jetbrains.com/plugin/7320) or install directly out of PhpStorm
 * Force file reindex if necessary with: `File -> Invalidate Cache`
 
-### Versions
-
-* 5.x: PhpStorm 2017.1+
-* 4.x: PhpStorm 2016.1.2+
-* 3.x: PhpStorm 2016.1
-* 2.x: PhpStorm9
-* 1.x: PhpStorm8
-
 ### Settings
 
 `Languages & Framework > PHP > Annotations`
