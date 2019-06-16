@@ -77,7 +77,7 @@ public class ImportUseForAnnotationQuickFix extends LocalQuickFixAndIntentionAct
             .setItemChosenCallback(selected ->
                 WriteCommandAction.writeCommandAction(editor.getProject())
                     .withName("Import: " + selected)
-                    .run(() -> invoke(startElement, selected))
+                    .run(() -> invoke(startElement, "\\" + selected))
             )
             .createPopup()
             .showInBestPositionFor(editor);
