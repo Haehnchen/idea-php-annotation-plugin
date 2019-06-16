@@ -1,7 +1,7 @@
 <idea-plugin url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>6.0</version>
+  <version>6.1</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[

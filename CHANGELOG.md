@@ -8,6 +8,10 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 6.1
+* Insert import must be full fqn name (Daniel Espendiller)
+* Add inspection for deprecated annotations (Cedric Ziel) [#123](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/123) [#149](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/149)
+
 ## 6.0
 * Replace deprecated code usages and drop support for old PhpStorm versions (Daniel Espendiller) [#148](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/148)
 * Add IntelliJ plugin icon (Daniel Espendiller) [#145](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/145)
