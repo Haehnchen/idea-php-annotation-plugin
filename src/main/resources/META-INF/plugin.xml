@@ -123,6 +123,13 @@
                        language="PHP"
                        implementationClass="de.espend.idea.php.annotation.inspection.AnnotationMissingUseInspection"/>
 
+      <localInspection groupPath="PHP" shortName="AnnotationDeprecatedInspection" displayName="Annotation is deprecated"
+                       groupName="Annotation"
+                       enabledByDefault="true"
+                       level="WARNING"
+                       language="PHP"
+                       implementationClass="de.espend.idea.php.annotation.inspection.AnnotationDeprecatedInspection"/>
+
       <localInspection groupPath="PHP" shortName="RepositoryClassInspection" displayName="Missing Repository Class"
                        groupName="Annotation"
                        enabledByDefault="true"
