@@ -6,6 +6,10 @@
 
   <description><![CDATA[
 
+<p>Extends PhpStorm to support annotations in DocBlocks</p>
+
+<br/>
+
 <h1>PHP Annotation</h1>
 <br/>
 <a href="https://github.com/Haehnchen/idea-php-annotation-plugin">GitHub</a> | <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues">Issues</a> | <a href="https://www.paypal.me/DanielEspendiller">Donate</a>
@@ -14,8 +18,8 @@
 <h2>Installation</h2>
 <ul>
   <li>Just install and be happy</li>
-  <li>Optional: Install <a href="http://plugins.jetbrains.com/plugin/7219">Symfony Plugin</a></li>
-  <li>Optional: Install <a href="https://plugins.jetbrains.com/plugin/8133">PHP Toolbox</a></li>
+  <li>Optional: Install <a href="https://plugins.jetbrains.com/plugin/7219-symfony-support">Symfony Support</a></li>
+  <li>Optional: Install <a href="https://plugins.jetbrains.com/plugin/8133-php-toolbox">PHP Toolbox</a></li>
   <li>Optional: Configure plugin "Languages & Framework > PHP > Annotations"</li>
 </ul>
 
@@ -38,8 +42,8 @@
 
 <h2>Related Plugins</h2>
 <ul>
-    <li><a href="http://plugins.jetbrains.com/plugin/8133">PHP Toolbox</a></li>
-    <li><a href="http://plugins.jetbrains.com/plugin/7487">Drupal Symfony Bridge</a></li>
+    <li><a href="https://plugins.jetbrains.com/plugin/8133-php-toolbox">PHP Toolbox</a></li>
+    <li><a href="https://plugins.jetbrains.com/plugin/7487-drupal-symfony-bridge">Drupal Symfony Bridge</a></li>
 </ul>
 
       ]]>
@@ -61,12 +65,6 @@
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="191"/>
-
-  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
-       on how to target different products -->
-  <!-- uncomment to enable plugin in all products
-  <depends>com.intellij.modules.lang</depends>
-  -->
 
   <application-components>
     <!-- Add your application components here -->
