@@ -15,6 +15,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
@@ -65,22 +66,51 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
             return;
         }
 
+        String fileName = phpClass.getName() + "Repository.php";
+        String namespace = DoctrineUtil.trimBlackSlashes(phpClass.getNamespaceName());
+        PsiDirectory dir = phpClass.getContainingFile().getContainingDirectory();
+
+        PsiDirectory repositoryDir = dir;
+        if (dir.getParentDirectory() != null) {
+            PsiDirectory checkDir = dir.getParentDirectory().findSubdirectory("Repository");
+
+            if (dir.findFile(fileName) == null && checkDir != null) {
+                repositoryDir = checkDir;
+            }
+        }
+
         String repoClass = phpClass.getPresentableFQN() + "Repository";
         PhpClass repoPhpClass = PhpElementsUtil.getClass(project, repoClass);
+
+        if (repoPhpClass == null && dir != repositoryDir) {
+            // Entity/../Repository/
+            namespace = phpClass.getNamespaceName();
+            namespace = namespace.substring(0, namespace.lastIndexOf("\\"));
+            namespace = namespace.substring(0, namespace.lastIndexOf("\\"));
+            namespace = namespace + "\\Repository";
+            namespace = DoctrineUtil.trimBlackSlashes(namespace);
+
+            repoClass = namespace + "\\" + phpClass.getName() + "Repository";
+            repoClass = PhpLangUtil.toPresentableFQN(repoClass);
+
+            repoPhpClass = PhpElementsUtil.getClass(project, repoClass);
+        }
+
         if(repoPhpClass == null) {
-            String fileName = phpClass.getName() + "Repository.php";
-            PsiDirectory dir = phpClass.getContainingFile().getContainingDirectory();
-            if(dir.findFile(fileName) == null) {
+            if(repositoryDir.findFile(fileName) == null) {
                 final FileTemplate fileTemplate = FileTemplateManager.getInstance(project).getTemplate("Doctrine Entity Repository");
                 final Properties defaultProperties = FileTemplateManager.getInstance(project).getDefaultProperties();
 
                 Properties properties = new Properties(defaultProperties);
 
-                properties.setProperty("NAMESPACE", DoctrineUtil.trimBlackSlashes(phpClass.getNamespaceName()));
-                properties.setProperty(FileTemplate.ATTRIBUTE_NAME, phpClass.getName() + "Repository");
+                properties.setProperty("NAMESPACE", namespace);
+                properties.setProperty("NAME", phpClass.getName() + "Repository");
+
+                properties.setProperty("ENTITY_NAMESPACE", DoctrineUtil.trimBlackSlashes(phpClass.getNamespaceName()));
+                properties.setProperty("ENTITY_NAME", phpClass.getName());
 
                 try {
-                    PsiElement newElement = FileTemplateUtil.createFromTemplate(fileTemplate, fileName, properties, dir);
+                    PsiElement newElement = FileTemplateUtil.createFromTemplate(fileTemplate, fileName, properties, repositoryDir);
 
                     new OpenFileDescriptor(project, newElement.getContainingFile().getVirtualFile(), 0).navigate(true);
                 } catch (Exception e) {
@@ -97,7 +127,7 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
         if(ormEntityPhpDocBlock != null) {
             PhpDocTag phpDocTag = ormEntityPhpDocBlock.getPhpDocTag();
             PhpPsiElement firstPsiChild = phpDocTag.getFirstPsiChild();
-            insertAttribute(editor, phpClass, phpDocTag, firstPsiChild);
+            insertAttribute(editor, repoClass, phpDocTag, firstPsiChild);
         }
 
     }
@@ -140,10 +170,10 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
         return PsiTreeUtil.getParentOfType(element, PhpClass.class);
     }
 
-    private void insertAttribute(@NotNull Editor editor, @NotNull PhpClass phpClass, @NotNull PhpDocTag phpDocTag, @Nullable PhpPsiElement firstPsiChild) {
+    private void insertAttribute(@NotNull Editor editor, @NotNull String repositoryClass, @NotNull PhpDocTag phpDocTag, @Nullable PhpPsiElement firstPsiChild) {
         if(firstPsiChild == null) return;
 
-        String attr = "repositoryClass=\"" + phpClass.getName() + "Repository" + "\"";
+        String attr = "repositoryClass=\"" + repositoryClass + "\"";
 
         // we already have an attribute list
         if(firstPsiChild.getNode().getElementType() == PhpDocElementTypes.phpDocAttributeList) {
@@ -152,6 +182,10 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
             String text = StringUtils.trim(firstPsiChild.getText());
             text = StringUtils.strip(text, "(");
             text = StringUtils.strip(text, ")");
+
+            if (text.contains(attr)) {
+                return;
+            }
 
             if(text.length() == 0) {
                 // @ORM\Entity()
