@@ -3,20 +3,23 @@ package de.espend.idea.php.annotation.doctrine.util;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
+import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
-import com.jetbrains.php.lang.psi.elements.Field;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpClassMember;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
+import com.jetbrains.php.lang.psi.elements.*;
 import de.espend.idea.php.annotation.PhpAnnotationIcons;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpDocUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -178,5 +181,43 @@ public class DoctrineUtil {
         }
 
         PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, DOCTRINE_ORM_MAPPING, "ORM");
+    }
+
+    public static boolean repositoryClassExists(PhpDocTag phpDocTag)
+    {
+        StringLiteralExpression repositoryClass = AnnotationUtil.getPropertyValueAsPsiElement(phpDocTag, "repositoryClass");
+        if(repositoryClass == null || StringUtils.isBlank(repositoryClass.getContents())) {
+            return false;
+        }
+
+        PhpClass phpClass = PhpElementsUtil.getClassInsideAnnotation(repositoryClass, repositoryClass.getContents());
+        if(phpClass != null) {
+            return true;
+        }
+
+        PhpDocComment phpDocComment = PsiTreeUtil.getParentOfType(repositoryClass, PhpDocComment.class);
+        if(phpDocComment == null) {
+            return false;
+        }
+
+        PhpPsiElement phpClassContext = phpDocComment.getNextPsiSibling();
+        if(!(phpClassContext instanceof PhpClass)) {
+            return false;
+        }
+
+        String ns = ((PhpClass) phpClassContext).getNamespaceName();
+        String repoClass = repositoryClass.getContents();
+        String targetClass;
+
+        if(repoClass.startsWith("\\") || repoClass.startsWith(ns)) {
+            targetClass = repoClass;
+        } else {
+            targetClass = ns + repoClass;
+        }
+
+        String classPath = PhpLangUtil.toPresentableFQN(targetClass);
+        PhpClass repoPhpClass = PhpElementsUtil.getClass(phpClassContext.getProject(), classPath);
+
+        return repoPhpClass != null;
     }
 }

@@ -38,68 +38,16 @@ public class RepositoryClassInspection extends LocalInspectionTool {
             @Override
             protected void visitAnnotationProperty(@NotNull PhpDocTag phpDocTag) {
                 StringLiteralExpression repositoryClass = AnnotationUtil.getPropertyValueAsPsiElement(phpDocTag, "repositoryClass");
-                if(repositoryClass == null || StringUtils.isBlank(repositoryClass.getContents())) {
+                if (repositoryClass == null) {
                     return;
                 }
 
-                PhpClass phpClass = PhpElementsUtil.getClassInsideAnnotation(repositoryClass, repositoryClass.getContents());
-                if(phpClass != null) {
-                    return;
-                }
-
-                PhpDocComment phpDocComment = PsiTreeUtil.getParentOfType(repositoryClass, PhpDocComment.class);
-                if(phpDocComment == null) {
-                    return;
-                }
-
-                PhpPsiElement phpClassContext = phpDocComment.getNextPsiSibling();
-                if(!(phpClassContext instanceof PhpClass)) {
-                    return;
-                }
-
-                String ns = ((PhpClass) phpClassContext).getNamespaceName();
-                if(ns.startsWith("\\")) {
-                    ns = ns.substring(1);
-                }
-
-                String repoClass = repositoryClass.getContents();
-                if(repoClass.startsWith("\\")) {
-                    return;
-                }
-
-                String targetClass;
-                if(repoClass.startsWith(ns)) {
-                    targetClass = repoClass;
-                } else {
-                    targetClass = ns + repoClass;
-                }
-
-                String targetClassName = targetClass.substring(targetClass.lastIndexOf("\\") + 1);
-                String filename = targetClassName  + ".php";
-
-                PsiFile containingFile = phpClassContext.getContainingFile();
-                if(containingFile == null) {
-                    return;
-                }
-
-                PsiDirectory directory = containingFile.getContainingDirectory();
-                if(directory == null) {
-                    return;
-                }
-
-                if(directory.findFile(filename) == null) {
-                    String relativePath = VfsUtil.getRelativePath(directory.getVirtualFile(), phpDocTag.getProject().getBaseDir(), '/');
-
-                    // wrong quick fix folder must not break inspection
-                    if(relativePath != null) {
-                        holder.registerProblem(
-                            repositoryClass,
-                            MESSAGE,
-                            new DoctrineOrmRepositoryIntention()
-                        );
-                    } else {
-                        holder.registerProblem(repositoryClass, MESSAGE);
-                    }
+                if(!DoctrineUtil.repositoryClassExists(phpDocTag)) {
+                    holder.registerProblem(
+                        repositoryClass,
+                        MESSAGE,
+                        new DoctrineOrmRepositoryIntention()
+                    );
                 }
             }
         };

@@ -53,7 +53,7 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
             return false;
         }
 
-        return ormEntityPhpDocBlock.getPropertyValuePsi("repositoryClass") == null;
+        return !DoctrineUtil.repositoryClassExists(ormEntityPhpDocBlock.getPhpDocTag());
 
     }
 
