@@ -71,7 +71,7 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
             String fileName = phpClass.getName() + "Repository.php";
             PsiDirectory dir = phpClass.getContainingFile().getContainingDirectory();
             if(dir.findFile(fileName) == null) {
-                final FileTemplate fileTemplate = FileTemplateManager.getInstance(project).getCodeTemplate("Doctrine Entity Repository");
+                final FileTemplate fileTemplate = FileTemplateManager.getInstance(project).getTemplate("Doctrine Entity Repository");
                 final Properties defaultProperties = FileTemplateManager.getInstance(project).getDefaultProperties();
 
                 Properties properties = new Properties(defaultProperties);
