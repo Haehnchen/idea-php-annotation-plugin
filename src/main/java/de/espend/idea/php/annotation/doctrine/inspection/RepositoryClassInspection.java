@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import de.espend.idea.php.annotation.doctrine.intention.DoctrineOrmRepositoryIntention;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
@@ -24,7 +25,7 @@ import java.util.Map;
  */
 public class RepositoryClassInspection extends LocalInspectionTool {
 
-    public static final String MESSAGE = "Missing Repository Class";
+    public static final String MESSAGE = "Missing repository class";
 
     @NotNull
     @Override
@@ -87,12 +88,6 @@ public class RepositoryClassInspection extends LocalInspectionTool {
                 }
 
                 if(directory.findFile(filename) == null) {
-                    Map<String, String> templateVars = new HashMap<>();
-
-                    templateVars.put("namespace", DoctrineUtil.trimBlackSlashes(ns));
-                    templateVars.put("class", targetClassName);
-
-
                     String relativePath = VfsUtil.getRelativePath(directory.getVirtualFile(), phpDocTag.getProject().getBaseDir(), '/');
 
                     // wrong quick fix folder must not break inspection
@@ -100,7 +95,7 @@ public class RepositoryClassInspection extends LocalInspectionTool {
                         holder.registerProblem(
                             repositoryClass,
                             MESSAGE,
-                            new CreateEntityRepositoryIntentionAction(relativePath, filename, templateVars)
+                            new DoctrineOrmRepositoryIntention()
                         );
                     } else {
                         holder.registerProblem(repositoryClass, MESSAGE);
