@@ -163,6 +163,8 @@
           <descriptionDirectoryName>DoctrineOrmRepositoryIntention</descriptionDirectoryName>
       </intentionAction>
 
+      <internalFileTemplate name="Doctrine Entity Repository"/>
+
   </extensions>
 
   <extensionPoints>

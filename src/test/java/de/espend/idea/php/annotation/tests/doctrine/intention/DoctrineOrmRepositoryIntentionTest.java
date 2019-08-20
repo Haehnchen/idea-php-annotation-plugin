@@ -29,7 +29,7 @@ public class DoctrineOrmRepositoryIntentionTest extends AnnotationLightCodeInsig
                 "class Relation\n" +
                 "{\n" +
                 "}",
-            "Add Doctrine Repository"
+            "Add doctrine repository"
         );
     }
 
@@ -44,7 +44,7 @@ public class DoctrineOrmRepositoryIntentionTest extends AnnotationLightCodeInsig
                 "class Relation\n" +
                 "{\n" +
                 "}",
-            "Add Doctrine Repository"
+            "Add doctrine repository"
         );
     }
 
