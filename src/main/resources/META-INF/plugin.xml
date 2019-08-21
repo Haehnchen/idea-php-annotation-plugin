@@ -1,7 +1,7 @@
 <idea-plugin url="https://github.com/Haehnchen/idea-php-annotation-plugin">
   <id>de.espend.idea.php.annotation</id>
   <name>PHP Annotations</name>
-  <version>6.1</version>
+  <version>6.2</version>
   <vendor email="daniel@espendiller.net" url="http://www.espend.de">Daniel Espendiller</vendor>
 
   <description><![CDATA[
@@ -48,20 +48,6 @@
 
       ]]>
   </description>
-
-  <change-notes><![CDATA[
-<a href="https://www.paypal.me/DanielEspendiller">Donate</a>
-
-<ul>
-    <li>Support latest EAP version <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/107">#107</a> <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues/105">#105</a> @vkhramtsov</li>
-    <li>Add new api to access class constants psi element in PhpDocTag properties</li>
-</ul>
-
-<br/>
-
-<a href="https://github.com/Haehnchen/idea-php-annotation-plugin/blob/master/CHANGELOG.md">see full changelog</a>
-]]>
-  </change-notes>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="191"/>

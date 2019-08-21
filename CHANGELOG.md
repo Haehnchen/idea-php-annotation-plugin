@@ -8,6 +8,13 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 6.2
+* Update entity repository template to closer match maker bundle (Jack Bentley)
+* Update to intelligently select correct repository directory (Jack Bentley)
+* Fix unable to find template (Jack Bentley)
+* Update quick action to show when existing repository class annotation is invalid (Jack Bentley)
+* Update doctrine repository class generation to use a file template (Jack Bentley)
+
 ## 6.1
 * Insert import must be full fqn name (Daniel Espendiller)
 * Add inspection for deprecated annotations (Cedric Ziel) [#123](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/123) [#149](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/149)
