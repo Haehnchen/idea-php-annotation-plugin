@@ -56,7 +56,7 @@ patchPluginXml {
 }
 
 publishPlugin {
-    username System.getenv('IJ_TOKEN')
+    token System.getenv('IJ_TOKEN')
 }
 
 group 'de.espend.idea.php.annotation'
