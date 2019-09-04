@@ -8,6 +8,9 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 6.2.1
+* Fix duplicated file template preventing saving (Jack Bentley) [#152](https://github.com/Haehnchen/idea-php-annotation-plugin/pull/152)
+
 ## 6.2
 * Update entity repository template to closer match maker bundle (Jack Bentley)
 * Update to intelligently select correct repository directory (Jack Bentley)
