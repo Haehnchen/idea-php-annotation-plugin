@@ -41,6 +41,15 @@ namespace My\Annotations
 
     /**
      * @Annotation
+     * @Target("CLASS")
+     * @deprecated
+     */
+    class ClazzDeprecated
+    {
+    }
+
+    /**
+     * @Annotation
      * @Target("PROPERTY")
      */
     class Property

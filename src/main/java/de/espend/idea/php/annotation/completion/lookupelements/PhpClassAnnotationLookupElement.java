@@ -39,9 +39,10 @@ public class PhpClassAnnotationLookupElement extends LookupElement {
         presentation.setTypeText(typeText != null ? typeText : this.phpClass.getPresentableFQN());
         presentation.setTypeGrayed(true);
         presentation.setIcon(this.phpClass.getIcon());
+        presentation.setStrikeout(this.phpClass.isDeprecated());
     }
 
-    public void handleInsert(InsertionContext context) {
+    public void handleInsert(@NotNull InsertionContext context) {
         if (this.insertHandler != null) {
             this.insertHandler.handleInsert(context, this);
         }
