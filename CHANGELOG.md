@@ -8,6 +8,9 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 6.2.2
+* Present deprecated annotation items as striked-out (Cedric Ziel) [#157](https://github.com/Haehnchen/idea-php-annotation-plugin/pull/157)
+
 ## 6.2.1
 * Fix duplicated file template preventing saving (Jack Bentley) [#152](https://github.com/Haehnchen/idea-php-annotation-plugin/pull/152)
 
