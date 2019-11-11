@@ -82,6 +82,19 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
         );
     }
 
+    public void testDeprecatedClassesComeLastInCompletion() {
+        myFixture.configureByText(PhpFileType.INSTANCE, "<?php\n" +
+                        "/**" +
+                        "* <caret>" +
+                        "*/" +
+                        "class Foo {}"
+        );
+
+        myFixture.completeBasic();
+
+        assertContainsOrdered(myFixture.getLookupElementStrings(), "Clazz", "AClazzDeprecated", "ClazzDeprecated");
+    }
+
     public void testDocTagCompletionInClassMethodScope() {
         assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
                 "class Foo {\n" +

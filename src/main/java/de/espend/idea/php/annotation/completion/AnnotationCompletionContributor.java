@@ -296,8 +296,9 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
         private void attachLookupElements(Project project, Map<String, String> importMap, AnnotationTarget foundTarget, CompletionResultSet completionResultSet) {
             for(PhpAnnotation phpClass: getPhpAnnotationTargetClasses(project, foundTarget)) {
-                PhpClassAnnotationLookupElement lookupElement = new PhpClassAnnotationLookupElement(phpClass.getPhpClass()).withInsertHandler(AnnotationTagInsertHandler.getInstance());
-                String fqnClass = phpClass.getPhpClass().getFQN();
+                final PhpClass underlyingClass = phpClass.getPhpClass();
+                PhpClassAnnotationLookupElement lookupElement = new PhpClassAnnotationLookupElement(underlyingClass).withInsertHandler(AnnotationTagInsertHandler.getInstance());
+                String fqnClass = underlyingClass.getFQN();
 
                 if(!fqnClass.startsWith("\\")) {
                     fqnClass = "\\" + fqnClass;
@@ -309,7 +310,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                     }
                 }
 
-                completionResultSet.addElement(lookupElement);
+                completionResultSet.addElement(underlyingClass.isDeprecated() ? PrioritizedLookupElement.withPriority(lookupElement, -1000) : lookupElement);
             }
         }
 

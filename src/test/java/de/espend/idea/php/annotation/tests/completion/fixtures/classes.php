@@ -34,6 +34,15 @@ namespace My\Annotations
     /**
      * @Annotation
      * @Target("CLASS")
+     * @deprecated
+     */
+    class AClazzDeprecated
+    {
+    }
+
+    /**
+     * @Annotation
+     * @Target("CLASS")
      */
     class Clazz
     {
