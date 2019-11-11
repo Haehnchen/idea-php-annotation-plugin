@@ -64,6 +64,26 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
         checkContainsCompletion(lookupStrings);
     }
 
+    protected void assertCompletionContainsDeprecationPresentation(LanguageFileType languageFileType, String configureByText, String lookupString, boolean deprecated) {
+        myFixture.configureByText(languageFileType, configureByText);
+        myFixture.completeBasic();
+
+        final LookupElement[] lookupElements = myFixture.completeBasic();
+        for (LookupElement lookupElement : lookupElements) {
+            final String myLookupString = lookupElement.getLookupString();
+            if (myLookupString.equals(lookupString)) {
+                LookupElementPresentation presentation = new LookupElementPresentation();
+                lookupElement.renderElement(presentation);
+
+                assertEquals(deprecated, presentation.isStrikeout());
+
+                return;
+            }
+        }
+
+        fail("Unable to assert element presentation");
+    }
+
     public void assertAtTextCompletionContains(String findByText, String... lookupStrings) {
 
         final PsiElement element = myFixture.findElementByText(findByText, PsiElement.class);
@@ -573,7 +593,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
             boolean match(@NotNull T value);
         }
     }
-    
+
     public static class LineMarker {
         public interface Assert {
             boolean match(@NotNull LineMarkerInfo markerInfo);

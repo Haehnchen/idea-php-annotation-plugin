@@ -62,6 +62,26 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
         );
     }
 
+    public void testDocTagCompletionRendersDeprecatedClasses() {
+        assertCompletionContainsDeprecationPresentation(PhpFileType.INSTANCE, "<?php\n" +
+                        "/**" +
+                        "* <caret>" +
+                        "*/" +
+                        "class Foo {}",
+                "ClazzDeprecated",
+                true
+        );
+
+        assertCompletionContainsDeprecationPresentation(PhpFileType.INSTANCE, "<?php\n" +
+                        "/**" +
+                        "* <caret>" +
+                        "*/" +
+                        "class Foo {}",
+                "Clazz",
+                false
+        );
+    }
+
     public void testDocTagCompletionInClassMethodScope() {
         assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
                 "class Foo {\n" +
