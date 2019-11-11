@@ -35,13 +35,14 @@ intellij {
             "de.espend.idea.php.toolbox:${toolboxPluginVersion}",
             "com.jetbrains.twig:${twigPluginVersion}",
             'CSS',
+            'java',
             'java-i18n',
             'properties'
     ]
     pluginName 'PHP Annotations'
 
 
-    // Can't instantiate configurable for PHP Toolbox 
+    // Can't instantiate configurable for PHP Toolbox
     // at de.espend.idea.php.toolbox.ui.application.ToolboxApplicationForm.<init>(ToolboxApplicationForm.java:26)
     tasks {
         "buildSearchableOptions" {
