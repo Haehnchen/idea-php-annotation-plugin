@@ -27,21 +27,28 @@ apply plugin: 'idea'
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
 
+def requiredPlugins = [
+    "com.jetbrains.php:${phpPluginVersion}",
+    "de.espend.idea.php.toolbox:${toolboxPluginVersion}",
+    "com.jetbrains.twig:${twigPluginVersion}",
+    'CSS',
+    'java',
+    'java-i18n',
+    'properties'
+]
+
+if(ideaVersion.startsWith("IU-2019.1")) {
+    requiredPlugins.removeAll { (it.toLowerCase() == 'java') }
+}
+
 intellij {
     version ideaVersion
     updateSinceUntilBuild false
-    plugins = [
-            "com.jetbrains.php:${phpPluginVersion}",
-            "de.espend.idea.php.toolbox:${toolboxPluginVersion}",
-            "com.jetbrains.twig:${twigPluginVersion}",
-            'CSS',
-            'java-i18n',
-            'properties'
-    ]
+    plugins = requiredPlugins
     pluginName 'PHP Annotations'
 
 
-    // Can't instantiate configurable for PHP Toolbox 
+    // Can't instantiate configurable for PHP Toolbox
     // at de.espend.idea.php.toolbox.ui.application.ToolboxApplicationForm.<init>(ToolboxApplicationForm.java:26)
     tasks {
         "buildSearchableOptions" {
