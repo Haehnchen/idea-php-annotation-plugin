@@ -271,7 +271,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
     private class PhpDocBlockTagAnnotations  extends CompletionProvider<CompletionParameters> {
 
         @Override
-        protected void addCompletions(@NotNull CompletionParameters completionParameters, ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
+        protected void addCompletions(@NotNull CompletionParameters completionParameters, @NotNull ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
             PsiElement psiElement = completionParameters.getOriginalPosition();
             if(psiElement == null) {
                 return;
@@ -305,7 +305,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
                 for(Map.Entry<String, String> entry: importMap.entrySet()) {
                     if(fqnClass.startsWith(entry.getValue() + "\\")) {
-                        lookupElement.withTypeText(entry.getKey() + fqnClass.substring(entry.getValue().length()));
+                        lookupElement.withTailText(entry.getKey() + fqnClass.substring(entry.getValue().length()));
                     }
                 }
 
