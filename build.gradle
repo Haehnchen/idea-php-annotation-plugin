@@ -26,6 +26,8 @@ def htmlFixer = { htmlFile -> file(htmlFile).text.replace('<html>', '').replace(
 apply plugin: 'idea'
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 def requiredPlugins = [
     "com.jetbrains.php:${phpPluginVersion}",

@@ -300,4 +300,21 @@ public class PhpElementsUtil {
             PhpAliasImporter.insertUseStatement(nsClass, alias, scopeForUseOperator);
         }
     }
+
+    @Nullable
+    public static String getClassDeprecatedMessage(@NotNull PhpClass phpClass) {
+        if (phpClass.isDeprecated()) {
+            PhpDocComment docComment = phpClass.getDocComment();
+            if (docComment != null) {
+                for (PhpDocTag deprecatedTag : docComment.getTagElementsByName("@deprecated")) {
+                    String tagValue = deprecatedTag.getTagValue();
+                    if (StringUtils.isNotBlank(tagValue)) {
+                        return StringUtils.abbreviate("Deprecated: " + tagValue, 100);
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 }
