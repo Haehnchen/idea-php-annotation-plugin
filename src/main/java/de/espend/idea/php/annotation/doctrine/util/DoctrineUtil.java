@@ -125,8 +125,8 @@ public class DoctrineUtil {
         void visit(@NotNull String name, @Nullable PhpClass phpClass, @Nullable PsiElement psiElement);
     }
 
+    @NotNull
     public static Collection<LookupElement> getTypes(@NotNull Project project) {
-
         final Collection<LookupElement> lookupElements = new ArrayList<>();
 
         visitCustomTypes(project, (name, phpClass, psiElement) -> {
@@ -134,6 +134,10 @@ public class DoctrineUtil {
 
             if(phpClass != null) {
                 lookupElementBuilder = lookupElementBuilder.withTypeText(phpClass.getName(), true);
+
+                if (phpClass.isDeprecated()) {
+                    lookupElementBuilder = lookupElementBuilder.withStrikeoutness(true);
+                }
             }
 
             lookupElements.add(lookupElementBuilder);
@@ -142,16 +146,15 @@ public class DoctrineUtil {
         return lookupElements;
     }
 
-    public static Collection<PsiElement> getColumnTypesTargets(@NotNull Project project, final @NotNull String contents) {
-
-        final Collection<PsiElement> targets = new ArrayList<>();
+    @NotNull
+    public static Collection<PhpClass> getColumnTypesTargets(@NotNull Project project, final @NotNull String contents) {
+        final Collection<PhpClass> targets = new ArrayList<>();
 
         visitCustomTypes(project, (name, phpClass, psiElement) -> {
             if(!name.equals(contents)) {
                 return;
             }
 
-            LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(name).withIcon(PhpAnnotationIcons.DOCTRINE);
             if(phpClass != null) {
                 targets.add(phpClass);
             }

@@ -121,6 +121,13 @@
                        language="PHP"
                        implementationClass="de.espend.idea.php.annotation.doctrine.inspection.RepositoryClassInspection"/>
 
+      <localInspection groupPath="PHP" shortName="DoctrineTypeDeprecatedInspection" displayName="Doctrine column type deprecated"
+                       groupName="Annotation"
+                       enabledByDefault="true"
+                       level="WARNING"
+                       language="PHP"
+                       implementationClass="de.espend.idea.php.annotation.doctrine.inspection.DoctrineTypeDeprecatedInspection"/>
+
       <applicationService serviceImplementation="de.espend.idea.php.annotation.ApplicationSettings"/>
 
       <projectConfigurable instance="de.espend.idea.php.annotation.ui.SettingsForm"
