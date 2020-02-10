@@ -18,7 +18,7 @@ public class DoctrineEmbeddedClassAnnotationGenerateAction extends DoctrineClass
     @NotNull
     @Override
     protected String supportedClass() {
-        return "Doctrine\\ORM\\Mapping\\Embedded";
+        return "Doctrine\\ORM\\Mapping\\Embeddable";
     }
 
     protected void execute(@NotNull Editor editor, @NotNull PhpClass phpClass, @NotNull PsiFile psiFile) {
