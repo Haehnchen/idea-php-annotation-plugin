@@ -8,6 +8,12 @@
 * 2.x: PhpStorm9, 10
 * 1.x: PhpStorm8
 
+## 6.3.0
+* Provide annotation deprecation inspection for Doctrine column (Daniel Espendiller)
+* Insert Embeddable instead of Embedded annotation for class (Konstantin Myakshin)
+* Strikeout whole LookupElement, if deprecated, as PHP plugin does (Cedric Ziel)
+* Assign lower priority to deprecated classes' LookupElements (Cedric Ziel)
+
 ## 6.2.2
 * Present deprecated annotation items as striked-out (Cedric Ziel) [#157](https://github.com/Haehnchen/idea-php-annotation-plugin/pull/157)
 
