@@ -13,3 +13,8 @@ namespace Doctrine\ORM\Mapping
     {
     }
 }
+
+namespace Foobar\Bar
+{
+    class FooBar {}
+}

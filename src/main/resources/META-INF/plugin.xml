@@ -100,7 +100,7 @@
 
       <codeInsight.lineMarkerProvider language="PHP" implementationClass="de.espend.idea.php.annotation.navigation.AnnotationUsageLineMarkerProvider"/>
 
-      <localInspection groupPath="PHP" shortName="AnnotationMissingUseInspection" displayName="Missing Import"
+      <localInspection groupPath="PHP" shortName="AnnotationMissingUseInspection" displayName="Missing import"
                        groupName="Annotation"
                        enabledByDefault="true"
                        level="WARNING"
@@ -114,7 +114,7 @@
                        language="PHP"
                        implementationClass="de.espend.idea.php.annotation.inspection.AnnotationDeprecatedInspection"/>
 
-      <localInspection groupPath="PHP" shortName="RepositoryClassInspection" displayName="Missing Repository Class"
+      <localInspection groupPath="PHP" shortName="RepositoryClassInspection" displayName="Missing repository class"
                        groupName="Annotation"
                        enabledByDefault="true"
                        level="WARNING"
@@ -127,6 +127,13 @@
                        level="WARNING"
                        language="PHP"
                        implementationClass="de.espend.idea.php.annotation.doctrine.inspection.DoctrineTypeDeprecatedInspection"/>
+
+      <localInspection groupPath="PHP" shortName="AnnotationDocBlockTagClassNotFound" displayName="Class not found"
+                       groupName="Annotation"
+                       enabledByDefault="true"
+                       level="WARNING"
+                       language="PHP"
+                       implementationClass="de.espend.idea.php.annotation.inspection.AnnotationDocBlockTagClassNotFoundInspection"/>
 
       <applicationService serviceImplementation="de.espend.idea.php.annotation.ApplicationSettings"/>
 
@@ -157,7 +164,6 @@
       </intentionAction>
 
       <internalFileTemplate name="Doctrine Entity Repository"/>
-
   </extensions>
 
   <extensionPoints>
