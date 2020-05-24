@@ -541,7 +541,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
 
         final List<PsiElement> elements = collectPsiElementsRecursive(psiElement);
 
-        for (LineMarkerProvider lineMarkerProvider : LineMarkerProviders.INSTANCE.allForLanguage(psiElement.getLanguage())) {
+        for (LineMarkerProvider lineMarkerProvider : LineMarkerProviders.getInstance().allForLanguage(psiElement.getLanguage())) {
             Collection<LineMarkerInfo> lineMarkerInfos = new ArrayList<>();
             lineMarkerProvider.collectSlowLineMarkers(elements, lineMarkerInfos);
 
@@ -563,7 +563,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
 
         final List<PsiElement> elements = collectPsiElementsRecursive(psiElement);
 
-        for (LineMarkerProvider lineMarkerProvider : LineMarkerProviders.INSTANCE.allForLanguage(psiElement.getLanguage())) {
+        for (LineMarkerProvider lineMarkerProvider : LineMarkerProviders.getInstance().allForLanguage(psiElement.getLanguage())) {
             Collection<LineMarkerInfo> lineMarkerInfos = new ArrayList<>();
             lineMarkerProvider.collectSlowLineMarkers(elements, lineMarkerInfos);
 
