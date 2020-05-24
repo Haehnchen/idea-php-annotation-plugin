@@ -474,7 +474,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
 
         for (ProblemDescriptor result : localInspectionsAtCaret.getFirst()) {
             TextRange textRange = result.getPsiElement().getTextRange();
-            if (textRange.contains(localInspectionsAtCaret.getSecond())) {
+            if (textRange.contains(localInspectionsAtCaret.getSecond()) && result.toString().equals(contains)) {
                 fail(String.format("Fail inspection not contains '%s'", contains));
             }
         }
