@@ -135,6 +135,13 @@
                        language="PHP"
                        implementationClass="de.espend.idea.php.annotation.inspection.AnnotationDocBlockTagClassNotFoundInspection"/>
 
+      <localInspection groupPath="PHP" shortName="AnnotationDocBlockClassConstantNotFound" displayName="Class not found"
+                       groupName="Annotation"
+                       enabledByDefault="true"
+                       level="WARNING"
+                       language="PHP"
+                       implementationClass="de.espend.idea.php.annotation.inspection.AnnotationDocBlockClassConstantNotFoundInspection"/>
+
       <applicationService serviceImplementation="de.espend.idea.php.annotation.ApplicationSettings"/>
 
       <projectConfigurable instance="de.espend.idea.php.annotation.ui.SettingsForm"
