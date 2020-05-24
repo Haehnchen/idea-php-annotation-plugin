@@ -13,7 +13,6 @@ import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -45,27 +44,7 @@ public class AnnotationDocBlockTagClassNotFoundInspection extends LocalInspectio
         String name = phpDocTag.getName();
         String tagName = StringUtils.stripStart(name, "@");
 
-        // ignore "@\Foo" absolute FQN ones
-
-
-        String clazz = null;
-        if (tagName.startsWith("\\")) {
-            // absolute class use it directly
-            clazz = tagName;
-        } else {
-            String[] split = tagName.split("\\\\");
-            Map<String, String> useImportMap = lazyUseImporterCollector.apply(null);
-            if (useImportMap.containsKey(split[0])) {
-                clazz = useImportMap.get(split[0]);
-
-                // based on the use statement, which can be an alias, attach the doc block class name
-                // "@Foobar\TTest" "Foo\Foobar"
-                if (split.length > 1) {
-                    clazz += "\\" + StringUtils.join(Arrays.copyOfRange(split, 1, split.length), "\\");
-                }
-            }
-        }
-
+        String clazz = AnnotationInspectionUtil.getClassFqnString(tagName, lazyUseImporterCollector);
         if (clazz == null) {
             return;
         }
