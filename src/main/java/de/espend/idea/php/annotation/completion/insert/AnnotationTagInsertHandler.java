@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
@@ -12,7 +13,9 @@ import com.jetbrains.php.completion.insert.PhpInsertHandlerUtil;
 import com.jetbrains.php.completion.insert.PhpReferenceInsertHandler;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.refactoring.PhpAliasImporter;
 import de.espend.idea.php.annotation.ApplicationSettings;
+import de.espend.idea.php.annotation.completion.lookupelements.PhpClassAnnotationLookupElement;
 import de.espend.idea.php.annotation.dict.UseAliasOption;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang.StringUtils;
@@ -30,13 +33,23 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
     private static final AnnotationTagInsertHandler instance = new AnnotationTagInsertHandler();
 
     public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement lookupElement) {
+        // "ORM\Entity"
+        if (lookupElement instanceof PhpClassAnnotationLookupElement && ((PhpClassAnnotationLookupElement) lookupElement).getAlias() != null) {
+            PsiElement element = PsiUtilCore.getElementAtOffset(context.getFile(), context.getStartOffset());
+            PhpPsiElement scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(element);
 
-        // find alias in settings "\Foo\Bar as Car" for given PhpClass insertion context
-        preAliasInsertion(context, lookupElement);
+            PhpClassAnnotationLookupElement lookupElement1 = (PhpClassAnnotationLookupElement) lookupElement;
+            PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, "\\" + StringUtils.stripStart(lookupElement1.getAlias().getClassName(), "\\"), lookupElement1.getAlias().getAlias());
+            PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(context.getDocument());
+        } else {
 
-        // reuse jetbrains "use importer": this is private only so we need some workaround
-        // to not implement your own algo for that
-        PhpReferenceInsertHandler.getInstance().handleInsert(context, lookupElement);
+            // find alias in settings "\Foo\Bar as Car" for given PhpClass insertion context
+            preAliasInsertion(context, lookupElement);
+
+            // reuse jetbrains "use importer": this is private only so we need some workaround
+            // to not implement your own algo for that
+            PhpReferenceInsertHandler.getInstance().handleInsert(context, lookupElement);
+        }
 
         // force "@Foo" => "@Foo(<caret>)"
         if(ApplicationSettings.getInstance().appendRoundBracket && !PhpInsertHandlerUtil.isStringAtCaret(context.getEditor(), "(")) {

@@ -78,3 +78,11 @@ namespace My\Annotations
         const FOO = null;
     }
 }
+
+namespace Doctrine\ORM\Mapping
+{
+    /**
+     * @Annotation
+     */
+    class Entity {}
+}

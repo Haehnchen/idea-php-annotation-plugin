@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import de.espend.idea.php.annotation.dict.UseAliasOption;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,13 +17,29 @@ public class PhpClassAnnotationLookupElement extends LookupElement {
     final private PhpClass phpClass;
 
     @Nullable
+    public UseAliasOption getAlias() {
+        return alias;
+    }
+
+    @Nullable
+    private UseAliasOption alias;
+
+    @Nullable
     private InsertHandler<LookupElement> insertHandler = null;
 
     private String tailText;
     private String typeText;
+    private String lookupString;
 
     public PhpClassAnnotationLookupElement(PhpClass phpClass) {
         this.phpClass = phpClass;
+        this.lookupString = phpClass.getName();
+    }
+
+    public PhpClassAnnotationLookupElement(PhpClass phpClass, UseAliasOption alias, String lookupString) {
+        this.phpClass = phpClass;
+        this.alias = alias;
+        this.lookupString = lookupString;
     }
 
     public PhpClassAnnotationLookupElement withInsertHandler(InsertHandler<LookupElement> insertHandler) {
@@ -33,12 +50,12 @@ public class PhpClassAnnotationLookupElement extends LookupElement {
     @NotNull
     @Override
     public String getLookupString() {
-        return phpClass.getName();
+        return this.lookupString;
     }
 
     public void renderElement(LookupElementPresentation presentation) {
         presentation.setItemText(getLookupString());
-        presentation.setTailText(tailText != null ? tailText : this.phpClass.getPresentableFQN(), true);
+        presentation.setTypeText(tailText != null ? tailText : this.phpClass.getPresentableFQN());
         presentation.setIcon(this.phpClass.getIcon());
         presentation.setStrikeout(this.phpClass.isDeprecated());
     }
@@ -57,10 +74,5 @@ public class PhpClassAnnotationLookupElement extends LookupElement {
     @NotNull
     public Object getObject() {
         return this.phpClass;
-    }
-
-    public PhpClassAnnotationLookupElement withTailText(String tailText) {
-        this.tailText = tailText;
-        return this;
     }
 }

@@ -27,10 +27,8 @@ import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import de.espend.idea.php.annotation.AnnotationStubIndex;
 import de.espend.idea.php.annotation.AnnotationUsageIndex;
-import de.espend.idea.php.annotation.dict.AnnotationTarget;
-import de.espend.idea.php.annotation.dict.PhpAnnotation;
-import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
-import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
+import de.espend.idea.php.annotation.ApplicationSettings;
+import de.espend.idea.php.annotation.dict.*;
 import de.espend.idea.php.annotation.extension.*;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationGlobalNamespacesLoaderParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
@@ -381,18 +379,38 @@ public class AnnotationUtil {
         return true;
     }
 
-    public static Collection<PhpClass> getPossibleImportClasses(PhpDocTag phpDocTag) {
-
+    public static Map<String, String> getPossibleImportClasses(@NotNull PhpDocTag phpDocTag) {
         String className = phpDocTag.getName();
-        if(className.startsWith("@")) {
+        if (className.startsWith("@")) {
             className = className.substring(1);
         }
 
-        List<PhpClass> phpClasses = new ArrayList<>();
+        Map<String, String> phpClasses = new HashMap<>();
 
-        for(PhpClass annotationClass: AnnotationUtil.getAnnotationsClasses(phpDocTag.getProject())) {
-            if(annotationClass.getName().equals(className)) {
-                phpClasses.add(annotationClass);
+        for (PhpClass annotationClass: AnnotationUtil.getAnnotationsClasses(phpDocTag.getProject())) {
+            if (annotationClass.getName().equals(className)) {
+                phpClasses.put(annotationClass.getFQN(), null);
+            }
+        }
+
+        String[] split = className.split("\\\\");
+        if (split.length > 1) {
+            String aliasStart = split[0];
+
+            for (UseAliasOption useAliasOption : ApplicationSettings.getUseAliasOptionsWithDefaultFallback()) {
+                String alias = useAliasOption.getAlias();
+
+                if (!aliasStart.equals(alias)) {
+                    continue;
+                }
+
+                String clazz = useAliasOption.getClassName() + "\\" + StringUtils.join(Arrays.copyOfRange(split, 1, split.length), "\\");
+                PhpClass phpClass = PhpElementsUtil.getClassInterface(phpDocTag.getProject(), clazz);
+
+                if (phpClass != null && isAnnotationClass(phpClass)) {
+                    // user input for class name
+                    phpClasses.put("\\" + StringUtils.stripStart(useAliasOption.getClassName(), "\\"), alias);
+                }
             }
         }
 

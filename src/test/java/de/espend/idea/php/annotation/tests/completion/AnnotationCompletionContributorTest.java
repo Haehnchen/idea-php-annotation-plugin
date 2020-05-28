@@ -329,4 +329,69 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
             "All"
         );
     }
+
+    public void testTheInternalAliasProvideCompletion() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "/**" +
+                "* @<caret>" +
+                "*/" +
+                "class Foo {}",
+            "ORM\\Entity"
+        );
+    }
+
+    public void testTheInternalAliasProvideCompletionAndImports() {
+        assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace {\n" +
+                "  class Foo {\n" +
+                "    /**\n" +
+                "     * <caret>\n" +
+                "     */\n" +
+                "    function foo() {}\n" +
+                "  }\n" +
+                "}",
+            "<?php\n" +
+                "namespace {\n" +
+                "\n" +
+                "    use Doctrine\\ORM\\Mapping as ORM;\n" +
+                "\n" +
+                "    class Foo {\n" +
+                "    /**\n" +
+                "     * @ORM\\Entity()\n" +
+                "     */\n" +
+                "    function foo() {}\n" +
+                "  }\n" +
+                "}",
+            lookupElement -> "ORM\\Entity".equals(lookupElement.getLookupString())
+        );
+    }
+
+    public void testTheInternalAliasProvideCompletionAndImportsWithAlreadyImported() {
+        assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace {\n" +
+                "\n" +
+                "    use Doctrine\\ORM\\Mapping as ORM;\n" +
+                "\n" +
+                "    class Foo {\n" +
+                "    /**\n" +
+                "     * <caret>\n" +
+                "     */\n" +
+                "    function foo() {}\n" +
+                "  }\n" +
+                "}",
+            "<?php\n" +
+                "namespace {\n" +
+                "\n" +
+                "    use Doctrine\\ORM\\Mapping as ORM;\n" +
+                "\n" +
+                "    class Foo {\n" +
+                "    /**\n" +
+                "     * @ORM\\Entity()\n" +
+                "     */\n" +
+                "    function foo() {}\n" +
+                "  }\n" +
+                "}",
+            lookupElement -> "ORM\\Entity".equals(lookupElement.getLookupString())
+        );
+    }
 }
