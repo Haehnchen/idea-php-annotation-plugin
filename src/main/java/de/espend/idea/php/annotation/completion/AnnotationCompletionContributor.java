@@ -13,13 +13,11 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.completion.insert.AnnotationTagInsertHandler;
 import de.espend.idea.php.annotation.completion.lookupelements.PhpAnnotationPropertyLookupElement;
 import de.espend.idea.php.annotation.completion.lookupelements.PhpClassAnnotationLookupElement;
-import de.espend.idea.php.annotation.dict.AnnotationProperty;
-import de.espend.idea.php.annotation.dict.AnnotationPropertyEnum;
-import de.espend.idea.php.annotation.dict.AnnotationTarget;
-import de.espend.idea.php.annotation.dict.PhpAnnotation;
+import de.espend.idea.php.annotation.dict.*;
 import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
 import de.espend.idea.php.annotation.extension.PhpAnnotationVirtualProperties;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationCompletionProviderParameter;
@@ -297,17 +295,36 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         private void attachLookupElements(Project project, Map<String, String> importMap, AnnotationTarget foundTarget, CompletionResultSet completionResultSet) {
             for(PhpAnnotation phpClass: getPhpAnnotationTargetClasses(project, foundTarget)) {
                 final PhpClass underlyingClass = phpClass.getPhpClass();
-                PhpClassAnnotationLookupElement lookupElement = new PhpClassAnnotationLookupElement(underlyingClass).withInsertHandler(AnnotationTagInsertHandler.getInstance());
-                String fqnClass = underlyingClass.getFQN();
 
+                String fqnClass = underlyingClass.getFQN();
                 if(!fqnClass.startsWith("\\")) {
                     fqnClass = "\\" + fqnClass;
                 }
 
+                PhpClassAnnotationLookupElement lookupElement = new PhpClassAnnotationLookupElement(underlyingClass)
+                    .withInsertHandler(AnnotationTagInsertHandler.getInstance());
+
                 for(Map.Entry<String, String> entry: importMap.entrySet()) {
                     if(fqnClass.startsWith(entry.getValue() + "\\")) {
-                        lookupElement.withTailText(entry.getKey() + fqnClass.substring(entry.getValue().length()));
+                        lookupElement.withTypeText(entry.getKey() + fqnClass.substring(entry.getValue().length()));
                     }
+                }
+
+                // attach class also "@ORM\Entity" if there is not import but an alias via settings
+                for (UseAliasOption useAliasOption : ApplicationSettings.getUseAliasOptionsWithDefaultFallback()) {
+                    String className = "\\" + StringUtils.stripStart(useAliasOption.getClassName(), "\\") + "\\";
+
+                    if (!fqnClass.startsWith(className)) {
+                        continue;
+                    }
+
+                    String substring = fqnClass.substring(className.length());
+
+                    String lookupString = useAliasOption.getAlias() + "\\" + substring;
+                    PhpClassAnnotationLookupElement phpClassAnnotationLookupElement = new PhpClassAnnotationLookupElement(underlyingClass, useAliasOption, lookupString);
+                    phpClassAnnotationLookupElement.withInsertHandler(AnnotationTagInsertHandler.getInstance());
+
+                    completionResultSet.addElement(underlyingClass.isDeprecated() ? PrioritizedLookupElement.withPriority(phpClassAnnotationLookupElement, -1000) : phpClassAnnotationLookupElement);
                 }
 
                 completionResultSet.addElement(underlyingClass.isDeprecated() ? PrioritizedLookupElement.withPriority(lookupElement, -1000) : lookupElement);

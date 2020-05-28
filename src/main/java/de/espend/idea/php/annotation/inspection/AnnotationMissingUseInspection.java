@@ -3,6 +3,7 @@ package de.espend.idea.php.annotation.inspection;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
@@ -16,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -63,11 +65,11 @@ public class AnnotationMissingUseInspection extends LocalInspectionTool {
             return;
         }
 
-        Collection<PhpClass> phpClasses = AnnotationUtil.getPossibleImportClasses(phpDocTag);
+        Map<String, String> phpClasses = AnnotationUtil.getPossibleImportClasses(phpDocTag);
         if (phpClasses.size() > 0) {
-            Set<String> collect = phpClasses.stream()
-                .map(PhpNamedElement::getFQN)
-                .collect(Collectors.toSet());
+            Collection<Pair<String, String>> collect = phpClasses.entrySet().stream()
+                .map(entry -> Pair.create(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
 
             holder.registerProblem(
                 firstChild,

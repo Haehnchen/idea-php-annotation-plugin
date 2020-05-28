@@ -11,10 +11,9 @@ import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -204,5 +203,33 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
 
             assertContainsElements(targets, objects[1]);
         }
+    }
+
+    public void testThatImportForClassIsSuggestedForImportedClass() {
+        myFixture.copyFileToProject("doctrine.php");
+
+        PhpDocTag phpDocTag = PhpPsiElementFactory.createFromText(getProject(), PhpDocTag.class, "<?php\n" +
+            "/**\n" +
+            "* @Entity()\n" +
+            "*/\n" +
+            "class Foo {}\n"
+        );
+
+        Map<String, String> possibleImportClasses = AnnotationUtil.getPossibleImportClasses(phpDocTag);
+        assertNull(possibleImportClasses.get("\\Doctrine\\ORM\\Mapping"));
+    }
+
+    public void testThatImportForClassIsSuggestedForAliasImportClass() {
+        myFixture.copyFileToProject("doctrine.php");
+
+        PhpDocTag phpDocTag = PhpPsiElementFactory.createFromText(getProject(), PhpDocTag.class, "<?php\n" +
+            "/**\n" +
+            "* @ORM\\Entity()\n" +
+            "*/\n" +
+            "class Foo {}\n"
+        );
+
+        Map<String, String> possibleImportClasses = AnnotationUtil.getPossibleImportClasses(phpDocTag);
+        assertEquals("ORM", possibleImportClasses.get("\\Doctrine\\ORM\\Mapping"));
     }
 }

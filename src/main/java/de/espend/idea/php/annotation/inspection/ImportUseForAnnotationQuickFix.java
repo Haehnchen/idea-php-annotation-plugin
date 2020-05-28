@@ -6,6 +6,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
@@ -25,9 +26,9 @@ import java.util.stream.Collectors;
  */
 public class ImportUseForAnnotationQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
     @NotNull
-    private final Collection<String> classes;
+    private final Collection<Pair<String, String>>  classes;
 
-    ImportUseForAnnotationQuickFix(@NotNull PhpDocTag phpDocTag, @NotNull Collection<String> classes) {
+    ImportUseForAnnotationQuickFix(@NotNull PhpDocTag phpDocTag, @NotNull Collection<Pair<String, String>>  classes) {
         super(phpDocTag);
         this.classes = classes;
     }
@@ -43,7 +44,15 @@ public class ImportUseForAnnotationQuickFix extends LocalQuickFixAndIntentionAct
     public String getText() {
         // single class presentable item
         if(this.classes.size() == 1) {
-            return "Import: " + this.classes.iterator().next();
+            Pair<String, String> next = this.classes.iterator().next();
+            String message = "Import: " + StringUtils.stripStart(next.getFirst(), "\\");
+
+            String alias = next.getSecond();
+            if (alias != null) {
+                message += " -> " + alias;
+            }
+
+            return message;
         }
 
         // multiple classes found just display overall count
@@ -67,26 +76,55 @@ public class ImportUseForAnnotationQuickFix extends LocalQuickFixAndIntentionAct
         }
 
         // strip first "\"
-        List<String> classes = this.classes.stream().map(s ->
-            StringUtils.stripStart(s, "\\")).collect(Collectors.toList()
-        );
+        List<PopupChooserItem> popupChooserItems = this.classes.stream()
+            .map(PopupChooserItem::new)
+            .collect(Collectors.toList());
 
-        // suggestion possible import
-        JBPopupFactory.getInstance().createPopupChooserBuilder(classes)
+        JBPopupFactory.getInstance().createPopupChooserBuilder(popupChooserItems)
             .setTitle("Import: Annotation Suggestion")
             .setItemChosenCallback(selected ->
                 WriteCommandAction.writeCommandAction(editor.getProject())
                     .withName("Import: " + selected)
-                    .run(() -> invoke(startElement, "\\" + selected))
+                    .run(() -> invoke(startElement, selected.getItem()))
             )
             .createPopup()
             .showInBestPositionFor(editor);
     }
 
-    private void invoke(@NotNull PsiElement psiElement, @NotNull String className) {
+    private void invoke(@NotNull PsiElement psiElement, @NotNull Pair<String, String> pair) {
         PhpPsiElement scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(psiElement);
         if(scopeForUseOperator != null) {
-            PhpAliasImporter.insertUseStatement(className, scopeForUseOperator);
+            if (pair.getSecond() == null) {
+                PhpAliasImporter.insertUseStatement(pair.getFirst(), scopeForUseOperator);
+            } else {
+                PhpAliasImporter.insertUseStatement(pair.getFirst(), pair.getSecond(), scopeForUseOperator);
+            }
+        }
+    }
+
+    private static class PopupChooserItem {
+        @NotNull
+        private final Pair<String, String> item;
+
+        public PopupChooserItem(@NotNull Pair<String, String> item) {
+            this.item = item;
+        }
+
+        @Override
+        public String toString() {
+            String itemText = StringUtils.stripStart(item.getFirst(), "\\");
+
+            String alias = item.getSecond();
+            if (alias != null) {
+                itemText += " -> " + alias;
+            }
+
+            return itemText;
+        }
+
+        @NotNull
+        public Pair<String, String> getItem() {
+            return item;
         }
     }
 }
