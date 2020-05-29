@@ -13,6 +13,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.ID;
@@ -454,7 +455,7 @@ public class AnnotationUtil {
         if (split.length > 1) {
             String aliasStart = split[0];
 
-            for (UseAliasOption useAliasOption : ApplicationSettings.getUseAliasOptionsWithDefaultFallback()) {
+            for (UseAliasOption useAliasOption : AnnotationUtil.getActiveImportsAliasesFromSettings()) {
                 String alias = useAliasOption.getAlias();
 
                 if (!aliasStart.equals(alias)) {
@@ -657,6 +658,16 @@ public class AnnotationUtil {
         }
 
         return psiElements;
+    }
+
+    @NotNull
+    public static Collection<UseAliasOption> getActiveImportsAliasesFromSettings() {
+        Collection<UseAliasOption> useAliasOptions = ApplicationSettings.getUseAliasOptionsWithDefaultFallback();
+        if(useAliasOptions.size() == 0) {
+            return Collections.emptyList();
+        }
+
+        return ContainerUtil.filter(useAliasOptions, UseAliasOption::isEnabled);
     }
 
     /**
