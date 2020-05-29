@@ -201,6 +201,40 @@ public class PhpDocUtil {
         return StringUtils.join(namespaces, null);
     }
 
+    /**
+     * Extract namespace+class @DateTime(F<caret>oo\Kernel::VERSION) => "F<caret>oo\Kerne"
+     */
+    @Nullable
+    public static String getNamespaceForDocIdentifierAtStart(@NotNull PsiElement psiElement) {
+        if(psiElement.getNode().getElementType() != PhpDocTokenTypes.DOC_IDENTIFIER) {
+            return null;
+        }
+
+        PsiElement prevSibling = psiElement.getPrevSibling();
+
+        List<String> namespaces = new ArrayList<>();
+
+        if (prevSibling != null && prevSibling.getNode().getElementType() == PhpDocTokenTypes.DOC_NAMESPACE) {
+            namespaces.add("\\");
+        }
+
+        PsiElement child = psiElement.getNextSibling();
+        namespaces.add(psiElement.getText());
+        while (child != null) {
+            if(!isValidClassTextReverse(child)) {
+                return StringUtils.join(namespaces, null);
+            }
+
+            namespaces.add(child.getText());
+            child = child.getNextSibling();
+        }
+
+        return StringUtils.join(namespaces, null);
+    }
+
+    /**
+     * Starting right and search left until we find a stopping char "Foo\Ke<caret>rnel::VERSION" => "Foo\Kernel"
+     */
     private static boolean isValidClassText(@NotNull PsiElement psiElement) {
         IElementType elementType = psiElement.getNode().getElementType();
         if(elementType == PhpDocTokenTypes.DOC_NAMESPACE) {
@@ -219,5 +253,28 @@ public class PhpDocUtil {
         }
 
         return text.matches("^\\w+$");
+    }
+
+    /**
+     * Starting left and search right until we find a stopping on the left like "static" element "F<caret>oo\Kernel::VERSION" => "Foo\Kernel"
+     */
+    private static boolean isValidClassTextReverse(@NotNull PsiElement psiElement) {
+        return psiElement.getNode().getElementType() != PhpDocTokenTypes.DOC_STATIC && isValidClassText(psiElement);
+    }
+
+    /**
+     * Extract namespace+class @DateTime(F<caret>oo\Kernel::VERSION) => "F<caret>oo\Kernel"
+     */
+    public static boolean isFirstIdentifierInNamespace(@NotNull PsiElement psiElement) {
+        PsiElement prevSibling = psiElement.getPrevSibling();
+        if (prevSibling == null) {
+            return true;
+        }
+
+        if (prevSibling.getNode().getElementType() == PhpDocTokenTypes.DOC_NAMESPACE) {
+            prevSibling = prevSibling.getPrevSibling();
+        }
+
+        return prevSibling == null || !isValidClassText(prevSibling);
     }
 }
