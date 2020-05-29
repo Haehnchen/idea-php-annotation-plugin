@@ -157,7 +157,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
     /**
      * "@Foo(<caret>)" provides attribute so field properties of annotation
      */
-    private class PhpDocAttributeList extends CompletionProvider<CompletionParameters> {
+    private static class PhpDocAttributeList extends CompletionProvider<CompletionParameters> {
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters completionParameters, ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
@@ -177,7 +177,9 @@ public class AnnotationCompletionContributor extends CompletionContributor {
             }
 
             for(Field field: phpClass.getFields()) {
-                attachLookupElement(completionResultSet, field);
+                if (field.getModifier().isPublic()) {
+                    attachLookupElement(completionResultSet, field);
+                }
             }
 
             // extension point for virtual properties

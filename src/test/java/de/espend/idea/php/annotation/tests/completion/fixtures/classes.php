@@ -29,6 +29,11 @@ namespace My\Annotations
          * @Enum({"AUTO", "SEQUENCE", "TABLE", "IDENTITY", "NONE", "UUID", "CUSTOM"})
          */
         public $strategy = 'AUTO';
+
+        /**
+         * @var string
+         */
+        private $myPrivate;
     }
 
     /**
