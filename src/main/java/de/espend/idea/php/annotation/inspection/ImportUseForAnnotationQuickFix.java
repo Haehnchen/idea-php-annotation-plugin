@@ -11,8 +11,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.refactoring.PhpAliasImporter;
+import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,7 +79,10 @@ public class ImportUseForAnnotationQuickFix extends LocalQuickFixAndIntentionAct
 
         // strip first "\"
         List<PopupChooserItem> popupChooserItems = this.classes.stream()
-            .map(PopupChooserItem::new)
+            .map(pair -> {
+                PhpClass classInterface = PhpElementsUtil.getClassInterface(project, pair.getFirst());
+                return new PopupChooserItem(pair, classInterface != null && classInterface.isDeprecated());
+            })
             .collect(Collectors.toList());
 
         JBPopupFactory.getInstance().createPopupChooserBuilder(popupChooserItems)
@@ -105,9 +110,11 @@ public class ImportUseForAnnotationQuickFix extends LocalQuickFixAndIntentionAct
     private static class PopupChooserItem {
         @NotNull
         private final Pair<String, String> item;
+        private final boolean isDeprecated;
 
-        public PopupChooserItem(@NotNull Pair<String, String> item) {
+        public PopupChooserItem(@NotNull Pair<String, String> item, boolean isDeprecated) {
             this.item = item;
+            this.isDeprecated = isDeprecated;
         }
 
         @Override
@@ -117,6 +124,10 @@ public class ImportUseForAnnotationQuickFix extends LocalQuickFixAndIntentionAct
             String alias = item.getSecond();
             if (alias != null) {
                 itemText += " -> " + alias;
+            }
+
+            if (isDeprecated) {
+                itemText += " (Deprecated)";
             }
 
             return itemText;
