@@ -23,7 +23,7 @@ import java.util.function.Function;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class AnnotationDocBlockClassConstantNotFoundInspection extends LocalInspectionTool {
-    public static final String MESSAGE = "Class not found";
+    public static final String MESSAGE = "[Annotations] Class not found";
 
     @NotNull
     @Override

@@ -25,7 +25,7 @@ public class DoctrineTypeDeprecatedInspectionTest extends AnnotationLightCodeIns
                 "class Foo\n" +
                 "{\n" +
                 "}",
-            "Deprecated: Use JsonType instead"
+            "[Annotations] Deprecated: Use JsonType instead"
         );
 
         assertLocalInspectionIsEmpty("test.php", "<?php\n" +

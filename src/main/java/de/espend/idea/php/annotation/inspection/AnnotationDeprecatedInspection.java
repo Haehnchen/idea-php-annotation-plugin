@@ -1,7 +1,6 @@
 package de.espend.idea.php.annotation.inspection;
 
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -12,10 +11,8 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 public class AnnotationDeprecatedInspection extends LocalInspectionTool {
-    public static final String MESSAGE = "Annotation is deprecated";
+    public static final String MESSAGE = "[Annotations] Annotation is deprecated";
 
     @NotNull
     @Override
