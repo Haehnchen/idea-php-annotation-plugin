@@ -1,11 +1,11 @@
 package de.espend.idea.php.annotation.dict;
 
-import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
+import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,13 +40,8 @@ public class PhpDocTagAnnotation {
      * @return Property value
      */
     @Nullable
-    public String getPropertyValue(String propertyName) {
-        StringLiteralExpression literalExpression = getPropertyValuePsi(propertyName);
-        if(literalExpression != null) {
-            return literalExpression.getContents();
-        }
-
-        return null;
+    public String getPropertyValue(@NotNull String propertyName) {
+        return AnnotationUtil.getPropertyValue(phpDocTag, propertyName);
     }
 
     /**
@@ -56,7 +51,7 @@ public class PhpDocTagAnnotation {
      * @return Property value
      */
     @Nullable
-    public StringLiteralExpression getPropertyValuePsi(String propertyName) {
+    public StringLiteralExpression getPropertyValuePsi(@NotNull String propertyName) {
         PhpPsiElement docAttrList = phpDocTag.getFirstPsiChild();
         if(docAttrList != null) {
             return PhpElementsUtil.getChildrenOnPatternMatch(docAttrList, AnnotationPattern.getPropertyIdentifierValue(propertyName));
@@ -72,18 +67,6 @@ public class PhpDocTagAnnotation {
      */
     @Nullable
     public String getDefaultPropertyValue() {
-        PhpPsiElement phpDocAttrList = phpDocTag.getFirstPsiChild();
-
-        if(phpDocAttrList != null) {
-            if(phpDocAttrList.getNode().getElementType() == PhpDocElementTypes.phpDocAttributeList) {
-                PhpPsiElement phpPsiElement = phpDocAttrList.getFirstPsiChild();
-                if(phpPsiElement instanceof StringLiteralExpression) {
-                    return ((StringLiteralExpression) phpPsiElement).getContents();
-                }
-            }
-        }
-
-        return null;
+        return AnnotationUtil.getDefaultPropertyValue(phpDocTag);
     }
-
 }

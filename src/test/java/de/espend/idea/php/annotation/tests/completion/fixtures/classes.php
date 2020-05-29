@@ -6,6 +6,15 @@ namespace My\Annotations
     /**
      * @Annotation
      * @Target("ALL")
+     *
+     * @Attributes({
+     *   @Attribute("stringProperty", type = "string"),
+     *   @Attribute("annotProperty",  type = "SomeAnnotationClass"),
+     * })
+     *
+     * @Attributes(
+     *     @Attribute("accessControl", type="string"),
+     * )
      */
     class All
     {

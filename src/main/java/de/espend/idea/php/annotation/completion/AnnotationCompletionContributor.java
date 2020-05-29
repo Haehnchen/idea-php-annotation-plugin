@@ -11,8 +11,9 @@ import com.jetbrains.php.PhpIcons;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.jetbrains.php.lang.psi.elements.Field;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.completion.insert.AnnotationTagInsertHandler;
 import de.espend.idea.php.annotation.completion.lookupelements.PhpAnnotationPropertyLookupElement;
@@ -24,7 +25,9 @@ import de.espend.idea.php.annotation.extension.parameter.AnnotationCompletionPro
 import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationVirtualPropertyCompletionParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
-import de.espend.idea.php.annotation.util.*;
+import de.espend.idea.php.annotation.util.AnnotationUtil;
+import de.espend.idea.php.annotation.util.PhpElementsUtil;
+import de.espend.idea.php.annotation.util.PhpIndexUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -155,50 +158,51 @@ public class AnnotationCompletionContributor extends CompletionContributor {
     }
 
     /**
-     * "@Foo(<caret>)" provides attribute so field properties of annotation
+     * Provides attribute so field properties of annotation
+     *
+     * "@Foo(<caret>)" => @Foo(name=)
+     * "@Foo("foo", <caret>)" => "@Foo("foo", name=)"
      */
     private static class PhpDocAttributeList extends CompletionProvider<CompletionParameters> {
-
         @Override
-        protected void addCompletions(@NotNull CompletionParameters completionParameters, ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
+        protected void addCompletions(@NotNull CompletionParameters completionParameters, @NotNull ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
             PsiElement psiElement = completionParameters.getOriginalPosition();
-            if(psiElement == null) {
+            if (psiElement == null) {
                 return;
             }
 
             PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(psiElement, PhpDocTag.class);
-            if(phpDocTag == null) {
+            if (phpDocTag == null) {
                 return;
             }
 
             PhpClass phpClass = AnnotationUtil.getAnnotationReference(phpDocTag);
-            if(phpClass == null) {
+            if (phpClass == null) {
                 return;
             }
 
-            for(Field field: phpClass.getFields()) {
-                if (field.getModifier().isPublic()) {
-                    attachLookupElement(completionResultSet, field);
-                }
-            }
+            AnnotationUtil.visitAttributes(phpClass, (attributeName, type, target) -> {
+                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(attributeName, AnnotationPropertyEnum.fromString(type))));
+                return null;
+            });
 
             // extension point for virtual properties
             AnnotationVirtualPropertyCompletionParameter virtualPropertyParameter = null;
             AnnotationCompletionProviderParameter parameter = null;
 
             for (PhpAnnotationVirtualProperties ep : AnnotationUtil.EP_VIRTUAL_PROPERTIES.getExtensions()) {
-                if(virtualPropertyParameter == null) {
+                if (virtualPropertyParameter == null) {
                     virtualPropertyParameter = new AnnotationVirtualPropertyCompletionParameter(phpClass);
                 }
 
-                if(parameter == null) {
+                if (parameter == null) {
                     parameter = new AnnotationCompletionProviderParameter(completionParameters, processingContext, completionResultSet);
                 }
 
                 ep.addCompletions(virtualPropertyParameter, parameter);
             }
 
-            if(virtualPropertyParameter != null) {
+            if (virtualPropertyParameter != null) {
                 for (Map.Entry<String, AnnotationPropertyEnum> pair : virtualPropertyParameter.getLookupElements().entrySet()) {
                     completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(
                         new AnnotationProperty(pair.getKey(), pair.getValue()))
@@ -206,69 +210,9 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                 }
             }
         }
-
-        private void attachLookupElement(CompletionResultSet completionResultSet, Field field) {
-            if(field.isConstant()) {
-               return;
-            }
-
-            String propertyName = field.getName();
-
-            // private $isNillable = false;
-            PhpType type = field.getType();
-            if(type.toString().equals("bool")) {
-                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.BOOLEAN)));
-                return;
-            }
-
-            // private $isNillable = array();
-            if(type.toString().equals("array")) {
-                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.ARRAY)));
-                return;
-            }
-
-            PhpDocComment docComment = field.getDocComment();
-            if(docComment != null) {
-                for(PhpDocTag varDocTag: docComment.getTagElementsByName("@var")) {
-                    PhpPsiElement phpPsiElement = varDocTag.getFirstPsiChild();
-                    if(phpPsiElement != null) {
-                        String typeText = phpPsiElement.getText().toLowerCase();
-                        if(!StringUtils.isBlank(typeText)) {
-
-                            // @var array<string>
-                            if(typeText.startsWith("array")) {
-                                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.ARRAY)));
-                                return;
-                            }
-
-                            if(typeText.equalsIgnoreCase("integer") || typeText.equalsIgnoreCase("int")) {
-                                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.INTEGER)));
-                                return;
-                            }
-
-                            if(typeText.equalsIgnoreCase("boolean") || typeText.equalsIgnoreCase("bool")) {
-                                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.BOOLEAN)));
-                                return;
-                            }
-
-                        }
-                    }
-                }
-            }
-
-            // public $var = array();
-            if(field.getDefaultValue() instanceof ArrayCreationExpression) {
-                completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.ARRAY)));
-                return;
-            }
-
-            // fallback
-            completionResultSet.addElement(new PhpAnnotationPropertyLookupElement(new AnnotationProperty(propertyName, AnnotationPropertyEnum.STRING)));
-        }
-
     }
 
-    private class PhpDocBlockTagAnnotations  extends CompletionProvider<CompletionParameters> {
+    private static class PhpDocBlockTagAnnotations extends CompletionProvider<CompletionParameters> {
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters completionParameters, @NotNull ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {

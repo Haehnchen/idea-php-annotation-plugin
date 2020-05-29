@@ -2,6 +2,7 @@ package de.espend.idea.php.annotation.tests.navigation;
 
 import com.intellij.patterns.PlatformPatterns;
 import com.jetbrains.php.lang.PhpFileType;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
@@ -177,6 +178,32 @@ public class AnnotationGoToDeclarationHandlerTest extends AnnotationLightCodeIns
                 "  /** @Foo(name={B<caret>ar::MY_VAR}) */" +
                 "}\n",
             PlatformPatterns.psiElement(PhpClass.class).withName("Bar")
+        );
+    }
+
+    public void testNavigationForPropertyInsideAnnotationAttributes() {
+        assertNavigationMatch(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace Bar;\n" +
+                "\n" +
+                "use Foo\\Bar;\n" +
+                "\n" +
+                "class Foo\n" +
+                "{\n" +
+                "  /** @Bar(fo<caret>o=\"test\") */" +
+                "}\n",
+            PlatformPatterns.psiElement(Field.class).withName("foo")
+        );
+
+        assertNavigationMatch(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace Bar;\n" +
+                "\n" +
+                "use Foo\\Bar;\n" +
+                "\n" +
+                "class Foo\n" +
+                "{\n" +
+                "  /** @Bar(access<caret>Control=\"test\") */" +
+                "}\n",
+            PlatformPatterns.psiElement(PhpDocTag.class)
         );
     }
 }

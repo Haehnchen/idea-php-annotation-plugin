@@ -108,6 +108,26 @@ class NotBlank extends Constraint {
 }
 ```
 
+https://www.doctrine-project.org/projects/doctrine-annotations/en/latest/custom.html#attribute-types
+
+```php
+/**
+ * @Annotation
+ *
+ * @Attributes({
+ *   @Attribute("stringProperty", type = "string"),
+ *   @Attribute("annotProperty",  type = "bool"),
+ * })
+ */
+ *
+ * @Attributes(
+ *   @Attribute("stringProperty", type = "string"),
+ *   @Attribute("annotProperty",  type = "bool"),
+ * )
+ */
+class Foobar {}
+```
+
 ### Annotation Target Detection
 
 `@Target` is used to attach annotation, if non provided its added to "ALL list"

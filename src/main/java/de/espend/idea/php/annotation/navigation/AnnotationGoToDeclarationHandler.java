@@ -107,11 +107,13 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
             return;
         }
 
-        for(Field field: phpClass.getFields()) {
-            if(field.getName().equals(property)) {
-                targets.add(field);
+        AnnotationUtil.visitAttributes(phpClass, (attributeName, type, target) -> {
+            if(attributeName.equals(property)) {
+                targets.add(target);
             }
-        }
+
+            return null;
+        });
 
         // extension point to provide virtual properties / fields targets
         AnnotationVirtualPropertyTargetsParameter parameter = null;

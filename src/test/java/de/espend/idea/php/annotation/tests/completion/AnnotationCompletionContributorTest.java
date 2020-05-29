@@ -58,6 +58,16 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
         );
     }
 
+    public void testCompletionForPropertyInsideAnnotationAttributes() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "/**" +
+                "* @\\My\\Annotations\\All(\"a\",<caret>)" +
+                "*/" +
+                "class Foo {}",
+            "accessControl", "annotProperty"
+        );
+    }
+
     public void testDocTagCompletionInClassPropertyScope() {
         assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
                 "class Foo {\n" +
