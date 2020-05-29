@@ -19,8 +19,6 @@ import de.espend.idea.php.annotation.extension.parameter.AnnotationDocTagGotoHan
 import de.espend.idea.php.annotation.extension.parameter.AnnotationVirtualPropertyTargetsParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
-import de.espend.idea.php.annotation.util.PhpDocUtil;
-import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -137,13 +135,10 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
      * @param targets Goto targets
      */
     private void addStaticClassTargets(PsiElement psiElement, List<PsiElement> targets) {
-
-        String text = psiElement.getText();
-        PhpClass phpClass = PhpElementsUtil.getClassByContext(psiElement, text);
+        PhpClass phpClass = AnnotationUtil.getClassFromDocIdentifier(psiElement);
         if(phpClass != null) {
             targets.add(phpClass);
         }
-
     }
 
     /**
@@ -153,24 +148,19 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
      * @param targets Goto targets
      */
     private void addStaticClassConstTargets(PsiElement psiElement, List<PsiElement> targets) {
+        PhpClass phpClass = AnnotationUtil.getClassFromConstant(psiElement);
+        if(phpClass != null) {
+            String constName = psiElement.getText();
 
-        String constName = psiElement.getText();
-
-        PsiElement docStatic = psiElement.getPrevSibling();
-        if(docStatic != null && PhpDocUtil.isDocStaticElement(docStatic)) {
-            PsiElement docIdentifier = docStatic.getPrevSibling();
-            if(docIdentifier != null && docIdentifier.getNode().getElementType() == PhpDocTokenTypes.DOC_IDENTIFIER) {
-                String className = docIdentifier.getText();
-                PhpClass phpClass = PhpElementsUtil.getClassByContext(psiElement, className);
-                if(phpClass != null) {
-                    Field field = phpClass.findFieldByName(constName, true);
-                    if(field != null) {
-                        targets.add(field);
-                    }
+            if ("class".equals(constName)) {
+                targets.add(phpClass);
+            } else {
+                Field field = phpClass.findFieldByName(constName, true);
+                if(field != null) {
+                    targets.add(field);
                 }
             }
         }
-
     }
 
     @Nullable

@@ -191,14 +191,14 @@ public class PhpDocUtil {
         while (child != null) {
             if(!isValidClassText(child)) {
                 Collections.reverse(namespaces);
-                return StringUtils.stripStart(StringUtils.join(namespaces, null), "\\");
+                return StringUtils.join(namespaces, null);
             }
 
             namespaces.add(child.getText());
             child = child.getPrevSibling();
         }
 
-        return StringUtils.stripStart(StringUtils.join(namespaces, null), "\\");
+        return StringUtils.join(namespaces, null);
     }
 
     private static boolean isValidClassText(@NotNull PsiElement psiElement) {

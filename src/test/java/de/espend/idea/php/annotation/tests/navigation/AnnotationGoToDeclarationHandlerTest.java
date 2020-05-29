@@ -112,11 +112,45 @@ public class AnnotationGoToDeclarationHandlerTest extends AnnotationLightCodeIns
         assertNavigationMatch(PhpFileType.INSTANCE, "<?php\n" +
                 "namespace Bar;\n" +
                 "\n" +
+                "class Foo\n" +
+                "{\n" +
+                "  /** @Foo(\\My\\Bar::cla<caret>ss) */" +
+                "}\n",
+            PlatformPatterns.psiElement(PhpClass.class).withName("Bar")
+        );
+
+        assertNavigationMatch(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace Bar;\n" +
+                "\n" +
+                "use \\My\\Bar;\n" +
+                "\n" +
+                "class Foo\n" +
+                "{\n" +
+                "  /** @Foo(Bar::cla<caret>ss) */" +
+                "}\n",
+            PlatformPatterns.psiElement(PhpClass.class).withName("Bar")
+        );
+
+        assertNavigationMatch(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace Bar;\n" +
+                "\n" +
                 "use \\My\\Bar;\n" +
                 "\n" +
                 "class Foo\n" +
                 "{\n" +
                 "  /** @Foo(B<caret>ar::MY_VAR) */" +
+                "}\n",
+            PlatformPatterns.psiElement(PhpClass.class).withName("Bar")
+        );
+
+        assertNavigationMatch(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace Bar;\n" +
+                "\n" +
+                "use \\My;\n" +
+                "\n" +
+                "class Foo\n" +
+                "{\n" +
+                "  /** @Foo(My\\B<caret>ar::MY_VAR) */" +
                 "}\n",
             PlatformPatterns.psiElement(PhpClass.class).withName("Bar")
         );
