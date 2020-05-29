@@ -418,18 +418,11 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                 return;
             }
 
-            PsiElement docStatic = psiElement.getPrevSibling();
-            if(docStatic != null && PhpDocUtil.isDocStaticElement(docStatic)) {
-                PsiElement docIdentifier = docStatic.getPrevSibling();
-                if(docIdentifier != null && docIdentifier.getNode().getElementType() == PhpDocTokenTypes.DOC_IDENTIFIER) {
-                    String className = docIdentifier.getText();
-                    PhpClass phpClass = PhpElementsUtil.getClassByContext(psiElement, className);
-                    if(phpClass != null) {
-                        phpClass.getFields().stream().filter(Field::isConstant).forEach(field ->
-                            result.addElement(LookupElementBuilder.create(field.getName()).withIcon(PhpIcons.FIELD).withTypeText(phpClass.getName(), true))
-                        );
-                    }
-                }
+            PhpClass phpClass = AnnotationUtil.getClassFromConstant(psiElement);
+            if(phpClass != null) {
+                phpClass.getFields().stream().filter(Field::isConstant).forEach(field ->
+                    result.addElement(LookupElementBuilder.create(field.getName()).withIcon(PhpIcons.FIELD).withTypeText(phpClass.getName(), true))
+                );
             }
         }
     }

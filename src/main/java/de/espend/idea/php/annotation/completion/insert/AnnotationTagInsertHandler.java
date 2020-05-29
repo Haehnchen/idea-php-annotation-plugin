@@ -5,7 +5,6 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
@@ -13,17 +12,15 @@ import com.jetbrains.php.completion.insert.PhpInsertHandlerUtil;
 import com.jetbrains.php.completion.insert.PhpReferenceInsertHandler;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
-import com.jetbrains.php.refactoring.PhpAliasImporter;
 import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.completion.lookupelements.PhpClassAnnotationLookupElement;
 import de.espend.idea.php.annotation.dict.UseAliasOption;
+import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -70,7 +67,7 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
      * Insert class alias before PhpStorm tries to import a new use statement "\Foo\Bar as Car"
      */
     private void preAliasInsertion(@NotNull InsertionContext context, @NotNull LookupElement lookupElement) {
-        List<UseAliasOption> importsAliases = getImportsAliases();
+        Collection<UseAliasOption> importsAliases = AnnotationUtil.getActiveImportsAliasesFromSettings();
         if(importsAliases.size() == 0) {
             return;
         }
@@ -112,17 +109,7 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
         PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(context.getDocument());
     }
 
-    private List<UseAliasOption> getImportsAliases() {
-        Collection<UseAliasOption> useAliasOptions = ApplicationSettings.getUseAliasOptionsWithDefaultFallback();
-        if(useAliasOptions.size() == 0) {
-            return Collections.emptyList();
-        }
-
-        return ContainerUtil.filter(useAliasOptions, UseAliasOption::isEnabled);
-    }
-
     public static AnnotationTagInsertHandler getInstance(){
         return instance;
     }
-
 }

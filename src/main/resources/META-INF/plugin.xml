@@ -100,42 +100,42 @@
 
       <codeInsight.lineMarkerProvider language="PHP" implementationClass="de.espend.idea.php.annotation.navigation.AnnotationUsageLineMarkerProvider"/>
 
-      <localInspection groupPath="PHP" shortName="AnnotationMissingUseInspection" displayName="Missing import"
+      <localInspection groupPath="PHP" shortName="AnnotationMissingUseInspection" displayName="[Annotations] Missing import"
                        groupName="Annotation"
                        enabledByDefault="true"
                        level="WARNING"
                        language="PHP"
                        implementationClass="de.espend.idea.php.annotation.inspection.AnnotationMissingUseInspection"/>
 
-      <localInspection groupPath="PHP" shortName="AnnotationDeprecatedInspection" displayName="Annotation is deprecated"
+      <localInspection groupPath="PHP" shortName="AnnotationDeprecatedInspection" displayName="[Annotations] Annotation is deprecated"
                        groupName="Annotation"
                        enabledByDefault="true"
                        level="WARNING"
                        language="PHP"
                        implementationClass="de.espend.idea.php.annotation.inspection.AnnotationDeprecatedInspection"/>
 
-      <localInspection groupPath="PHP" shortName="RepositoryClassInspection" displayName="Missing repository class"
+      <localInspection groupPath="PHP" shortName="RepositoryClassInspection" displayName="[Annotations] Missing repository class"
                        groupName="Annotation"
                        enabledByDefault="true"
                        level="WARNING"
                        language="PHP"
                        implementationClass="de.espend.idea.php.annotation.doctrine.inspection.RepositoryClassInspection"/>
 
-      <localInspection groupPath="PHP" shortName="DoctrineTypeDeprecatedInspection" displayName="Doctrine column type deprecated"
+      <localInspection groupPath="PHP" shortName="DoctrineTypeDeprecatedInspection" displayName="[Annotations] Doctrine column type deprecated"
                        groupName="Annotation"
                        enabledByDefault="true"
                        level="WARNING"
                        language="PHP"
                        implementationClass="de.espend.idea.php.annotation.doctrine.inspection.DoctrineTypeDeprecatedInspection"/>
 
-      <localInspection groupPath="PHP" shortName="AnnotationDocBlockTagClassNotFound" displayName="Class not found"
+      <localInspection groupPath="PHP" shortName="AnnotationDocBlockTagClassNotFound" displayName="[Annotations] Class not found"
                        groupName="Annotation"
                        enabledByDefault="true"
                        level="WARNING"
                        language="PHP"
                        implementationClass="de.espend.idea.php.annotation.inspection.AnnotationDocBlockTagClassNotFoundInspection"/>
 
-      <localInspection groupPath="PHP" shortName="AnnotationDocBlockClassConstantNotFound" displayName="Class not found"
+      <localInspection groupPath="PHP" shortName="AnnotationDocBlockClassConstantNotFound" displayName="[Annotations] Class not found"
                        groupName="Annotation"
                        enabledByDefault="true"
                        level="WARNING"

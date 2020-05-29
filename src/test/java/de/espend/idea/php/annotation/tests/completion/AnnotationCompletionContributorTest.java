@@ -130,6 +130,29 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
         );
     }
 
+    public void testCompletionOfClassConstantsWithNamespace() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "/**\n" +
+                "* @All(\\My\\Annotations\\Constants::<caret>)\n" +
+                "*/\n" +
+                "class Foo {}\n" +
+                "",
+            "FOO"
+        );
+    }
+
+    public void testCompletionOfClassConstantsWithNamespaceAndUse() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "use My\\Annotations;" +
+                "/**\n" +
+                "* @All(Annotations\\Constants::<caret>)\n" +
+                "*/\n" +
+                "class Foo {}\n" +
+                "",
+            "FOO"
+        );
+    }
+
     public void testCompletionOfClassConstantsInsideArray() {
         assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
                 "use \\My\\Annotations\\All;" +

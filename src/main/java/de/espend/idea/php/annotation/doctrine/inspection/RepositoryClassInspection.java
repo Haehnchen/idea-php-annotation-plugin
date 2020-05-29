@@ -24,8 +24,7 @@ import java.util.Map;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class RepositoryClassInspection extends LocalInspectionTool {
-
-    public static final String MESSAGE = "Missing repository class";
+    public static final String MESSAGE = "[Annotations] Missing repository class";
 
     @NotNull
     @Override

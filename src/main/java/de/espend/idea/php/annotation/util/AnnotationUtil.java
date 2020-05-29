@@ -13,6 +13,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.ID;
@@ -31,6 +32,7 @@ import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.dict.*;
 import de.espend.idea.php.annotation.extension.*;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationGlobalNamespacesLoaderParameter;
+import de.espend.idea.php.annotation.inspection.AnnotationInspectionUtil;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -281,6 +283,62 @@ public class AnnotationUtil {
 
     }
 
+    /**
+     * "\My\Bar::cla<caret>ss" => "\My\Bar"
+     */
+    @Nullable
+    public static PhpClass getClassFromConstant(@NotNull PsiElement psiElement) {
+        PsiElement prevSibling = psiElement.getPrevSibling();
+
+        if (prevSibling == null || !de.espend.idea.php.annotation.util.PhpDocUtil.isDocStaticElement(prevSibling)) {
+            return null;
+        }
+
+        PsiElement prevSibling1 = prevSibling.getPrevSibling();
+        if (prevSibling1 == null || prevSibling1.getNode().getElementType() != PhpDocTokenTypes.DOC_IDENTIFIER) {
+            return null;
+        }
+
+        return getClassFromDocIdentifier(prevSibling1);
+    }
+
+    /**
+     * "\My\B<caret>ar::class" => "\My\Bar"
+     */
+    @Nullable
+    public static PhpClass getClassFromDocIdentifier(@NotNull PsiElement psiElement) {
+        String classFromDocIdentifierAsString = getClassFromDocIdentifierAsString(psiElement);
+        if (classFromDocIdentifierAsString == null) {
+            return null;
+        }
+
+        return PhpElementsUtil.getClassInterface(psiElement.getProject(), classFromDocIdentifierAsString);
+    }
+
+    /**
+     * "\My\B<caret>ar::class" => "\My\Bar"
+     */
+    @Nullable
+    public static String getClassFromDocIdentifierAsString(@NotNull PsiElement psiElement) {
+        if(psiElement.getNode().getElementType() != PhpDocTokenTypes.DOC_IDENTIFIER) {
+            return null;
+        }
+
+        String namespaceForDocIdentifier = de.espend.idea.php.annotation.util.PhpDocUtil.getNamespaceForDocIdentifier(psiElement);
+        if (namespaceForDocIdentifier == null) {
+            return null;
+        }
+
+        return AnnotationInspectionUtil.getClassFqnString(namespaceForDocIdentifier, aVoid -> {
+            PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(psiElement, PhpDocTag.class);
+            if(phpDocTag == null) {
+                return Collections.emptyMap();
+            }
+
+            return AnnotationUtil.getUseImportMap(phpDocTag);
+        });
+    }
+
     public static class CollectProjectUniqueKeys implements Processor<String> {
 
         final Project project;
@@ -397,7 +455,7 @@ public class AnnotationUtil {
         if (split.length > 1) {
             String aliasStart = split[0];
 
-            for (UseAliasOption useAliasOption : ApplicationSettings.getUseAliasOptionsWithDefaultFallback()) {
+            for (UseAliasOption useAliasOption : AnnotationUtil.getActiveImportsAliasesFromSettings()) {
                 String alias = useAliasOption.getAlias();
 
                 if (!aliasStart.equals(alias)) {
@@ -600,6 +658,16 @@ public class AnnotationUtil {
         }
 
         return psiElements;
+    }
+
+    @NotNull
+    public static Collection<UseAliasOption> getActiveImportsAliasesFromSettings() {
+        Collection<UseAliasOption> useAliasOptions = ApplicationSettings.getUseAliasOptionsWithDefaultFallback();
+        if(useAliasOptions.size() == 0) {
+            return Collections.emptyList();
+        }
+
+        return ContainerUtil.filter(useAliasOptions, UseAliasOption::isEnabled);
     }
 
     /**

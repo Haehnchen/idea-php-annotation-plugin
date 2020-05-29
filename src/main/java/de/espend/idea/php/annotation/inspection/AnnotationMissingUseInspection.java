@@ -10,7 +10,6 @@ import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import de.espend.idea.php.annotation.inspection.visitor.PhpDocTagWithUsePsiElementVisitor;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class AnnotationMissingUseInspection extends LocalInspectionTool {
-    public static final String MESSAGE = "Missing import";
+    public static final String MESSAGE = "[Annotations] Missing import";
 
     @NotNull
     @Override

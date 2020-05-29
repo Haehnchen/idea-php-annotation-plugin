@@ -82,7 +82,7 @@ public class DoctrineTypeDeprecatedInspection extends LocalInspectionTool {
 
                             holder.registerProblem(
                                 element,
-                                deprecationMessage != null ? deprecationMessage : String.format("Field '%s' is deprecated", text),
+                                "[Annotations] " + (deprecationMessage != null ? deprecationMessage : String.format("Field '%s' is deprecated", text)),
                                 ProblemHighlightType.LIKE_DEPRECATED
                             );
 

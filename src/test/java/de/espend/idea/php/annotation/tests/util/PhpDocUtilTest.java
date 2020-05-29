@@ -15,13 +15,14 @@ public class PhpDocUtilTest extends AnnotationLightCodeInsightFixtureTestCase {
      */
     public void testNamespaceIsExtractOnStopChar() {
         assertEquals("Foo\\Kernel", getPsiElement("@DateTime(Foo\\Ker<caret>nel::VERSION)"));
-        assertEquals("Foo\\Kernel", getPsiElement("@DateTime(\\Foo\\Ker<caret>nel::VERSION)"));
-        assertEquals("Foo\\Kernel", getPsiElement("@DateTime(\\Foo\\Ker<caret>nel::VERSION)"));
+        assertEquals("\\Foo\\Kernel", getPsiElement("@DateTime(\\Foo\\Ker<caret>nel::VERSION)"));
+        assertEquals("\\Foo\\Kernel", getPsiElement("@DateTime(\\Foo\\Ker<caret>nel::VERSION)"));
         assertEquals("Foo\\Kernel", getPsiElement("@DateTime(foo=Foo\\Ker<caret>nel::VERSION)"));
         assertEquals("Foo\\Kernel", getPsiElement("@DateTime(foo={Foo\\Ker<caret>nel::VERSION)"));
         assertEquals("Foo\\Kernel", getPsiElement("@DateTime({Foo\\Ker<caret>nel::VERSION)"));
         assertEquals("Foo\\Kernel", getPsiElement("@DateTime(\"Foo\\Ker<caret>nel::VERSION)"));
         assertEquals("Kernel", getPsiElement("@DateTime(Ker<caret>nel::VERSION)"));
+        assertEquals("\\Foo\\Kernel", getPsiElement("@DateTime({\\Foo\\Ker<caret>nel::VERSION)"));
     }
 
     private String getPsiElement(@NotNull String content) {
