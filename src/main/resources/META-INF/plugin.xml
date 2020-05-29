@@ -142,6 +142,13 @@
                        language="PHP"
                        implementationClass="de.espend.idea.php.annotation.inspection.AnnotationDocBlockClassConstantNotFoundInspection"/>
 
+      <localInspection groupPath="PHP" shortName="AnnotationDocBlockConstantDeprecated" displayName="[Annotations] Deprecated usage"
+                       groupName="Annotation"
+                       enabledByDefault="true"
+                       level="WARNING"
+                       language="PHP"
+                       implementationClass="de.espend.idea.php.annotation.inspection.AnnotationDocBlockConstantDeprecatedInspection"/>
+
       <applicationService serviceImplementation="de.espend.idea.php.annotation.ApplicationSettings"/>
 
       <projectConfigurable instance="de.espend.idea.php.annotation.ui.SettingsForm"

@@ -17,4 +17,17 @@ namespace Doctrine\ORM\Mapping
 namespace Foobar\Bar
 {
     class FooBar {}
+
+    /**
+     * @deprecated
+     */
+    class FooBarDeprecated
+    {
+        /**
+         * @deprecated
+         */
+        public const I_AM_DEPRECATED = 'oh no';
+
+        public const I_AM_NOT_DEPRECATED = 'nice';
+    }
 }
