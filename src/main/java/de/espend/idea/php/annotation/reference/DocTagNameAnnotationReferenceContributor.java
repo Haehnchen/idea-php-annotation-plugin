@@ -63,7 +63,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                 }
 
                 PsiElement prevSibling = element.getPrevSibling();
-                if (prevSibling.getNode().getElementType() == PhpDocTokenTypes.DOC_NAMESPACE || PhpDocUtil.isDocStaticElement(prevSibling)) {
+                if (prevSibling == null || prevSibling.getNode().getElementType() == PhpDocTokenTypes.DOC_NAMESPACE || PhpDocUtil.isDocStaticElement(prevSibling)) {
                     return PsiReference.EMPTY_ARRAY;
                 }
 
