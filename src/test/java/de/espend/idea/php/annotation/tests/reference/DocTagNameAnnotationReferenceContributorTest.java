@@ -143,6 +143,7 @@ public class DocTagNameAnnotationReferenceContributorTest extends AnnotationLigh
             "namespace My;\n" +
             "\n" +
             "use FooBar\\Car;\n" +
+            "use FooBar\\Apple;\n" +
             "use MyConstant\\Foo;\n" +
             "\n" +
             "class Foo\n" +
@@ -156,7 +157,9 @@ public class DocTagNameAnnotationReferenceContributorTest extends AnnotationLigh
             "}\n"
         );
 
-        assertFalse(optimized.contains("use MyConstant\\Foo;"));
+        assertFalse(optimized.contains("use FooBar\\Apple;"));
+        assertTrue(optimized.contains("use FooBar\\Car;"));
+        assertTrue(optimized.contains("use MyConstant\\Foo;"));
     }
 
     public void testThatClassInterfaceIsSupportedForImportOptimization() {
@@ -180,6 +183,27 @@ public class DocTagNameAnnotationReferenceContributorTest extends AnnotationLigh
 
         assertTrue(optimized.contains("use FooBar\\FoobarInterface;"));
         assertFalse(optimized.contains("use FooBar\\Apple;"));
+    }
+
+    public void testThatClassClassConstantWithNamespaceMustNotBeRemoved() {
+        String optimized = optimizeImports("<?php\n" +
+            "\n" +
+            "namespace My;\n" +
+            "\n" +
+            "use FooBar;\n" +
+            "\n" +
+            "class Foo\n" +
+            "{\n" +
+            "  /**\n" +
+            "   * @Car(FooBar\\FoobarInterface::class)" +
+            "   */\n" +
+            "  public function foo()\n" +
+            "  {\n" +
+            "  }\n" +
+            "}\n"
+        );
+
+        assertTrue(optimized.contains("use FooBar;"));
     }
 
     public void testPhpDocTagsShouldNotBindToVariables() {
