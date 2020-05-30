@@ -6,13 +6,11 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
+import com.intellij.util.TripleFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileContent;
@@ -26,6 +24,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import de.espend.idea.php.annotation.AnnotationStubIndex;
 import de.espend.idea.php.annotation.AnnotationUsageIndex;
 import de.espend.idea.php.annotation.ApplicationSettings;
@@ -671,6 +670,48 @@ public class AnnotationUtil {
     }
 
     /**
+     * Get attributes for @Foo("test", ATTR<caret>IBUTE)
+     *
+     * "@Attributes(@Attribute("accessControl", type="string"))"
+     * "@Attributes({@Attribute("accessControl", type="string")})"
+     * "class foo { public $foo; }"
+     */
+    public static void visitAttributes(@NotNull PhpClass phpClass, TripleFunction<String, String, PsiElement, Void> fn) {
+        for (Field field : phpClass.getFields()) {
+            if(field.getModifier().isPublic() && !field.isConstant()) {
+                String type = null;
+                for (String type2 : field.getType().getTypes()) {
+                    if (PhpType.isPrimitiveType(type2)) {
+                        type = StringUtils.stripStart(type2, "\\");
+                    }
+                }
+
+                fn.fun(field.getName(), type, field);
+            }
+        }
+
+        PhpDocComment docComment = phpClass.getDocComment();
+        if (docComment != null) {
+            for (PhpDocTag phpDocTag : docComment.getTagElementsByName("@Attributes")) {
+                for (PhpDocTag docTag : PsiTreeUtil.collectElementsOfType(phpDocTag, PhpDocTag.class)) {
+                    String name = docTag.getName();
+                    if (!"@Attribute".equals(name)) {
+                        continue;
+                    }
+
+                    String defaultPropertyValue = AnnotationUtil.getDefaultPropertyValue(docTag);
+                    if (defaultPropertyValue == null || StringUtils.isBlank(defaultPropertyValue)) {
+                        continue;
+                    }
+
+                    fn.fun(defaultPropertyValue, AnnotationUtil.getPropertyValue(docTag, "type"), docTag);
+                }
+            }
+        }
+    }
+
+
+    /**
      * matches "@Callback(propertyName="<value>")"
      */
     private static PsiElementPattern.Capture<StringLiteralExpression> getPropertyIdentifierValue(@NotNull String propertyName) {
@@ -698,6 +739,27 @@ public class AnnotationUtil {
                 PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).withText(propertyName)
             )
             .withParent(PlatformPatterns.psiElement(PhpDocElementTypes.phpDocAttributeList));
+    }
+
+    /**
+     * Get default property value from annotation "@Template("foo");
+     *
+     * @return Content of property value literal
+     */
+    @Nullable
+    public static String getDefaultPropertyValue(@NotNull PhpDocTag phpDocTag) {
+        PhpPsiElement phpDocAttrList = phpDocTag.getFirstPsiChild();
+
+        if(phpDocAttrList != null) {
+            if(phpDocAttrList.getNode().getElementType() == PhpDocElementTypes.phpDocAttributeList) {
+                PhpPsiElement phpPsiElement = phpDocAttrList.getFirstPsiChild();
+                if(phpPsiElement instanceof StringLiteralExpression) {
+                    return ((StringLiteralExpression) phpPsiElement).getContents();
+                }
+            }
+        }
+
+        return null;
     }
 }
 

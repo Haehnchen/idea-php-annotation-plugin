@@ -12,8 +12,6 @@ import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTest
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -231,5 +229,48 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
 
         Map<String, String> possibleImportClasses = AnnotationUtil.getPossibleImportClasses(phpDocTag);
         assertEquals("ORM", possibleImportClasses.get("\\Doctrine\\ORM\\Mapping"));
+    }
+
+    public void testAttributeVisitingForAnnotationClass() {
+        myFixture.copyFileToProject("doctrine.php");
+
+        PhpClass phpClass = PhpPsiElementFactory.createFromText(getProject(), PhpClass.class, "<?php\n" +
+            "/**\n" +
+            "* @Attributes(\n" +
+            "*    @Attribute(\"accessControl\", type=\"string\"),\n" +
+            "*    @Attribute(\"accessControl2\", type=\"string\"),\n" +
+            "* )\n" +
+            "*\n" +
+            "* @Attributes({\n" +
+            "*    @Attribute(\"array\", type=\"array\"),\n" +
+            "*    @Attribute(\"array2\", type=\"array\"),\n" +
+            "* })\n" +
+            "*/\n" +
+            "class Foo\n" +
+            "{" +
+            "   public string $foo;\n" +
+            "   \n" +
+            "   /** @var boolean **/\n" +
+            "   public $bool;\n" +
+            "   public $myArray = [];\n" +
+            "   public $myBool = false;\n" +
+            "}\n"
+        );
+
+        Map<String, String> attributes = new HashMap<>();
+
+        AnnotationUtil.visitAttributes(phpClass, (attribute, type, psiElement) -> {
+            attributes.put(attribute, type);
+            return null;
+        });
+
+        assertContainsElements(attributes.keySet(), "accessControl", "accessControl2", "array", "array2", "foo");
+
+        assertEquals("array", attributes.get("array2"));
+        assertEquals("string", attributes.get("accessControl"));
+        assertEquals("bool", attributes.get("bool"));
+
+        assertEquals("array", attributes.get("myArray"));
+        assertEquals("bool", attributes.get("myBool"));
     }
 }
