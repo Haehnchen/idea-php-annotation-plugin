@@ -3,9 +3,7 @@ package de.espend.idea.php.annotation.doctrine.util;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
@@ -13,6 +11,7 @@ import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import de.espend.idea.php.annotation.PhpAnnotationIcons;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
@@ -23,7 +22,10 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -40,8 +42,10 @@ public class DoctrineUtil {
         "\\Doctrine\\ORM\\Mapping\\ManyToMany",
     };
 
-    public static String guessFieldType(String fieldName) {
+    public static String guessFieldType(@NotNull Field field) {
+        String fieldName = field.getName();
 
+        // match the the fields name wins
         if(fieldName.endsWith("_at") || fieldName.endsWith("At")) {
             return "datetime";
         } else if(fieldName.endsWith("_id") || fieldName.equals("id") || fieldName.endsWith("Id")) {
@@ -50,6 +54,25 @@ public class DoctrineUtil {
             return "boolean";
         } else if(fieldName.startsWith("has_") || (fieldName.startsWith("has_") && fieldName.length() >= 4 && Character.isUpperCase(fieldName.charAt(3)))) {
             return "boolean";
+        }
+
+        // match on the types; that supports all possible types from PhpStorm but only use primitive types expect for Datetime
+        for (String type : field.getType().getTypes()) {
+            if (PhpType.isPrimitiveType(type)) {
+                return StringUtils.stripStart(type, " \\");
+            }
+
+            type = StringUtils.stripStart(type, " \\").toLowerCase();
+
+            // special datetime interfaces first
+            if (type.startsWith("datetimeimmutable")) {
+                return "datetime_immutable";
+            }
+
+            // all DateTime at its interfaces
+            if (type.startsWith("datetime")) {
+                return "datetime";
+            }
         }
 
         return "string";

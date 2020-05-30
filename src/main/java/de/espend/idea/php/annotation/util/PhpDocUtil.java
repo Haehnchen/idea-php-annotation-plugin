@@ -40,7 +40,7 @@ public class PhpDocUtil {
         }
 
         String fieldName = forElement.getName();
-        String defaultType = DoctrineUtil.guessFieldType(fieldName);
+        String defaultType = DoctrineUtil.guessFieldType(forElement);
 
         if(fieldName.equals("id")) {
 
