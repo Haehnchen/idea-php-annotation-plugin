@@ -680,7 +680,7 @@ public class AnnotationUtil {
         for (Field field : phpClass.getFields()) {
             if(field.getModifier().isPublic() && !field.isConstant()) {
                 String type = null;
-                for (String type2 : field.getType().getTypes()) {
+                for (String type2 : field.getType().filterNull().getTypes()) {
                     if (PhpType.isPrimitiveType(type2)) {
                         type = StringUtils.stripStart(type2, "\\");
                     }
