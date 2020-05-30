@@ -57,20 +57,30 @@ public class DoctrineUtil {
         }
 
         // match on the types; that supports all possible types from PhpStorm but only use primitive types expect for Datetime
-        for (String type : field.getType().getTypes()) {
+        for (String type : field.getType().filterNull().getTypes()) {
+            String typeStrip = StringUtils.stripStart(type, "\\");
+
             if (PhpType.isPrimitiveType(type)) {
-                return StringUtils.stripStart(type, " \\");
+                if ("bool".equals(typeStrip)) {
+                    return "boolean";
+                }
+
+                if ("int".equals(typeStrip)) {
+                    return "integer";
+                }
+
+                return typeStrip;
             }
 
-            type = StringUtils.stripStart(type, " \\").toLowerCase();
+            typeStrip = typeStrip.toLowerCase();
 
             // special datetime interfaces first
-            if (type.startsWith("datetimeimmutable")) {
+            if (typeStrip.startsWith("datetimeimmutable")) {
                 return "datetime_immutable";
             }
 
             // all DateTime at its interfaces
-            if (type.startsWith("datetime")) {
+            if (typeStrip.startsWith("datetime")) {
                 return "datetime";
             }
         }
