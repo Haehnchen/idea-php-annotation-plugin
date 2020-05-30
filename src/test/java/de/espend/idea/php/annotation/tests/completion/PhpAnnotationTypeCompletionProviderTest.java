@@ -132,11 +132,21 @@ public class PhpAnnotationTypeCompletionProviderTest extends AnnotationLightCode
         );
     }
 
-    public void testPropertyValueCompletionForMultipleTypes() {
+    public void testPropertyValueCompletionForTypes() {
         assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
                 "use \\My\\Annotations\\All;\n" +
                 "/**\n" +
-                "* @All(mixed=\"<caret>\")\n" +
+                "* @All(boolValue=\"<caret>\")\n" +
+                "*/\n" +
+                "class Foo {}\n" +
+                "",
+            "true", "false"
+        );
+
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "use \\My\\Annotations\\All;\n" +
+                "/**\n" +
+                "* @All(has_access=\"<caret>\")\n" +
                 "*/\n" +
                 "class Foo {}\n" +
                 "",

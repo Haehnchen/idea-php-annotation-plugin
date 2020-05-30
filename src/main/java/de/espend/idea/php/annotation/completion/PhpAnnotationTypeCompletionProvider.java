@@ -5,10 +5,11 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import de.espend.idea.php.annotation.dict.AnnotationPropertyEnum;
 import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationCompletionProviderParameter;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
-import org.apache.commons.lang.StringUtils;
+import de.espend.idea.php.annotation.util.AnnotationUtil;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,40 +30,37 @@ public class PhpAnnotationTypeCompletionProvider implements PhpAnnotationComplet
         }
 
         Set<String> values = new HashSet<>();
-        for(Field field: annotationPropertyParameter.getPhpClass().getFields()) {
-            if(!field.getName().equals(propertyName)) {
-                continue;
+        AnnotationUtil.visitAttributes(annotationPropertyParameter.getPhpClass(), (attributeName, type, target) -> {
+            if(!attributeName.equals(propertyName)) {
+                return null;
             }
 
-            for (String s : field.getType().getTypes()) {
-                // _BOOLEAN, _BOOL are private so rebuild a boolean check
-                s = StringUtils.stripStart(s,"\\");
-                if(s.equalsIgnoreCase("bool") || s.equalsIgnoreCase("boolean")) {
-                    values.addAll(Arrays.asList("false", "true"));
-
-                    // stop on first match
-                    break;
-                }
+            if (AnnotationPropertyEnum.fromString(type) == AnnotationPropertyEnum.BOOLEAN) {
+                values.addAll(Arrays.asList("false", "true"));
             }
 
             // @Enum({"AUTO", "SEQUENCE"})
-            PhpDocComment docComment = field.getDocComment();
-            if(docComment != null) {
-                PhpDocTag[] phpDocTags = docComment.getTagElementsByName("@Enum");
-                for(PhpDocTag phpDocTag: phpDocTags) {
-                    PhpPsiElement phpDocAttrList = phpDocTag.getFirstPsiChild();
-                    if(phpDocAttrList != null) {
-                        String enumArrayString = phpDocAttrList.getText();
-                        Pattern targetPattern = Pattern.compile("\"(\\w+)\"");
+            if (target instanceof Field) {
+                PhpDocComment docComment = ((Field) target).getDocComment();
+                if(docComment != null) {
+                    PhpDocTag[] phpDocTags = docComment.getTagElementsByName("@Enum");
+                    for(PhpDocTag phpDocTag: phpDocTags) {
+                        PhpPsiElement phpDocAttrList = phpDocTag.getFirstPsiChild();
+                        if(phpDocAttrList != null) {
+                            String enumArrayString = phpDocAttrList.getText();
+                            Pattern targetPattern = Pattern.compile("\"(\\w+)\"");
 
-                        Matcher matcher = targetPattern.matcher(enumArrayString);
-                        while (matcher.find()) {
-                            values.add(matcher.group(1));
+                            Matcher matcher = targetPattern.matcher(enumArrayString);
+                            while (matcher.find()) {
+                                values.add(matcher.group(1));
+                            }
                         }
                     }
                 }
             }
-        }
+
+            return null;
+        });
 
         for(String s: values) {
             completionParameter.getResult().addElement(LookupElementBuilder.create(s));

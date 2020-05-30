@@ -14,6 +14,7 @@ namespace My\Annotations
      *
      * @Attributes(
      *     @Attribute("accessControl", type="string"),
+     *     @Attribute("has_access", type="bool"),
      * )
      */
     class All
@@ -29,9 +30,9 @@ namespace My\Annotations
         public $option = false;
 
         /**
-         * @var mixed|array|boolean
+         * @var boolean
          */
-        public $mixed;
+        public $boolValue;
 
         /**
          *

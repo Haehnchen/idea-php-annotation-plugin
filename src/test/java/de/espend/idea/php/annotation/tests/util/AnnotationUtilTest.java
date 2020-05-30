@@ -254,6 +254,7 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
             "   public $bool;\n" +
             "   public $myArray = [];\n" +
             "   public $myBool = false;\n" +
+            "   public ?string $nullable;\n" +
             "}\n"
         );
 
@@ -272,5 +273,6 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
 
         assertEquals("array", attributes.get("myArray"));
         assertEquals("bool", attributes.get("myBool"));
+        assertEquals("string", attributes.get("nullable"));
     }
 }
