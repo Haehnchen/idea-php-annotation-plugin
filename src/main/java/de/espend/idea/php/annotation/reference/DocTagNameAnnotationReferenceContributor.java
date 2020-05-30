@@ -3,6 +3,7 @@ package de.espend.idea.php.annotation.reference;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
@@ -15,7 +16,6 @@ import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.jetbrains.php.lang.psi.elements.Variable;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpDocUtil;
-import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,27 +49,42 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
         );
 
         /*
-          Collects static identifier elements: @Foo(F<caret>OO::BAR)
+         * Collects static identifier elements on the first element and search them inside the use statements or global namespace
+         *
+         * - @Foo(F<caret>OO::BAR)
+         * - @Foo(Fo<caret>o\FOO::BAR)
          */
         psiReferenceRegistrar.registerReferenceProvider(PlatformPatterns.psiElement(PhpDocToken.class), new PsiReferenceProvider() {
             @NotNull
             @Override
             public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-                String text = element.getText();
-                if (StringUtils.isBlank(text)) return PsiReference.EMPTY_ARRAY;
-                PsiElement nextSibling = element.getNextSibling();
-                if (nextSibling == null || !PhpDocUtil.isDocStaticElement(nextSibling)) return PsiReference.EMPTY_ARRAY;
+                if (element.getNode().getElementType() != PhpDocTokenTypes.DOC_IDENTIFIER) {
+                    return PsiReference.EMPTY_ARRAY;
+                }
 
-                PsiElement docTag = PhpPsiUtil.getParentByCondition(element, PhpDocTag.INSTANCEOF);
-                if (docTag == null) return PsiReference.EMPTY_ARRAY;
+                PsiElement prevSibling = element.getPrevSibling();
+                if (prevSibling.getNode().getElementType() == PhpDocTokenTypes.DOC_NAMESPACE || PhpDocUtil.isDocStaticElement(prevSibling)) {
+                    return PsiReference.EMPTY_ARRAY;
+                }
 
-                PsiElement attributes = PhpPsiUtil.getChildOfType(docTag, PhpDocElementTypes.phpDocAttributeList);
-                if (attributes == null) return PsiReference.EMPTY_ARRAY;
+                // We must be at first namespace part: "F<caret>oo\Bar::class"
+                String namespaceForDocIdentifierAtStart = PhpDocUtil.getNamespaceForDocIdentifierAtStart(element);
+                if (namespaceForDocIdentifierAtStart == null) {
+                    return PsiReference.EMPTY_ARRAY;
+                }
 
-                PhpClass phpClass = PhpElementsUtil.getClassByContext(nextSibling, text);
-                if (phpClass == null) return PsiReference.EMPTY_ARRAY;
+                PhpDocTag docTag = PhpPsiUtil.getParentByCondition(element, PhpDocTag.INSTANCEOF);
+                if (docTag == null) {
+                    return PsiReference.EMPTY_ARRAY;
+                }
 
-                return new PsiReference[]{new PhpDocIdentifierReference(element, phpClass.getFQN())};
+                // Find any import which is related here: "use Foo" => "F<caret>oo\Bar::class"
+                String classFromDocIdentifierAsString = AnnotationUtil.getClassFromDocIdentifierAsString(element);
+                if (classFromDocIdentifierAsString == null) {
+                    return PsiReference.EMPTY_ARRAY;
+                }
+
+                return new PsiReference[]{new PhpDocIdentifierReference(element, classFromDocIdentifierAsString)};
             }
         });
     }
@@ -81,7 +96,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
         }
 
         @Override
-        public boolean isReferenceTo(PsiElement element) {
+        public boolean isReferenceTo(@NotNull PsiElement element) {
 
             // use Doctrine\ORM\Mapping as "ORM";
             if (element instanceof PhpUse) {
@@ -201,7 +216,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
          * @param psiElement PhpClass used in "use" statement
          */
         @Override
-        public boolean isReferenceTo(PsiElement psiElement) {
+        public boolean isReferenceTo(@NotNull PsiElement psiElement) {
             if(!(psiElement instanceof PhpNamedElement)) {
                 return false;
             }
@@ -211,13 +226,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                 return false;
             }
 
-            PsiElement namespace = myElement.getPrevSibling();
-            if(PhpPsiUtil.isOfType(namespace, PhpDocTokenTypes.DOC_NAMESPACE)) {
-                // @TODO: namespace not supported
-                return false;
-            }
-
-            String classByContext = PhpElementsUtil.getFqnForClassNameByContext(myElement, text);
+            String classByContext = getFqnForClassNameByContext(myElement, text);
             if(classByContext != null) {
                 return StringUtils.stripStart(((PhpNamedElement) psiElement).getFQN(), "\\")
                     .equalsIgnoreCase(StringUtils.stripStart(fqn, "\\"));
@@ -231,5 +240,21 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
         public Object[] getVariants() {
             return new Object[0];
         }
+    }
+
+    /**
+     * Resolve classname with scoped namespace imports on inside PhpDocTag
+     *
+     * @param psiElement PhpDocTag scoped element
+     * @param className with namespace
+     */
+    @Nullable
+    private static String getFqnForClassNameByContext(@NotNull PsiElement psiElement, @NotNull String className) {
+        PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(psiElement, PhpDocTag.class);
+        if(phpDocTag == null) {
+            return null;
+        }
+
+        return AnnotationUtil.getUseImportMap(phpDocTag).get(className);
     }
 }
