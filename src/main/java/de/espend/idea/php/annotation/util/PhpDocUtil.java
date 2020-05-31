@@ -221,15 +221,20 @@ public class PhpDocUtil {
         PsiElement child = psiElement.getNextSibling();
         namespaces.add(psiElement.getText());
         while (child != null) {
-            if(!isValidClassTextReverse(child)) {
+            // end at static
+            if (child.getNode().getElementType() == PhpDocTokenTypes.DOC_STATIC) {
                 return StringUtils.join(namespaces, null);
+            }
+
+            if(!isValidClassTextReverse(child)) {
+                return null;
             }
 
             namespaces.add(child.getText());
             child = child.getNextSibling();
         }
 
-        return StringUtils.join(namespaces, null);
+        return null;
     }
 
     /**
