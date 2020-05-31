@@ -1,12 +1,30 @@
 # Changelog
 
 ## Versions
-* 6.x: PhpStorm 2019.1+
-* 5.x: PhpStorm 2017.1+
-* 4.x: PhpStorm 2016.1.2+
-* 3.x: PhpStorm 2016.1+
-* 2.x: PhpStorm9, 10
-* 1.x: PhpStorm8
+* 7.x: PhpStorm 2020.1+
+* 6.x: PhpStorm 2019.1+ (no support)
+* 5.x: PhpStorm 2017.1+ (no support)
+* 4.x: PhpStorm 2016.1.2+ (no support)
+* 3.x: PhpStorm 2016.1+ (no support)
+* 2.x: PhpStorm9, 10 (no support)
+* 1.x: PhpStorm8 (no support)
+
+## 7.0.0
+* Smarter ORM column field detection for insert @Column tag (Daniel Espendiller)
+* Optimize imports and its references should also take into account constants with namespaces (Daniel Espendiller)
+* Support attribute types also on its attribute values (Daniel Espendiller)
+* Provide type detection on column also on the Field type it self to support typed properties of PHP (Daniel Espendiller)
+* Add property suggestions from Doctrine @Attribute annotations [#112](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/112) (https://www.doctrine-project.org/projects/doctrine-annotations/en/latest/custom.html#attribute-types) (Daniel Espendiller)
+* Hide non public properties on DocBlock attribute list completion [#139](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/139) (Daniel Espendiller)
+* Provide deprecated hint on importing class on DocBlock [#163](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/163) (Daniel Espendiller)
+* Provide inspections for deprecated constant and class constant in DocBlocks (Daniel Espendiller)
+* Prefix inspection messages (Daniel Espendiller)
+* Support namespace in class constant annotation string (Daniel Espendiller)
+* Provide importing annotation classes based on the alias (Daniel Espendiller)
+* Provide inspection to check that a class behind a class constant in DocBlocks exists (Daniel Espendiller)
+* Provide inspection to check if there is a real class behind a annotation doc block based on the use statements (Daniel Espendiller)
+* DocBlock annotations should also check alias and check for a valid import; provide lazy and higher the scope for DocBlock to be the parent document reducing element processing (Daniel Espendiller)
+* Drop support older PhpStorm versions (Daniel Espendiller)
 
 ## 6.3.0
 * Provide annotation deprecation inspection for Doctrine column (Daniel Espendiller)
