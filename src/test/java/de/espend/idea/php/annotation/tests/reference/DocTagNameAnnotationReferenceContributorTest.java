@@ -185,7 +185,7 @@ public class DocTagNameAnnotationReferenceContributorTest extends AnnotationLigh
         assertFalse(optimized.contains("use FooBar\\Apple;"));
     }
 
-    public void testThatClassClassConstantWithNamespaceMustNotBeRemoved() {
+    public void testThatClassConstantWithNamespaceMustNotBeRemoved() {
         String optimized = optimizeImports("<?php\n" +
             "\n" +
             "namespace My;\n" +
@@ -196,6 +196,27 @@ public class DocTagNameAnnotationReferenceContributorTest extends AnnotationLigh
             "{\n" +
             "  /**\n" +
             "   * @Car(FooBar\\FoobarInterface::class)" +
+            "   */\n" +
+            "  public function foo()\n" +
+            "  {\n" +
+            "  }\n" +
+            "}\n"
+        );
+
+        assertTrue(optimized.contains("use FooBar;"));
+    }
+
+    public void testThatConstantWithNamespaceMustNotBeRemoved() {
+        String optimized = optimizeImports("<?php\n" +
+            "\n" +
+            "namespace My;\n" +
+            "\n" +
+            "use FooBar;\n" +
+            "\n" +
+            "class Foo\n" +
+            "{\n" +
+            "  /**\n" +
+            "   * @Car(FooBar\\FoobarInterface::TEST)" +
             "   */\n" +
             "  public function foo()\n" +
             "  {\n" +

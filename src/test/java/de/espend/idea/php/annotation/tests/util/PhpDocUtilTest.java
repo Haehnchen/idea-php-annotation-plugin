@@ -37,6 +37,11 @@ public class PhpDocUtilTest extends AnnotationLightCodeInsightFixtureTestCase {
         assertEquals("Foo\\Kernel", getRightPsiElementString("@DateTime({F<caret>oo\\Kernel::VERSION)"));
         assertEquals("Foo\\Kernel", getRightPsiElementString("@DateTime(\"F<caret>oo\\Kernel::VERSION)"));
         assertEquals("Kernel", getRightPsiElementString("@DateTime(Ker<caret>nel::VERSION)"));
+
+        assertNull(getRightPsiElementString("@DateTime(Ker<caret>nel)"));
+        assertNull(getRightPsiElementString("@DateTime(Ker<caret>nel\\Test)"));
+        assertNull(getRightPsiElementString("@DateTime(Ker<caret>nel Test::test)"));
+        assertNull(getRightPsiElementString("@DateTime(Ker<caret>nel(Test::test))"));
     }
 
     /**
