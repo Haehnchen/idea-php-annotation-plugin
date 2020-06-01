@@ -9,6 +9,9 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 7.0.1
+* Fix PHPStorm @noinspection causes Missing Import warning [#190](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/190) (Daniel Espendiller)
+
 ## 7.0.0
 * Smarter ORM column field detection for insert @Column tag (Daniel Espendiller)
 * Optimize imports and its references should also take into account constants with namespaces (Daniel Espendiller)

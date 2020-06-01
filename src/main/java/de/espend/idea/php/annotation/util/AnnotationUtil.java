@@ -69,6 +69,7 @@ public class AnnotationUtil {
         add("@test");
         add("@noninspection");
         add("@noinspection");
+        add("@covers");
     }};
 
     public static boolean isAnnotationClass(@NotNull PhpClass phpClass) {
