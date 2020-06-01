@@ -447,29 +447,35 @@ public class AnnotationUtil {
 
         Map<String, String> phpClasses = new HashMap<>();
 
-        for (PhpClass annotationClass: AnnotationUtil.getAnnotationsClasses(phpDocTag.getProject())) {
-            if (annotationClass.getName().equals(className)) {
-                phpClasses.put(annotationClass.getFQN(), null);
+        // "@Test\Bar" can be ignored here
+        // "@Bar" We only search for a direct class
+        if (!className.contains("\\")) {
+            for (PhpClass annotationClass: AnnotationUtil.getAnnotationsClasses(phpDocTag.getProject())) {
+                if (annotationClass.getName().equals(className)) {
+                    phpClasses.put(annotationClass.getFQN(), null);
+                }
             }
         }
 
-        String[] split = className.split("\\\\");
-        if (split.length > 1) {
-            String aliasStart = split[0];
+        // "@ORM\Entity" is search for configured alias which can also provide a valid "use" path
+        if (!className.startsWith("\\")) {
+            String[] split = className.split("\\\\");
+            if (split.length > 1) {
+                String aliasStart = split[0];
 
-            for (UseAliasOption useAliasOption : AnnotationUtil.getActiveImportsAliasesFromSettings()) {
-                String alias = useAliasOption.getAlias();
+                for (UseAliasOption useAliasOption : AnnotationUtil.getActiveImportsAliasesFromSettings()) {
+                    String alias = useAliasOption.getAlias();
+                    if (!aliasStart.equals(alias)) {
+                        continue;
+                    }
 
-                if (!aliasStart.equals(alias)) {
-                    continue;
-                }
+                    String clazz = useAliasOption.getClassName() + "\\" + StringUtils.join(Arrays.copyOfRange(split, 1, split.length), "\\");
+                    PhpClass phpClass = PhpElementsUtil.getClassInterface(phpDocTag.getProject(), clazz);
 
-                String clazz = useAliasOption.getClassName() + "\\" + StringUtils.join(Arrays.copyOfRange(split, 1, split.length), "\\");
-                PhpClass phpClass = PhpElementsUtil.getClassInterface(phpDocTag.getProject(), clazz);
-
-                if (phpClass != null && isAnnotationClass(phpClass)) {
-                    // user input for class name
-                    phpClasses.put("\\" + StringUtils.stripStart(useAliasOption.getClassName(), "\\"), alias);
+                    if (phpClass != null && isAnnotationClass(phpClass)) {
+                        // user input for class name
+                        phpClasses.put("\\" + StringUtils.stripStart(useAliasOption.getClassName(), "\\"), alias);
+                    }
                 }
             }
         }

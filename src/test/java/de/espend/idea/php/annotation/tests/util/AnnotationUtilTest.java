@@ -231,6 +231,20 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
         assertEquals("ORM", possibleImportClasses.get("\\Doctrine\\ORM\\Mapping"));
     }
 
+    public void testThatAlreadyFqnNameMustNotSuggestAnyImport() {
+        myFixture.copyFileToProject("doctrine.php");
+
+        PhpDocTag phpDocTag = PhpPsiElementFactory.createFromText(getProject(), PhpDocTag.class, "<?php\n" +
+            "/**\n" +
+            "* @\\ORM\\Entity()\n" +
+            "*/\n" +
+            "class Foo {}\n"
+        );
+
+        Map<String, String> possibleImportClasses = AnnotationUtil.getPossibleImportClasses(phpDocTag);
+        assertEquals(0, possibleImportClasses.size());
+    }
+
     public void testAttributeVisitingForAnnotationClass() {
         myFixture.copyFileToProject("doctrine.php");
 
