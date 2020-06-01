@@ -30,20 +30,6 @@ public class AnnotationMissingUseInspectionTest extends AnnotationLightCodeInsig
             AnnotationMissingUseInspection.MESSAGE
         );
 
-        assertLocalInspectionContains("test.php", "<?php\n" +
-                "use Foo\\Entity;\n" +
-                "\n" +
-                "/**\n" +
-                " * @Entity()\n" +
-                " * @Foo()\n" +
-                " * @Fo<caret>obar()\n" +
-                " */\n" +
-                "class Foo\n" +
-                "{\n" +
-                "}",
-            AnnotationMissingUseInspection.MESSAGE
-        );
-
         assertLocalInspectionContainsNotContains("test.php", "<?php\n" +
                 "use Foo\\Entity;\n" +
                 "\n" +
@@ -60,6 +46,22 @@ public class AnnotationMissingUseInspectionTest extends AnnotationLightCodeInsig
                 "\n" +
                 "/**\n" +
                 " * @\\E<caret>ntity()\n" +
+                " */\n" +
+                "class Foo\n" +
+                "{\n" +
+                "}",
+            AnnotationMissingUseInspection.MESSAGE
+        );
+    }
+
+    public void testThatInspectionIsNotDisplayedForClassesWhichDoesNotHaveAValidImportPath() {
+        assertLocalInspectionContainsNotContains("test.php", "<?php\n" +
+                "use Foo\\Entity;\n" +
+                "\n" +
+                "/**\n" +
+                " * @Entity()\n" +
+                " * @Foo()\n" +
+                " * @Fo<caret>obar()\n" +
                 " */\n" +
                 "class Foo\n" +
                 "{\n" +

@@ -76,15 +76,7 @@ public class AnnotationMissingUseInspection extends LocalInspectionTool {
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 new ImportUseForAnnotationQuickFix(phpDocTag, collect)
             );
-
-            return;
         }
-
-        holder.registerProblem(
-            firstChild,
-            MESSAGE,
-            ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-        );
     }
 
     @Override
