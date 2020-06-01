@@ -106,5 +106,17 @@ public class AnnotationMissingUseInspectionTest extends AnnotationLightCodeInsig
                 "}",
             AnnotationMissingUseInspection.MESSAGE
         );
+
+        assertLocalInspectionContainsNotContains("test.php", "<?php\n" +
+                "\n" +
+                "\n" +
+                "/**\n" +
+                " * @noinspe<caret>ction()\n" +
+                " */\n" +
+                "class Foo\n" +
+                "{\n" +
+                "}",
+            AnnotationMissingUseInspection.MESSAGE
+        );
     }
 }
