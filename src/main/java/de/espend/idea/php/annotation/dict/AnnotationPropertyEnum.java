@@ -1,6 +1,6 @@
 package de.espend.idea.php.annotation.dict;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -8,7 +8,11 @@ import org.jetbrains.annotations.NotNull;
 public enum AnnotationPropertyEnum {
     ARRAY, STRING, INTEGER, BOOLEAN;
 
-    public static AnnotationPropertyEnum fromString(@NotNull String value) {
+    public static AnnotationPropertyEnum fromString(@Nullable String value) {
+        if (value == null) {
+            return STRING;
+        }
+
         if (value.equalsIgnoreCase("string")) {
             return STRING;
         }

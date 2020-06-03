@@ -10,6 +10,8 @@ namespace My\Annotations
      * @Attributes({
      *   @Attribute("stringProperty", type = "string"),
      *   @Attribute("annotProperty",  type = "SomeAnnotationClass"),
+     *   @Attribute("attribute_no_type"),
+     *   @Attribute("attribute_blank_type",  type = ""),
      * })
      *
      * @Attributes(

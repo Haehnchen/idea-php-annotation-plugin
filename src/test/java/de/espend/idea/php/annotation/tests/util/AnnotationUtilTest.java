@@ -253,6 +253,7 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
             "* @Attributes(\n" +
             "*    @Attribute(\"accessControl\", type=\"string\"),\n" +
             "*    @Attribute(\"accessControl2\", type=\"string\"),\n" +
+            "*    @Attribute(\"typeNull\"),\n" +
             "* )\n" +
             "*\n" +
             "* @Attributes({\n" +
@@ -288,5 +289,6 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
         assertEquals("array", attributes.get("myArray"));
         assertEquals("bool", attributes.get("myBool"));
         assertEquals("string", attributes.get("nullable"));
+        assertNull(attributes.get("typeNull"));
     }
 }
