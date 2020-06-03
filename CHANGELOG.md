@@ -9,6 +9,9 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 7.0.2
+* Fix "Argument for @NotNull parameter .../dict/AnnotationPropertyEnum.fromString must not be null" [#194](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/194) (Daniel Espendiller)
+
 ## 7.0.1
 * Fix PHPStorm @noinspection causes Missing Import warning [#190](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/190) (Daniel Espendiller)
 
