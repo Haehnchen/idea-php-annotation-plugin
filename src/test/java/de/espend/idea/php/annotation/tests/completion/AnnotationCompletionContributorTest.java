@@ -64,7 +64,7 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
                 "* @\\My\\Annotations\\All(\"a\",<caret>)" +
                 "*/" +
                 "class Foo {}",
-            "accessControl", "annotProperty"
+            "accessControl", "annotProperty", "attribute_blank_type", "attribute_no_type"
         );
     }
 
