@@ -69,7 +69,7 @@ public class RepositoryClassInspection extends LocalInspectionTool {
             }
 
             String name = ((PhpDocTag) psiElement).getName();
-            if(AnnotationUtil.NON_ANNOTATION_TAGS.contains(name)) {
+            if(AnnotationUtil.isBlockedAnnotationTag(name)) {
                 super.visitElement(psiElement);
                 return;
             }

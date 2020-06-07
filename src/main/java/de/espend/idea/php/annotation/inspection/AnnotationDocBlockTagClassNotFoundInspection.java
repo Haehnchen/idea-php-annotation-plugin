@@ -41,6 +41,11 @@ public class AnnotationDocBlockTagClassNotFoundInspection extends LocalInspectio
         String name = phpDocTag.getName();
         String tagName = StringUtils.stripStart(name, "@");
 
+        // ignore "@test", but allow "@\test" to go through
+        if (!tagName.startsWith("\\") && !Character.isUpperCase(tagName.codePointAt(0))) {
+            return;
+        }
+
         String clazz = AnnotationInspectionUtil.getClassFqnString(tagName, lazyUseImporterCollector);
         if (clazz == null) {
             return;

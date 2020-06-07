@@ -59,7 +59,7 @@ public class AnnotationUtil {
     public static final ExtensionPointName<PhpAnnotationVirtualProperties> EP_VIRTUAL_PROPERTIES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationVirtualProperties");
     public static final ExtensionPointName<PhpAnnotationUseAlias> EP_USE_ALIASES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationUseAlias");
 
-    final public static Set<String> NON_ANNOTATION_TAGS = new HashSet<String>() {{
+    final private static Set<String> NON_ANNOTATION_TAGS = new HashSet<String>() {{
         addAll(Arrays.asList(PhpDocUtil.ALL_TAGS));
         add("@Annotation");
         add("@inheritDoc");
@@ -73,6 +73,20 @@ public class AnnotationUtil {
         add("@noninspection");
         add("@noinspection");
         add("@covers");
+
+        add("@SuppressWarnings");
+        add("@package_version");
+        add("@startuml");
+        add("@enduml");
+        add("@experimental");
+        add("@codingStandardsIgnoreStart");
+        add("@codingStandardsIgnoreEnd");
+        add("@phpcsSuppress");
+        add("@extends");
+        add("@implements");
+        add("@template");
+        add("@use");
+        add("@TODO");
     }};
 
     public static boolean isAnnotationClass(@NotNull PhpClass phpClass) {
@@ -411,7 +425,7 @@ public class AnnotationUtil {
 
         Map<String, PhpDocTagAnnotation> annotationRefsMap = new HashMap<>();
         for(PhpDocTag phpDocTag: PsiTreeUtil.findChildrenOfType(phpDocComment, PhpDocTag.class)) {
-            if(!AnnotationUtil.NON_ANNOTATION_TAGS.contains(phpDocTag.getName())) {
+            if(!AnnotationUtil.isBlockedAnnotationTag(phpDocTag.getName())) {
                 PhpClass annotationClass = AnnotationUtil.getAnnotationReference(phpDocTag, uses);
                 if(annotationClass != null) {
                     annotationRefsMap.put(annotationClass.getPresentableFQN(), new PhpDocTagAnnotation(annotationClass, phpDocTag));
@@ -778,6 +792,25 @@ public class AnnotationUtil {
         }
 
         return null;
+    }
+
+    /**
+     * Check if "@TagName" is need to check for annotation related stuff
+     *
+     * https://github.com/doctrine/annotations/blob/master/lib/Doctrine/Common/Annotations/ImplicitlyIgnoredAnnotationNames.php
+     *
+     * @param tagName include "@" at beginning
+     */
+    public static boolean isBlockedAnnotationTag(@NotNull String tagName) {
+        if (NON_ANNOTATION_TAGS.contains(tagName)) {
+            return true;
+        }
+
+        String lowercase = tagName.toLowerCase();
+        return lowercase.startsWith("@phpstan-")
+            || lowercase.startsWith("@psalm-")
+            || lowercase.startsWith("@phan-")
+            || lowercase.startsWith("@phpcs");
     }
 }
 

@@ -23,7 +23,7 @@ public class AnnotationDocTagAnnotator implements Annotator {
         }
 
         String name = ((PhpDocTag) psiElement).getName();
-        if(AnnotationUtil.NON_ANNOTATION_TAGS.contains(name)) {
+        if(AnnotationUtil.isBlockedAnnotationTag(name)) {
             return;
         }
 

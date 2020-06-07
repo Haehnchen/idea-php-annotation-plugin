@@ -33,7 +33,7 @@ public class PhpDocTagAnnotationRecursiveElementWalkingVisitor extends PsiRecurs
 
     private void visitPhpDocTag(@NotNull PhpDocTag phpDocTag) {
         // "@var" and user non related tags dont need an action
-        if(AnnotationUtil.NON_ANNOTATION_TAGS.contains(phpDocTag.getName())) {
+        if(AnnotationUtil.isBlockedAnnotationTag(phpDocTag.getName())) {
             return;
         }
 
