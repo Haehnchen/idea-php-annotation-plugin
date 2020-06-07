@@ -3,7 +3,6 @@ package de.espend.idea.php.annotation.reference;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocToken;
@@ -225,7 +224,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                 return false;
             }
 
-            String classByContext = getFqnForClassNameByContext(myElement, text);
+            String classByContext = AnnotationUtil.getUseImportMap(myElement).get(text);
             if(classByContext != null) {
                 return StringUtils.stripStart(((PhpNamedElement) psiElement).getFQN(), "\\")
                     .equalsIgnoreCase(StringUtils.stripStart(fqn, "\\"));
@@ -239,21 +238,5 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
         public Object[] getVariants() {
             return new Object[0];
         }
-    }
-
-    /**
-     * Resolve classname with scoped namespace imports on inside PhpDocTag
-     *
-     * @param psiElement PhpDocTag scoped element
-     * @param className with namespace
-     */
-    @Nullable
-    private static String getFqnForClassNameByContext(@NotNull PsiElement psiElement, @NotNull String className) {
-        PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(psiElement, PhpDocTag.class);
-        if(phpDocTag == null) {
-            return null;
-        }
-
-        return AnnotationUtil.getUseImportMap(phpDocTag).get(className);
     }
 }

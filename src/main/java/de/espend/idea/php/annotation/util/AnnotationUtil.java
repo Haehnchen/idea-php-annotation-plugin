@@ -6,7 +6,10 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
@@ -180,9 +183,21 @@ public class AnnotationUtil {
 
     }
 
+    /**
+     * @deprecated "Use PsiElement parameter and check for null"
+     */
+    @Deprecated
     @NotNull
     public static Map<String, String> getUseImportMap(@Nullable PhpDocTag phpDocTag) {
-        return getUseImportMap(PsiTreeUtil.getParentOfType(phpDocTag, PhpDocComment.class));
+        return getUseImportMap((PsiElement) phpDocTag);
+    }
+
+    /**
+     * @deprecated "Use PsiElement parameter and check for null"
+     */
+    @Deprecated
+    public static Map<String, String> getUseImportMap(@Nullable PhpDocComment phpDocComment) {
+        return getUseImportMap((PsiElement) phpDocComment);
     }
 
     /*
@@ -192,11 +207,7 @@ public class AnnotationUtil {
     * @return map with class names as key and fqn on value
     */
     @NotNull
-    public static Map<String, String> getUseImportMap(@Nullable PhpDocComment phpDocComment) {
-        if(phpDocComment == null) {
-            return Collections.emptyMap();
-        }
-
+    public static Map<String, String> getUseImportMap(@NotNull PsiElement phpDocComment) {
         PhpPsiElement scope = PhpCodeInsightUtil.findScopeForUseOperator(phpDocComment);
         if(scope == null) {
             return Collections.emptyMap();
@@ -237,7 +248,7 @@ public class AnnotationUtil {
             }
         }
 
-        return getAnnotationReference(phpDocTag, getUseImportMap(phpDocTag));
+        return getAnnotationReference(phpDocTag, getUseImportMap((PsiElement) phpDocTag));
 
     }
 
@@ -332,14 +343,7 @@ public class AnnotationUtil {
             return null;
         }
 
-        return AnnotationInspectionUtil.getClassFqnString(namespaceForDocIdentifier, aVoid -> {
-            PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(psiElement, PhpDocTag.class);
-            if(phpDocTag == null) {
-                return Collections.emptyMap();
-            }
-
-            return AnnotationUtil.getUseImportMap(phpDocTag);
-        });
+        return AnnotationInspectionUtil.getClassFqnString(namespaceForDocIdentifier, new AnnotationInspectionUtil.LazyNamespaceImportResolver(psiElement));
     }
 
     public static class CollectProjectUniqueKeys implements Processor<String> {
@@ -397,9 +401,11 @@ public class AnnotationUtil {
 
     @Nullable
     public static PhpDocCommentAnnotation getPhpDocCommentAnnotationContainer(@Nullable PhpDocComment phpDocComment) {
-        if(phpDocComment == null) return null;
+        if(phpDocComment == null) {
+            return null;
+        }
 
-        Map<String, String> uses = AnnotationUtil.getUseImportMap(phpDocComment);
+        Map<String, String> uses = AnnotationUtil.getUseImportMap((PsiElement) phpDocComment);
 
         Map<String, PhpDocTagAnnotation> annotationRefsMap = new HashMap<>();
         for(PhpDocTag phpDocTag: PsiTreeUtil.findChildrenOfType(phpDocComment, PhpDocTag.class)) {

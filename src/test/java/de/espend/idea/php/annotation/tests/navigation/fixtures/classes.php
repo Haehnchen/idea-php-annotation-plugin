@@ -27,3 +27,11 @@ namespace My
         const MY_VAR = 'BAR';
     }
 }
+
+namespace My\SubClass
+{
+    class SubClassBar
+    {
+        const MY_VAR = 'BAR';
+    }
+}

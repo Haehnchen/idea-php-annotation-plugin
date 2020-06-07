@@ -231,7 +231,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                 return;
             }
 
-            Map<String, String> importMap = AnnotationUtil.getUseImportMap(parentOfType);
+            Map<String, String> importMap = AnnotationUtil.getUseImportMap((PsiElement) parentOfType);
 
             Project project = completionParameters.getPosition().getProject();
             attachLookupElements(project, importMap , annotationTarget, completionResultSet);
@@ -315,7 +315,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
             name = name.substring(1, start);
 
-            Map<String, String> importMap = AnnotationUtil.getUseImportMap((PhpDocTag) phpDocTag);
+            Map<String, String> importMap = AnnotationUtil.getUseImportMap(phpDocTag);
             if(!importMap.containsKey(name)) {
                 return;
             }
