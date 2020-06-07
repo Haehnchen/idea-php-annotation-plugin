@@ -9,6 +9,12 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 7.1.0
+* Provide IntelliJ platform annotation icon for annotation classes [#67](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/67) (Daniel Espendiller)
+* Provide plugin url for vendor link [#155](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/155) (Daniel Espendiller)
+* Fix: "java.lang.IllegalArgumentException: Argument for @NotNull parameter must not be null" on indexing [#154](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/154) (Daniel Espendiller)
+* Support class constant navigation on same namespace and refactor import scope usage [#165](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/165) (Daniel Espendiller)
+
 ## 7.0.2
 * Fix "Argument for @NotNull parameter .../dict/AnnotationPropertyEnum.fromString must not be null" [#194](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/194) (Daniel Espendiller)
 
