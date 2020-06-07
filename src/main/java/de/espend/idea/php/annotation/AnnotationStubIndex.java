@@ -50,7 +50,7 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
 
                 psiFile.accept(new PsiRecursiveElementWalkingVisitor() {
                     @Override
-                    public void visitElement(PsiElement element) {
+                    public void visitElement(@NotNull PsiElement element) {
                         if ((element instanceof PhpClass)) {
                             visitPhpClass((PhpClass) element);
                         }

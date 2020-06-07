@@ -382,15 +382,19 @@ public class AnnotationUtil {
 
     }
 
-    public static boolean isValidForIndex(FileContent inputData) {
-
+    public static boolean isValidForIndex(@NotNull FileContent inputData) {
         String fileName = inputData.getPsiFile().getName();
         if(fileName.startsWith(".") || fileName.contains("Test")) {
             return false;
         }
 
         // we check for project path, on no match we are properly inside external library paths
-        String relativePath = VfsUtil.getRelativePath(inputData.getFile(), inputData.getProject().getBaseDir(), '/');
+        VirtualFile baseDir = inputData.getProject().getBaseDir();
+        if (baseDir == null) {
+            return true;
+        }
+
+        String relativePath = VfsUtil.getRelativePath(inputData.getFile(), baseDir, '/');
         if(relativePath == null) {
             return true;
         }
