@@ -9,6 +9,9 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 7.1.1
+* Fine tuning for annotation blacklist [#199](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/199) (Daniel Espendiller)
+
 ## 7.1.0
 * Provide IntelliJ platform annotation icon for annotation classes [#67](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/67) (Daniel Espendiller)
 * Provide plugin url for vendor link [#155](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/155) (Daniel Espendiller)
