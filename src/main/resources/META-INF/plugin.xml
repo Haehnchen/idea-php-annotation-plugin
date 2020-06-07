@@ -165,6 +165,8 @@
                            nonDefaultProject="true"
       />
 
+      <iconProvider implementation="de.espend.idea.php.annotation.AnnotationIconProvider"/>
+
       <intentionAction>
           <className>de.espend.idea.php.annotation.doctrine.intention.DoctrineOrmFieldIntention</className>
           <category>PHP</category>

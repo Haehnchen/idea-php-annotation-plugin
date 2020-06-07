@@ -79,9 +79,7 @@ public class AnnotationUtil {
         PhpDocComment phpDocComment = phpClass.getDocComment();
         if(phpDocComment != null) {
             PhpDocTag[] annotationDocTags = phpDocComment.getTagElementsByName("@Annotation");
-            if(annotationDocTags.length > 0) {
-                return true;
-            }
+            return annotationDocTags.length > 0;
         }
 
         return false;
