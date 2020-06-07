@@ -37,7 +37,7 @@ public class PhpDocTagAnnotationRecursiveElementWalkingVisitor extends PsiRecurs
             return;
         }
 
-        String annotationFqnName = StringUtils.stripStart(getClassNameReference(phpDocTag, AnnotationUtil.getUseImportMap(phpDocTag)), "\\");
+        String annotationFqnName = StringUtils.stripStart(getClassNameReference(phpDocTag, AnnotationUtil.getUseImportMap((PsiElement) phpDocTag)), "\\");
 
         if(annotationFqnName != null && StringUtils.isNotBlank(annotationFqnName)) {
             this.processor.process(Pair.create(annotationFqnName, phpDocTag));

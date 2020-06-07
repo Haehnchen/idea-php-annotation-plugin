@@ -7,7 +7,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.inspection.visitor.PhpDocTagWithUsePsiElementVisitor;
@@ -16,10 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +32,7 @@ public class AnnotationMissingUseInspection extends LocalInspectionTool {
         return new PhpDocTagWithUsePsiElementVisitor(holder, this::visitAnnotationDocTag);
     }
 
-    private void visitAnnotationDocTag(@NotNull PhpDocTag phpDocTag, @NotNull ProblemsHolder holder, @NotNull Function<Void, Map<String, String>> lazyUseImporterCollector) {
+    private void visitAnnotationDocTag(@NotNull PhpDocTag phpDocTag, @NotNull ProblemsHolder holder, @NotNull AnnotationInspectionUtil.LazyNamespaceImportResolver lazyNamespaceImportResolver) {
         // Target for our inspection is DocTag name: @Foobar() => Foobar
         // This prevent highlighting the complete DocTag
         PsiElement firstChild = phpDocTag.getFirstChild();
@@ -54,7 +50,7 @@ public class AnnotationMissingUseInspection extends LocalInspectionTool {
 
         String[] split = tagName.split("\\\\");
 
-        Map<String, String> useImportMap = lazyUseImporterCollector.apply(null);
+        Map<String, String> useImportMap = lazyNamespaceImportResolver.getImports();
         if (useImportMap.containsKey(split[0])) {
             return;
         }
@@ -82,25 +78,5 @@ public class AnnotationMissingUseInspection extends LocalInspectionTool {
     @Override
     public boolean runForWholeFile() {
         return true;
-    }
-
-    public static class MyLazyUserImporterCollector implements Function<Void, Map<String, String>> {
-        @NotNull
-        private final PhpDocComment phpDocComment;
-
-        private Map<String, String> imports = null;
-
-        public MyLazyUserImporterCollector(@NotNull PhpDocComment phpDocComment) {
-            this.phpDocComment = phpDocComment;
-        }
-
-        @Override
-        public Map<String, String> apply(Void aVoid) {
-            if (imports != null) {
-                return this.imports;
-            }
-
-            return this.imports = AnnotationUtil.getUseImportMap(this.phpDocComment);
-        }
     }
 }

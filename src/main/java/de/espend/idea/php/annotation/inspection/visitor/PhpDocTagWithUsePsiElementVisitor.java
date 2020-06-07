@@ -6,15 +6,13 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import de.espend.idea.php.annotation.inspection.AnnotationMissingUseInspection;
+import de.espend.idea.php.annotation.inspection.AnnotationInspectionUtil;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.function.Function;
 
 public class PhpDocTagWithUsePsiElementVisitor extends PsiElementVisitor {
     @NotNull
@@ -44,10 +42,10 @@ public class PhpDocTagWithUsePsiElementVisitor extends PsiElementVisitor {
             });
 
             // our scope are the full DocComment; so collect the imports for them but lazy only if we need them
-            AnnotationMissingUseInspection.MyLazyUserImporterCollector lazy = null;
+            AnnotationInspectionUtil.LazyNamespaceImportResolver lazy = null;
             for (PhpDocTag phpDocTag : phpDocTags) {
                 if (lazy == null) {
-                    lazy = new AnnotationMissingUseInspection.MyLazyUserImporterCollector((PhpDocComment) element);
+                    lazy = new AnnotationInspectionUtil.LazyNamespaceImportResolver(element);
                 }
 
                 this.visitor.visitElement(phpDocTag, holder, lazy);
@@ -57,7 +55,7 @@ public class PhpDocTagWithUsePsiElementVisitor extends PsiElementVisitor {
         super.visitElement(element);
     }
 
-    public static interface DocWithUsePsiPsiElementVisitor {
-        public void visitElement(@NotNull PhpDocTag phpDocTag, @NotNull ProblemsHolder holder, @NotNull Function<Void, Map<String, String>> lazyUseImporterCollector);
+    public interface DocWithUsePsiPsiElementVisitor {
+        void visitElement(@NotNull PhpDocTag phpDocTag, @NotNull ProblemsHolder holder, @NotNull AnnotationInspectionUtil.LazyNamespaceImportResolver lazyNamespaceImportResolver);
     }
 }

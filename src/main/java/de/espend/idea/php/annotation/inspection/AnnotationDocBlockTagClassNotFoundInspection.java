@@ -13,9 +13,6 @@ import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.function.Function;
-
 /**
  * Check if there is a PhpClass available for a doc block based on the use statement
  *
@@ -33,7 +30,7 @@ public class AnnotationDocBlockTagClassNotFoundInspection extends LocalInspectio
         return new PhpDocTagWithUsePsiElementVisitor(holder, this::visitAnnotationDocTag);
     }
 
-    private void visitAnnotationDocTag(@NotNull PhpDocTag phpDocTag, @NotNull ProblemsHolder holder, @NotNull Function<Void, Map<String, String>> lazyUseImporterCollector) {
+    private void visitAnnotationDocTag(@NotNull PhpDocTag phpDocTag, @NotNull ProblemsHolder holder, @NotNull AnnotationInspectionUtil.LazyNamespaceImportResolver lazyUseImporterCollector) {
         // Target for our inspection is DocTag name: @Foobar() => Foobar
         // This prevent highlighting the complete DocTag
         PsiElement firstChild = phpDocTag.getFirstChild();

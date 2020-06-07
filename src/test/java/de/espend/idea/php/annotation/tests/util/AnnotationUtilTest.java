@@ -95,7 +95,7 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
             "class Foo() {}\n"
         );
 
-        Map<String, String> propertyForEnum = AnnotationUtil.getUseImportMap(phpDocTag);
+        Map<String, String> propertyForEnum = AnnotationUtil.getUseImportMap((PsiElement) phpDocTag);
 
         assertEquals("\\Foobar", propertyForEnum.get("Foobar"));
         assertEquals("\\Bar", propertyForEnum.get("MyFoo"));

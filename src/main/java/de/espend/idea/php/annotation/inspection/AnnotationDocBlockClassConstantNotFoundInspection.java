@@ -14,9 +14,6 @@ import de.espend.idea.php.annotation.util.PhpDocUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.function.Function;
-
 /**
  * Provide inpsection check for the class of "foo=Foo\Foo::cla<caret>ss"
  *
@@ -31,7 +28,7 @@ public class AnnotationDocBlockClassConstantNotFoundInspection extends LocalInsp
         return new PhpDocTagWithUsePsiElementVisitor(holder, this::visitAnnotationDocTag);
     }
 
-    private void visitAnnotationDocTag(@NotNull PhpDocTag phpDocTag, @NotNull ProblemsHolder holder, @NotNull Function<Void, Map<String, String>> lazyUseImporterCollector) {
+    private void visitAnnotationDocTag(@NotNull PhpDocTag phpDocTag, @NotNull ProblemsHolder holder, @NotNull AnnotationInspectionUtil.LazyNamespaceImportResolver lazyUseImporterCollector) {
         for (PsiElement element : PsiTreeUtil.collectElements(phpDocTag, psiElement -> psiElement.getNode().getElementType() == PhpDocTokenTypes.DOC_STATIC)) {
             PsiElement nextSibling = element.getNextSibling();
             if (nextSibling == null || nextSibling.getNode().getElementType() != PhpDocTokenTypes.DOC_IDENTIFIER || !"class".equals(nextSibling.getText())) {
