@@ -117,5 +117,49 @@ public class AnnotationDocBlockTagClassNotFoundInspectionTest extends Annotation
                 "}",
             AnnotationDocBlockTagClassNotFoundInspection.MESSAGE
         );
+
+        assertLocalInspectionContainsNotContains("test.php", "<?php\n" +
+                "use Foobar\\Bar\\FooBar;\n" +
+                "/**\n" +
+                " * @phpst<caret>an-template\n" +
+                " */\n" +
+                "class Foo\n" +
+                "{\n" +
+                "}",
+            AnnotationDocBlockTagClassNotFoundInspection.MESSAGE
+        );
+
+        assertLocalInspectionContainsNotContains("test.php", "<?php\n" +
+                "use Foobar\\Bar\\FooBar;\n" +
+                "/**\n" +
+                " * @ps<caret>alm-foobar\n" +
+                " */\n" +
+                "class Foo\n" +
+                "{\n" +
+                "}",
+            AnnotationDocBlockTagClassNotFoundInspection.MESSAGE
+        );
+
+        assertLocalInspectionContainsNotContains("test.php", "<?php\n" +
+                "use Foobar\\Bar\\FooBar;\n" +
+                "/**\n" +
+                " * @phpcsSup<caret>press\n" +
+                " */\n" +
+                "class Foo\n" +
+                "{\n" +
+                "}",
+            AnnotationDocBlockTagClassNotFoundInspection.MESSAGE
+        );
+
+        assertLocalInspectionContainsNotContains("test.php", "<?php\n" +
+                "use Foobar\\Bar\\FooBar;\n" +
+                "/**\n" +
+                " * @foo<caret>bar\n" +
+                " */\n" +
+                "class Foo\n" +
+                "{\n" +
+                "}",
+            AnnotationDocBlockTagClassNotFoundInspection.MESSAGE
+        );
     }
 }

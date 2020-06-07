@@ -34,7 +34,7 @@ public class PhpDocTagWithUsePsiElementVisitor extends PsiElementVisitor {
             // there os no "getAllTags", we can only search by name; so use same internal logic but without name
             PhpDocUtil.processTagElementsByName((PhpDocComment) element, null, phpDocTag -> {
                 String name = phpDocTag.getName();
-                if (StringUtils.isNotBlank(name) && !AnnotationUtil.NON_ANNOTATION_TAGS.contains(name)) {
+                if (StringUtils.isNotBlank(name) && !AnnotationUtil.isBlockedAnnotationTag(name)) {
                     phpDocTags.add(phpDocTag);
                 }
 
