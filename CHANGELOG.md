@@ -9,6 +9,9 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 7.1.2
+* Stop marking keywords for BDD [#202](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/202) (Daniel Espendiller)
+
 ## 7.1.1
 * Fine tuning for annotation blacklist [#199](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/199) (Daniel Espendiller)
 
