@@ -87,6 +87,10 @@ public class AnnotationUtil {
         add("@template");
         add("@use");
         add("@TODO");
+
+        add("@Given");
+        add("@When");
+        add("@Then");
     }};
 
     public static boolean isAnnotationClass(@NotNull PhpClass phpClass) {
