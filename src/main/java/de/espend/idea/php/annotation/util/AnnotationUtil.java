@@ -816,7 +816,9 @@ public class AnnotationUtil {
         return lowercase.startsWith("@phpstan-")
             || lowercase.startsWith("@psalm-")
             || lowercase.startsWith("@phan-")
-            || lowercase.startsWith("@phpcs");
+            || lowercase.startsWith("@phpcs")
+            || lowercase.startsWith("@before") // BeforeSuite, BeforeScenario
+            || lowercase.startsWith("@after"); // AfterSuite, AfterScenario
     }
 }
 
