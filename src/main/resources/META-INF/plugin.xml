@@ -128,13 +128,6 @@
                        language="PHP"
                        implementationClass="de.espend.idea.php.annotation.doctrine.inspection.DoctrineTypeDeprecatedInspection"/>
 
-      <localInspection groupPath="PHP" shortName="AnnotationDocBlockTagClassNotFound" displayName="[Annotations] Class not found"
-                       groupName="Annotation"
-                       enabledByDefault="true"
-                       level="WARNING"
-                       language="PHP"
-                       implementationClass="de.espend.idea.php.annotation.inspection.AnnotationDocBlockTagClassNotFoundInspection"/>
-
       <localInspection groupPath="PHP" shortName="AnnotationDocBlockClassConstantNotFound" displayName="[Annotations] Class not found"
                        groupName="Annotation"
                        enabledByDefault="true"
