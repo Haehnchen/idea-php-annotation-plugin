@@ -49,7 +49,7 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
             "strategy"
         );
 
-        assertCompletionNotContains(PhpFileType.INSTANCE, "<?php\n" +
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
                 "/**" +
                 "* @\\My\\Annotations\\All(\"a\",<caret>)" +
                 "*/" +

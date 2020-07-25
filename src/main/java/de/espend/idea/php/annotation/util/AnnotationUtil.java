@@ -714,16 +714,18 @@ public class AnnotationUtil {
      */
     public static void visitAttributes(@NotNull PhpClass phpClass, TripleFunction<String, String, PsiElement, Void> fn) {
         for (Field field : phpClass.getFields()) {
-            if(field.getModifier().isPublic() && !field.isConstant()) {
-                String type = null;
-                for (String type2 : field.getType().filterNull().getTypes()) {
-                    if (PhpType.isPrimitiveType(type2)) {
-                        type = StringUtils.stripStart(type2, "\\");
-                    }
-                }
-
-                fn.fun(field.getName(), type, field);
+            if(field.isConstant()) {
+                continue;
             }
+
+            String type = null;
+            for (String type2 : field.getType().filterNull().getTypes()) {
+                if (PhpType.isPrimitiveType(type2)) {
+                    type = StringUtils.stripStart(type2, "\\");
+                }
+            }
+
+            fn.fun(field.getName(), type, field);
         }
 
         PhpDocComment docComment = phpClass.getDocComment();
