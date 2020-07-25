@@ -264,6 +264,7 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
             "class Foo\n" +
             "{" +
             "   public string $foo;\n" +
+            "   private string $privateFoo;\n" +
             "   \n" +
             "   /** @var boolean **/\n" +
             "   public $bool;\n" +
@@ -280,7 +281,7 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
             return null;
         });
 
-        assertContainsElements(attributes.keySet(), "accessControl", "accessControl2", "array", "array2", "foo");
+        assertContainsElements(attributes.keySet(), "accessControl", "accessControl2", "array", "array2", "foo", "privateFoo");
 
         assertEquals("array", attributes.get("array2"));
         assertEquals("string", attributes.get("accessControl"));
