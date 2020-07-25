@@ -9,6 +9,10 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 7.1.3
+* Remove class existing inspection for too much noise (Daniel Espendiller)
+* Support private properties again as is commonly used for navigation and documentation purpose #205 (Daniel Espendiller)
+
 ## 7.1.2
 * Stop marking keywords for BDD [#202](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/202) (Daniel Espendiller)
 
