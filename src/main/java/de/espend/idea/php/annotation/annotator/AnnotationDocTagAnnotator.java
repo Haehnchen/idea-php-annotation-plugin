@@ -11,14 +11,11 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator;
 import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationDocTagAnnotatorParameter;
 import de.espend.idea.php.annotation.grammar.AnnotationError;
-import de.espend.idea.php.annotation.grammar.ErrorListener;
-import de.espend.idea.php.annotation.grammar.recognizer.AnnotationsLexer;
-import de.espend.idea.php.annotation.grammar.recognizer.AnnotationsParser;
+import de.espend.idea.php.annotation.grammar.Parser;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -63,22 +60,11 @@ public class AnnotationDocTagAnnotator implements Annotator {
         }
 
         // parse
-        CharStream in = CharStreams.fromString(psiElement.getText());
-        AnnotationsLexer lexer = new AnnotationsLexer(in);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        AnnotationsParser parser = new AnnotationsParser(tokens);
+        Parser parser = new Parser();
+        List<AnnotationError> errorList = parser.parse(psiElement.getText());
 
-        parser.removeErrorListeners();
-        lexer.removeErrorListeners();
-
-        ErrorListener errorListener = new ErrorListener();
-        parser.addErrorListener(errorListener);
-        lexer.addErrorListener(errorListener);
-
-        parser.start();
-
-        for (AnnotationError error: errorListener.errors) {
-            TextRange range = error.rangeFromPsiElement(psiElement);
+        for (AnnotationError error: errorList) {
+            TextRange range = error.rangeInPsiElement(psiElement);
             AnnotationBuilder builder = holder.newAnnotation(HighlightSeverity.ERROR, error.getMessage()).range(range);
 
             builder.create();

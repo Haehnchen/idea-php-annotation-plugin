@@ -45,7 +45,7 @@ public class AnnotationError {
         this.fullError = fullError;
     }
 
-    public TextRange rangeFromPsiElement(PsiElement element)
+    public TextRange rangeInPsiElement(PsiElement element)
     {
         TextRange range = element.getTextRange();
 

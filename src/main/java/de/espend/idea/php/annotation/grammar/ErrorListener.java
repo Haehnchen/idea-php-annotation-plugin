@@ -1,6 +1,9 @@
 package de.espend.idea.php.annotation.grammar;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.ANTLRErrorListener;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 
@@ -16,17 +19,17 @@ public class ErrorListener implements ANTLRErrorListener {
     }
 
     @Override
-    public void reportAmbiguity(Parser parser, DFA dfa, int i, int i1, boolean b, BitSet bitSet, ATNConfigSet atnConfigSet) {
+    public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
 
     }
 
     @Override
-    public void reportAttemptingFullContext(Parser parser, DFA dfa, int i, int i1, BitSet bitSet, ATNConfigSet atnConfigSet) {
+    public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex, BitSet conflictingAlts, ATNConfigSet configs) {
 
     }
 
     @Override
-    public void reportContextSensitivity(Parser parser, DFA dfa, int i, int i1, int i2, ATNConfigSet atnConfigSet) {
+    public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
 
     }
 }
