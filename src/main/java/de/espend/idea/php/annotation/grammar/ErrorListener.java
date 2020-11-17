@@ -9,9 +9,14 @@ import org.antlr.v4.runtime.dfa.DFA;
 
 import java.util.BitSet;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ErrorListener implements ANTLRErrorListener {
-    public LinkedList<AnnotationError> errors = new LinkedList<>();
+    private List<AnnotationError> errors = new LinkedList<>();
+
+    public List<AnnotationError> getErrors() {
+        return errors;
+    }
 
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object o, int i, int i1, String s, RecognitionException e) {

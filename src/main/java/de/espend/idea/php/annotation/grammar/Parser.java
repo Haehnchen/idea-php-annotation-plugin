@@ -24,6 +24,6 @@ public class Parser {
 
         parser.start();
 
-        return errorListener.errors;
+        return errorListener.getErrors();
     }
 }
