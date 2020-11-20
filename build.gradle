@@ -10,6 +10,7 @@ def htmlFixer = { htmlFile -> file(htmlFile).text.replace('<html>', '').replace(
 apply plugin: 'idea'
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
+apply plugin: 'antlr'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -66,3 +67,12 @@ wrapper {
 }
 
 test.testLogging.exceptionFormat = TestExceptionFormat.FULL
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    antlr "org.antlr:antlr4:4.8"
+}
+

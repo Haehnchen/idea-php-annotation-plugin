@@ -1,14 +1,21 @@
 package de.espend.idea.php.annotation.annotator;
 
+import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator;
 import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationDocTagAnnotatorParameter;
+import de.espend.idea.php.annotation.grammar.AnnotationError;
+import de.espend.idea.php.annotation.grammar.Parser;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -45,6 +52,22 @@ public class AnnotationDocTagAnnotator implements Annotator {
         PhpAnnotationDocTagAnnotatorParameter parameter = new PhpAnnotationDocTagAnnotatorParameter(phpClass, (PhpDocTag) psiElement, holder);
         for(PhpAnnotationDocTagAnnotator annotator: AnnotationUtil.EP_DOC_TAG_ANNOTATOR.getExtensions()) {
             annotator.annotate(parameter);
+        }
+
+        // only check root objects
+        if (psiElement.getParent().getParent() instanceof PhpDocTag) {
+            return;
+        }
+
+        // parse
+        Parser parser = new Parser();
+        List<AnnotationError> errorList = parser.parse(psiElement.getText());
+
+        for (AnnotationError error: errorList) {
+            TextRange range = error.rangeInPsiElement(psiElement);
+            AnnotationBuilder builder = holder.newAnnotation(HighlightSeverity.ERROR, error.getMessage()).range(range);
+
+            builder.create();
         }
     }
 }

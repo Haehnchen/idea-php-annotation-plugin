@@ -7,6 +7,7 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.daemon.LineMarkerProviders;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
+import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.codeInsight.lookup.Lookup;
@@ -14,6 +15,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.codeInspection.*;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
@@ -35,6 +37,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
 import com.intellij.util.ui.UIUtil;
+import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpReference;
@@ -129,6 +132,21 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
                 fail(String.format("failed that completion contains %s in %s", s, lookupElements.toString()));
             }
         }
+    }
+
+    public void assertSyntaxViolationHighlighting(String text, int expectedErrorCount) {
+        myFixture.configureByText(PhpFileType.INSTANCE, text);
+        myFixture.completeBasic();
+
+        List<HighlightInfo> infos = myFixture.doHighlighting();
+        int errorCount = 0;
+        for (HighlightInfo info: infos) {
+            if (info.getSeverity() == HighlightSeverity.ERROR) {
+                errorCount++;
+            }
+        }
+
+        assertEquals(expectedErrorCount, errorCount);
     }
 
     public void assertNavigationContains(LanguageFileType languageFileType, String configureByText, String targetShortcut) {
