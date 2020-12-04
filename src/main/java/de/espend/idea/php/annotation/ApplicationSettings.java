@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
 
     public boolean appendRoundBracket = true;
+    public boolean activateBracketHighlighting = true;
 
     public List<UseAliasOption> useAliasOptions = new ArrayList<>();
 
