@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 public class BracketHighlighter {
     private static final char[][] BRACKET_PAIRS = {
@@ -117,12 +116,16 @@ public class BracketHighlighter {
 
     private static int getCaretOffsetInElement(PsiElement element)
     {
-        Editor editor = FileEditorManager.getInstance(element.getProject()).getSelectedTextEditor();
+        Editor[] editor = new Editor[1];
+        ApplicationManager.getApplication()
+                .invokeLater( () -> editor[0] = FileEditorManager.getInstance(element.getProject()).getSelectedTextEditor());
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        if (editor == null)
-            return -1;
-
-        return editor.getCaretModel().getOffset() - element.getTextRange().getStartOffset();
+        return editor[0].getCaretModel().getOffset() - element.getTextRange().getStartOffset();
     }
 
     public static int getBracketPositionNextToOffset(int offset, String text)
