@@ -32,4 +32,20 @@ public class SymfonyCompletionProviderTest extends AnnotationLightCodeInsightFix
                 "}\n",
             "GET");
     }
+
+    public void testThatAttributesArrayCompletionForSymfonyRouteMethodsAreProvides() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "\n" +
+                "use Symfony\\Component\\Routing\\Annotation\\Route;\n" +
+                "\n" +
+                "class Test\n" +
+                "\n" +
+                "{\n" +
+                "  #[Route('/path', methods: ['<caret>'])]\n" +
+                "  public static function fooAction()\n" +
+                "  {\n" +
+                "  }\n" +
+                "}\n",
+            "GET");
+    }
 }

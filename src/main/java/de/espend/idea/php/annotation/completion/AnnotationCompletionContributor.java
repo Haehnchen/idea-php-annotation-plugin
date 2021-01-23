@@ -3,17 +3,19 @@ package de.espend.idea.php.annotation.completion;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.PhpIcons;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import com.jetbrains.php.lang.psi.elements.Field;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiUtil;
+import com.jetbrains.php.lang.psi.elements.*;
 import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.completion.insert.AnnotationTagInsertHandler;
 import de.espend.idea.php.annotation.completion.lookupelements.PhpAnnotationPropertyLookupElement;
@@ -30,6 +32,7 @@ import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import de.espend.idea.php.annotation.util.PhpIndexUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -56,6 +59,9 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
         // @Foo(name={"FOOBAR", "<caret>"})
         extend(CompletionType.BASIC, AnnotationPattern.getPropertyArrayPattern(), new PhpDocArrayPropertyCompletion());
+
+        // #[Route('/path', methods: ['action'])]
+        extend(CompletionType.BASIC, AnnotationPattern.getAttributesArrayPattern(), new AttributesArrayPropertyCompletion());
     }
 
     private class PhpDocDefaultValue extends CompletionProvider<CompletionParameters> {
@@ -115,6 +121,67 @@ public class AnnotationCompletionContributor extends CompletionContributor {
             );
 
             providerWalker(parameters, context, result, annotationPropertyParameter);
+        }
+    }
+
+    /**
+     * #[Route('/path', methods: ['action'])]
+     */
+    private static class AttributesArrayPropertyCompletion extends CompletionProvider<CompletionParameters> {
+        @Override
+        protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
+            PsiElement psiElement = parameters.getOriginalPosition();
+            if(psiElement == null) {
+                return;
+            }
+
+            PsiElement parent = psiElement.getParent();
+            if(!(parent instanceof StringLiteralExpression)) {
+                return;
+            }
+
+            ArrayCreationExpression arrayCreationExpression = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), ArrayCreationExpression.class);
+            if (arrayCreationExpression == null) {
+                return;
+            }
+
+            PsiElement attributeNamePsi = PhpPsiUtil.getPrevSibling(arrayCreationExpression, psiElement1 -> psiElement1 instanceof PsiWhiteSpace || psiElement1.getNode().getElementType() == PhpTokenTypes.opCOLON);
+            if (attributeNamePsi == null || attributeNamePsi.getNode().getElementType() != PhpTokenTypes.IDENTIFIER) {
+                return;
+            }
+
+            String attributeName = attributeNamePsi.getText();
+            if (StringUtils.isBlank(attributeName)) {
+                return;
+            }
+
+            PhpAttribute phpAttribute = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PhpAttribute.class);
+            if (phpAttribute == null) {
+                return;
+            }
+
+            String fqn = phpAttribute.getFQN();
+            if (fqn == null) {
+                return;
+            }
+
+            PhpClass phpClass = PhpElementsUtil.getClassInterface(psiElement.getProject(), fqn);
+            if (phpClass == null) {
+                return;
+            }
+
+            AnnotationCompletionProviderParameter completionParameter = new AnnotationCompletionProviderParameter(parameters, context, result);
+
+            AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(
+                parameters.getOriginalPosition(),
+                phpClass,
+                attributeName,
+                AnnotationPropertyParameter.Type.PROPERTY_ARRAY
+            );
+
+            for(PhpAnnotationCompletionProvider phpAnnotationExtension : AnnotationUtil.EXTENSION_POINT_COMPLETION.getExtensions()) {
+                phpAnnotationExtension.getPropertyValueCompletions(annotationPropertyParameter, completionParameter);
+            }
         }
     }
 
