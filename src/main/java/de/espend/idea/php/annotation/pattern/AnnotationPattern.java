@@ -13,9 +13,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocPsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -273,9 +271,20 @@ public class AnnotationPattern {
             .afterLeafSkipping(
                 PlatformPatterns.psiElement(PsiWhiteSpace.class), PlatformPatterns.psiElement().withElementType(PhpTokenTypes.opCOLON)
                     .afterLeafSkipping(PlatformPatterns.psiElement(PsiWhiteSpace.class), PlatformPatterns.psiElement().withElementType(PhpTokenTypes.IDENTIFIER))
-            );
+            ).withParent(PlatformPatterns.psiElement(ParameterList.class).withParent(PhpAttribute.class));
     }
 
+    /**
+     * #[Route('/path', name: '<caret>')]
+     */
+    public static PsiElementPattern.Capture<StringLiteralExpression> getAttributesDefaultPattern() {
+        return PlatformPatterns.psiElement(StringLiteralExpression.class).with(new PatternCondition<>("default attribute value") {
+            @Override
+            public boolean accepts(@NotNull StringLiteralExpression stringLiteralExpression, ProcessingContext processingContext) {
+                return stringLiteralExpression.getPrevSibling() == null;
+            }
+        }).withParent(PlatformPatterns.psiElement(ParameterList.class).withParent(PhpAttribute.class));
+    }
     /**
      * Get property of enum array eg "methods"
      *
