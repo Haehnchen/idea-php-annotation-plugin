@@ -12,6 +12,10 @@ import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocPsiElement;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
+import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
+import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -246,6 +250,20 @@ public class AnnotationPattern {
                     )
                 )
             );
+    }
+
+    /**
+     * #[Route('/path', name: 'action', methods: ['test'])]
+     */
+    public static ElementPattern<PsiElement> getAttributesArrayPattern() {
+        return PlatformPatterns.psiElement()
+            .withParent(PlatformPatterns.psiElement(StringLiteralExpression.class)
+                .withParent(PlatformPatterns.psiElement(PhpPsiElement.class)
+                    .withParent(PlatformPatterns.psiElement(ArrayCreationExpression.class).afterLeafSkipping(
+                        PlatformPatterns.psiElement(PsiWhiteSpace.class), PlatformPatterns.psiElement().withElementType(PhpTokenTypes.opCOLON)
+                            .afterLeafSkipping(PlatformPatterns.psiElement(PsiWhiteSpace.class), PlatformPatterns.psiElement().withElementType(PhpTokenTypes.IDENTIFIER))
+                    )
+            )));
     }
 
     /**
