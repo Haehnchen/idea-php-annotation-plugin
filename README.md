@@ -170,6 +170,22 @@ Usage
 </extensions>
 ```
 
+### PHP Attributes Bridge
+
+All extensions points providing support to DocBlock and PHP Attributes at the same time.   
+
+```php
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+#[NotBlank(message: 'An empty file is not allowed.')]
+/* @NotBlank({message: "An empty file is not allowed."}) */
+```
+
+```php
+#[Template('foo.html.twig')]
+/* @Template("foo.html.twig") */
+```
+
 ### Completion confidence
 
 Annoying pressing completion shortcut? Plugin provides a nice completion confidence to open completion popover on several conditions
