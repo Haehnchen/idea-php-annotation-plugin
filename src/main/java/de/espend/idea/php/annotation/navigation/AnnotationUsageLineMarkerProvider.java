@@ -33,12 +33,12 @@ import java.util.List;
 public class AnnotationUsageLineMarkerProvider implements LineMarkerProvider {
     @Nullable
     @Override
-    public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement psiElement) {
+    public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement psiElement) {
         return null;
     }
 
     @Override
-    public void collectSlowLineMarkers(@NotNull List<PsiElement> psiElements, @NotNull Collection<LineMarkerInfo> results) {
+    public void collectSlowLineMarkers(@NotNull List<? extends PsiElement> psiElements, @NotNull Collection<? super LineMarkerInfo<?>> results) {
         for(PsiElement psiElement: psiElements) {
             if(!getClassNamePattern().accepts(psiElement)) {
                 continue;

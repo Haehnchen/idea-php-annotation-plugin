@@ -1,7 +1,7 @@
 sudo: false
 language: java
 jdk:
-  - openjdk8
+  - oraclejdk11
 
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -21,7 +21,7 @@ before_install:
 - "export ORG_GRADLE_PROJECT_twigPluginVersion=${TWIG_PLUGIN_VERSION}"
 
 env:
-  - IDEA_VERSION="IU-2020.1" PHP_PLUGIN_VERSION="201.6668.153" TOOLBOX_PLUGIN_VERSION="0.4.6" TWIG_PLUGIN_VERSION="201.6668.153"
+  - IDEA_VERSION="IU-2020.3.1" PHP_PLUGIN_VERSION="203.6682.137" TOOLBOX_PLUGIN_VERSION="0.4.6" TWIG_PLUGIN_VERSION="203.6682.75"
 
 script:
 - "./gradlew check verifyPlugin buildPlugin"
