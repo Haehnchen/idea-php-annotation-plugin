@@ -13,7 +13,6 @@ import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocPsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
@@ -264,6 +263,17 @@ public class AnnotationPattern {
                             .afterLeafSkipping(PlatformPatterns.psiElement(PsiWhiteSpace.class), PlatformPatterns.psiElement().withElementType(PhpTokenTypes.IDENTIFIER))
                     )
             )));
+    }
+
+    /**
+     * #[Route('/path', name: '<caret>')]
+     */
+    public static PsiElementPattern.Capture<StringLiteralExpression> getAttributesValuePattern() {
+        return PlatformPatterns.psiElement(StringLiteralExpression.class)
+            .afterLeafSkipping(
+                PlatformPatterns.psiElement(PsiWhiteSpace.class), PlatformPatterns.psiElement().withElementType(PhpTokenTypes.opCOLON)
+                    .afterLeafSkipping(PlatformPatterns.psiElement(PsiWhiteSpace.class), PlatformPatterns.psiElement().withElementType(PhpTokenTypes.IDENTIFIER))
+            );
     }
 
     /**

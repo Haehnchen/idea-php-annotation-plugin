@@ -6,13 +6,18 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiUtil;
+import com.jetbrains.php.lang.psi.elements.PhpAttribute;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider;
+import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
 import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationReferenceProviderParameter;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +33,9 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar psiReferenceRegistrar) {
         psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getDefaultPropertyValueString(), new PropertyValueDefaultReferences());
         psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getPropertyValueString(), new PropertyValueReferences());
+
+        // #[Route('/path', name: '<caret>')]
+        psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getAttributesValuePattern(), new AttributeValueReferences());
     }
 
     /**
@@ -71,6 +79,48 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
             AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(psiElement, phpClass, propertyName.getText(), AnnotationPropertyParameter.Type.PROPERTY_VALUE);
             return addPsiReferences(psiElement, processingContext, annotationPropertyParameter);
 
+        }
+    }
+
+    /**
+     * #[Route('/path', name: '<caret>')]
+     */
+    private class AttributeValueReferences extends PsiReferenceProvider {
+
+        @NotNull
+        @Override
+        public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
+            if(!(psiElement instanceof StringLiteralExpression)) {
+                return new PsiReference[0];
+            }
+
+            PhpAttribute phpAttribute = PsiTreeUtil.getParentOfType(psiElement, PhpAttribute.class);
+            if (phpAttribute == null) {
+                return new PsiReference[0];
+            }
+
+            String fqn = phpAttribute.getFQN();
+            if (fqn == null) {
+                return new PsiReference[0];
+            }
+
+            PhpClass phpClass = PhpElementsUtil.getClassInterface(psiElement.getProject(), fqn);
+            if (phpClass == null) {
+                return new PsiReference[0];
+            }
+
+            PsiElement attributeNamePsi = PhpPsiUtil.getPrevSibling(psiElement, psiElement1 -> psiElement1 instanceof PsiWhiteSpace || psiElement1.getNode().getElementType() == PhpTokenTypes.opCOLON);
+            if (attributeNamePsi == null || attributeNamePsi.getNode().getElementType() != PhpTokenTypes.IDENTIFIER) {
+                return new PsiReference[0];
+            }
+
+            String attributeName = attributeNamePsi.getText();
+            if (StringUtils.isBlank(attributeName)) {
+                return new PsiReference[0];
+            }
+
+            AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(psiElement, phpClass, attributeName, AnnotationPropertyParameter.Type.PROPERTY_VALUE);
+            return addPsiReferences(psiElement, processingContext, annotationPropertyParameter);
         }
     }
 
