@@ -36,6 +36,9 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
 
         // #[Route('/path', name: '<caret>')]
         psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getAttributesValuePattern(), new AttributeValueReferences());
+
+        // #[Route('<caret>')]
+        psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getAttributesDefaultPattern(), new AttributeDefaultReferences());
     }
 
     /**
@@ -120,6 +123,39 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
             }
 
             AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(psiElement, phpClass, attributeName, AnnotationPropertyParameter.Type.PROPERTY_VALUE);
+            return addPsiReferences(psiElement, processingContext, annotationPropertyParameter);
+        }
+    }
+
+
+    /**
+     * #[Route('/path', name: '<caret>')]
+     */
+    private class AttributeDefaultReferences extends PsiReferenceProvider {
+
+        @NotNull
+        @Override
+        public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
+            if(!(psiElement instanceof StringLiteralExpression)) {
+                return new PsiReference[0];
+            }
+
+            PhpAttribute phpAttribute = PsiTreeUtil.getParentOfType(psiElement, PhpAttribute.class);
+            if (phpAttribute == null) {
+                return new PsiReference[0];
+            }
+
+            String fqn = phpAttribute.getFQN();
+            if (fqn == null) {
+                return new PsiReference[0];
+            }
+
+            PhpClass phpClass = PhpElementsUtil.getClassInterface(psiElement.getProject(), fqn);
+            if (phpClass == null) {
+                return new PsiReference[0];
+            }
+
+            AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(psiElement, phpClass, AnnotationPropertyParameter.Type.DEFAULT);
             return addPsiReferences(psiElement, processingContext, annotationPropertyParameter);
         }
     }
