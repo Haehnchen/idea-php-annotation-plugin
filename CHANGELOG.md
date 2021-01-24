@@ -1,13 +1,19 @@
 # Changelog
 
 ## Versions
-* 7.x: PhpStorm 2020.1+
+* 8.x: PhpStorm 2020.3+
+* 7.x: PhpStorm 2020.1+ (no support)
 * 6.x: PhpStorm 2019.1+ (no support)
 * 5.x: PhpStorm 2017.1+ (no support)
 * 4.x: PhpStorm 2016.1.2+ (no support)
 * 3.x: PhpStorm 2016.1+ (no support)
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
+
+## 8.0.0
+* Provide attribute default value "navigation / references" bridge for PHP8 Attributes (Daniel Espendiller)
+* Provide attribute property value "navigation / references" bridge for PHP8 Attributes (Daniel Espendiller)
+* Provide array completion bridge for PHP8 Attributes (Daniel Espendiller)
 
 ## 7.1.3
 * Remove class existing inspection for too much noise (Daniel Espendiller)
