@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
  */
 public class SettingsForm implements Configurable {
     private JCheckBox appendRoundBracket;
+    private JCheckBox activateBracketHighlighting;
     private JPanel panel;
     private JButton buttonCleanIndex;
 
@@ -49,14 +50,17 @@ public class SettingsForm implements Configurable {
 
     @Override
     public boolean isModified() {
+        ApplicationSettings settings = ApplicationSettings.getInstance();
         return
-            !appendRoundBracket.isSelected() == ApplicationSettings.getInstance().appendRoundBracket
-        ;
+            !appendRoundBracket.isSelected() == settings.appendRoundBracket ||
+                    !activateBracketHighlighting.isSelected() == settings.activateBracketHighlighting;
     }
 
     @Override
     public void apply() throws ConfigurationException {
-        ApplicationSettings.getInstance().appendRoundBracket = appendRoundBracket.isSelected();
+        ApplicationSettings settings = ApplicationSettings.getInstance();
+        settings.appendRoundBracket = appendRoundBracket.isSelected();
+        settings.activateBracketHighlighting = activateBracketHighlighting.isSelected();
     }
 
     @Override
@@ -65,7 +69,9 @@ public class SettingsForm implements Configurable {
     }
 
     private void updateUIFromSettings() {
-        appendRoundBracket.setSelected(ApplicationSettings.getInstance().appendRoundBracket);
+        ApplicationSettings settings = ApplicationSettings.getInstance();
+        appendRoundBracket.setSelected(settings.appendRoundBracket);
+        activateBracketHighlighting.setSelected(settings.activateBracketHighlighting);
     }
 
     @Override

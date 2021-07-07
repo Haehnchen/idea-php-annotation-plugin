@@ -5,6 +5,7 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator;
 import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationDocTagAnnotatorParameter;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
@@ -45,6 +46,10 @@ public class AnnotationDocTagAnnotator implements Annotator {
         PhpAnnotationDocTagAnnotatorParameter parameter = new PhpAnnotationDocTagAnnotatorParameter(phpClass, (PhpDocTag) psiElement, holder);
         for(PhpAnnotationDocTagAnnotator annotator: AnnotationUtil.EP_DOC_TAG_ANNOTATOR.getExtensions()) {
             annotator.annotate(parameter);
+        }
+
+        if (ApplicationSettings.getInstance().activateBracketHighlighting) {
+            BracketHighlighter.highlightCaretBracketPair(psiElement, holder);
         }
     }
 }

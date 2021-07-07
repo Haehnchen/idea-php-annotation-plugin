@@ -83,6 +83,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
 
+      <postStartupActivity implementation="de.espend.idea.php.annotation.annotator.AnnotationCaretListener" />
+
       <projectService serviceImplementation="de.espend.idea.php.annotation.Settings"/>
       <fileBasedIndex implementation="de.espend.idea.php.annotation.AnnotationStubIndex"/>
       <fileBasedIndex implementation="de.espend.idea.php.annotation.AnnotationUsageIndex"/>
