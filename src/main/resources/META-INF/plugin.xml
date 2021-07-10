@@ -173,8 +173,6 @@
       </intentionAction>
 
       <internalFileTemplate name="Doctrine Entity Repository"/>
-
-      <phpDeadCode implementation="de.espend.idea.php.annotation.doctrine.DoctrinePropertyWithIdEntryPoint" />
   </extensions>
 
   <extensionPoints>
