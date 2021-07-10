@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
     id "org.jetbrains.intellij" version "0.4.11"
-    id 'com.palantir.git-version' version "0.11.0"
+    id "com.palantir.git-version" version "0.12.3"
 }
 
 def htmlFixer = { htmlFile -> file(htmlFile).text.replace('<html>', '').replace('</html>', '') }
@@ -22,10 +22,6 @@ def requiredPlugins = [
     'java-i18n',
     'properties'
 ]
-
-if(ideaVersion.startsWith("IU-2019.1")) {
-    requiredPlugins.removeAll { (it.toLowerCase() == 'java') }
-}
 
 intellij {
     version ideaVersion
