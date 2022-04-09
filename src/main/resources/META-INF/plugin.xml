@@ -52,14 +52,6 @@
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="203"/>
 
-  <application-components>
-    <!-- Add your application components here -->
-  </application-components>
-
-  <project-components>
-    <!-- Add your project components here -->
-  </project-components>
-
   <actions>
 
       <action icon="PhpAnnotationIcons.DOCTRINE" id="PhpAnnotation.Doctrine.Orm.PropertyGenerator" class="de.espend.idea.php.annotation.doctrine.action.DoctrinePropertyOrmAnnotationGenerateAction" text="ORM Annotation">
@@ -176,13 +168,13 @@
   </extensions>
 
   <extensionPoints>
-      <extensionPoint name="PhpAnnotationCompletionProvider" interface="de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider"/>
-      <extensionPoint name="PhpAnnotationReferenceProvider" interface="de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider"/>
-      <extensionPoint name="PhpAnnotationDocTagGotoHandler" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler"/>
-      <extensionPoint name="PhpAnnotationDocTagAnnotator" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator"/>
-      <extensionPoint name="PhpAnnotationGlobalNamespacesLoader" interface="de.espend.idea.php.annotation.extension.PhpAnnotationGlobalNamespacesLoader"/>
-      <extensionPoint name="PhpAnnotationVirtualProperties" interface="de.espend.idea.php.annotation.extension.PhpAnnotationVirtualProperties"/>
-      <extensionPoint name="PhpAnnotationUseAlias" interface="de.espend.idea.php.annotation.extension.PhpAnnotationUseAlias"/>
+      <extensionPoint dynamic="true" name="PhpAnnotationCompletionProvider" interface="de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider"/>
+      <extensionPoint dynamic="true" name="PhpAnnotationReferenceProvider" interface="de.espend.idea.php.annotation.extension.PhpAnnotationReferenceProvider"/>
+      <extensionPoint dynamic="true" name="PhpAnnotationDocTagGotoHandler" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDocTagGotoHandler"/>
+      <extensionPoint dynamic="true" name="PhpAnnotationDocTagAnnotator" interface="de.espend.idea.php.annotation.extension.PhpAnnotationDocTagAnnotator"/>
+      <extensionPoint dynamic="true" name="PhpAnnotationGlobalNamespacesLoader" interface="de.espend.idea.php.annotation.extension.PhpAnnotationGlobalNamespacesLoader"/>
+      <extensionPoint dynamic="true" name="PhpAnnotationVirtualProperties" interface="de.espend.idea.php.annotation.extension.PhpAnnotationVirtualProperties"/>
+      <extensionPoint dynamic="true" name="PhpAnnotationUseAlias" interface="de.espend.idea.php.annotation.extension.PhpAnnotationUseAlias"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="de.espend.idea.php.annotation">
