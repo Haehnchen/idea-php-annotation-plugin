@@ -74,7 +74,7 @@ public class PhpDocUtil {
 
     public static void addClassEmbeddedDocs(@NotNull PhpClass forElement, @NotNull Document document, @NotNull PsiFile file)
     {
-        addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Embedded", null);
+        addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Embeddable", null);
     }
 
     private static void addPhpDocTag(@NotNull PhpNamedElement forElement, @NotNull Document document, @NotNull PsiFile file, @NotNull  PsiElement beforeElement, @NotNull String annotationClass, @Nullable String tagParameter) {
