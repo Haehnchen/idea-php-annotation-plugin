@@ -68,7 +68,7 @@ public class DoctrineAnnotationFieldTypeProvider implements PhpAnnotationReferen
         @NotNull
         @Override
         public Object[] getVariants() {
-            return new Object[0];
+            return DoctrineUtil.getTypes(psiElement.getProject()).toArray();
         }
     }
 
