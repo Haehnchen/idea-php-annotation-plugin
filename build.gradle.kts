@@ -71,8 +71,8 @@ tasks {
     patchPluginXml {
         version.set(properties("pluginVersion"))
         sinceBuild.set(properties("pluginSinceBuild"))
+        untilBuild.set(properties("pluginUntilBuild"))
         changeNotes.set(file("src/main/resources/META-INF/change-notes.html").readText().replace("<html>", "").replace("</html>", ""));
-        // untilBuild.set(properties("pluginUntilBuild"))
 
         // Get the latest available change notes from the changelog file
         // changeNotes.set(provider {
