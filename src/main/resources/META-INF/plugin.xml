@@ -196,15 +196,9 @@
       <PhpAnnotationCompletionProvider implementation="de.espend.idea.php.annotation.symfony.SymfonyCompletionProvider"/>
   </extensions>
 
-  <extensions defaultExtensionNs="de.espend.idea.php.toolbox.extension">
-      <LanguageRegistrarMatcher implementation="de.espend.idea.php.annotation.toolbox.DefaultPropertyRegistrarMatcher"/>
-      <LanguageRegistrarMatcher implementation="de.espend.idea.php.annotation.toolbox.PropertyRegistrarMatcher"/>
-      <LanguageRegistrarMatcher implementation="de.espend.idea.php.annotation.toolbox.PropertyArrayRegistrarMatcher"/>
-      <ToolboxJsonFileCompletion implementation="de.espend.idea.php.annotation.toolbox.AnnotationToolboxJsonFileCompletion"/>
-  </extensions>
 
   <depends>com.jetbrains.php</depends>
   <depends>com.intellij.modules.platform</depends>
-  <depends optional="true">de.espend.idea.php.toolbox</depends>
+  <depends optional="true" config-file="toolbox.xml">de.espend.idea.php.toolbox</depends>
 
 </idea-plugin>
