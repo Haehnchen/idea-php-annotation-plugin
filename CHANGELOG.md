@@ -10,6 +10,12 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 8.1.0
+* Fix Doctrine column type is not an array to completion (Daniel Espendiller)
+* Update build to IU-2021.3 (Daniel Espendiller)
+* [#230](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/230) Embedded classes => @ORM\Embeddable instead of @ORM\Embedded (Daniel Espendiller)
+* Allow plugin to be dynamic (Daniel Espendiller)
+
 ## 8.0.0
 * Provide attribute default value "navigation / references" bridge for PHP8 Attributes (Daniel Espendiller)
 * Provide attribute property value "navigation / references" bridge for PHP8 Attributes (Daniel Espendiller)

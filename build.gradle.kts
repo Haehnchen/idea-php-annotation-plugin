@@ -71,6 +71,7 @@ tasks {
     patchPluginXml {
         version.set(properties("pluginVersion"))
         sinceBuild.set(properties("pluginSinceBuild"))
+        changeNotes.set(file("src/main/resources/META-INF/change-notes.html").readText().replace("<html>", "").replace("</html>", ""));
         // untilBuild.set(properties("pluginUntilBuild"))
 
         // Get the latest available change notes from the changelog file
@@ -97,7 +98,7 @@ tasks {
     }
 
     publishPlugin {
-        dependsOn("patchChangelog")
+        // dependsOn("patchChangelog")
         token.set(System.getenv("PUBLISH_TOKEN"))
         // pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
         // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
