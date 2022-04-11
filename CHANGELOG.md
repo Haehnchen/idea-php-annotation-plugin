@@ -10,6 +10,12 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 8.2.0
+* [#204](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/204) Annotation with identical name to a method name is found as usage (Daniel Espendiller)
+* [#209](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/209) [#222](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/222) move annotation completion to top of completion (Daniel Espendiller)
+* [#237](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/237) attribute value completion for single property values should work as expected (Daniel Espendiller)
+* [#237](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/237) onDelete should complete only on single value (Daniel Espendiller)
+
 ## 8.1.1
 * Use new toolbox version (Daniel Espendiller)
 * Move toolbox extension to an optional config (Daniel Espendiller)
