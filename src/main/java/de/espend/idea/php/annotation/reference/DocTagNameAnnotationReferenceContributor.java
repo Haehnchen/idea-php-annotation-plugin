@@ -8,10 +8,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocToken;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpPsiUtil;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
-import com.jetbrains.php.lang.psi.elements.PhpUse;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.elements.*;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpDocUtil;
 import org.apache.commons.lang.StringUtils;
@@ -95,6 +92,10 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
 
         @Override
         public boolean isReferenceTo(@NotNull PsiElement element) {
+            // eg for "Optimize Imports"
+            // attach reference to @Template()
+            // reference can also point to a namespace e.g. @Annotation\Exclude()
+
 
             // use Doctrine\ORM\Mapping as "ORM";
             if (element instanceof PhpUse) {
@@ -104,16 +105,21 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                 if(useName.equals(docUseName)) {
                     return true;
                 }
-
             }
 
-            // eg for "Optimize Imports"
-            // attach reference to @Template()
-            // reference can also point to a namespace e.g. @Annotation\Exclude()
-            if (element instanceof PhpNamedElement && !(element instanceof Variable)) {
-                if(((PhpNamedElement) element).getName().equals(getDocBlockName())) {
-                    return true;
-                }
+            // class "Zend\Form\Annotation\Exclude" imported via namespace and has "subclass" annotation
+            // use Zend\Form\Annotation;
+            // @Annotation\Exclude
+            if (element instanceof PhpNamespace) {
+                PhpClass phpClass = AnnotationUtil.getAnnotationReference(getElement());
+                return phpClass != null && phpClass.getFQN().startsWith(((PhpNamespace) element).getFQN());
+            }
+
+            // direct class match
+            // Zend\Form\Annotation => @Annotation
+            if (element instanceof PhpClass) {
+                PhpClass phpClass = AnnotationUtil.getAnnotationReference(getElement());
+                return phpClass != null && phpClass.getFQN().equals(((PhpClass) element).getFQN());
             }
 
             return false;
