@@ -12,9 +12,11 @@ import java.util.Arrays;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class DoctrineAnnotationStaticCompletionProvider implements PhpAnnotationCompletionProvider {
-
     @Override
     public void getPropertyValueCompletions(AnnotationPropertyParameter annotationPropertyParameter, AnnotationCompletionProviderParameter completionParameter) {
+        if (annotationPropertyParameter.getType() != AnnotationPropertyParameter.Type.PROPERTY_VALUE) {
+            return;
+        }
 
         String propertyName = annotationPropertyParameter.getPropertyName();
         if(propertyName == null) {
@@ -26,7 +28,5 @@ public class DoctrineAnnotationStaticCompletionProvider implements PhpAnnotation
                 completionParameter.getResult().addElement(LookupElementBuilder.create(s));
             }
         }
-
     }
-
 }

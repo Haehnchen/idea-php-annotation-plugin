@@ -266,12 +266,24 @@ public class AnnotationPattern {
     /**
      * #[Route('/path', name: '<caret>')]
      */
-    public static PsiElementPattern.Capture<StringLiteralExpression> getAttributesValuePattern() {
+    public static PsiElementPattern.Capture<StringLiteralExpression> getAttributesValueReferencesPattern() {
         return PlatformPatterns.psiElement(StringLiteralExpression.class)
             .afterLeafSkipping(
                 PlatformPatterns.psiElement(PsiWhiteSpace.class), PlatformPatterns.psiElement().withElementType(PhpTokenTypes.opCOLON)
                     .afterLeafSkipping(PlatformPatterns.psiElement(PsiWhiteSpace.class), PlatformPatterns.psiElement().withElementType(PhpTokenTypes.IDENTIFIER))
             ).withParent(PlatformPatterns.psiElement(ParameterList.class).withParent(PhpAttribute.class));
+    }
+
+    /**
+     * #[Route('/path', name: '<caret>')]
+     * @return
+     */
+    public static PsiElementPattern.@NotNull Capture<PsiElement> getAttributesValuePattern() {
+        return PlatformPatterns.psiElement().withParent(PlatformPatterns.psiElement(StringLiteralExpression.class)
+            .afterLeafSkipping(
+                PlatformPatterns.psiElement(PsiWhiteSpace.class), PlatformPatterns.psiElement().withElementType(PhpTokenTypes.opCOLON)
+                    .afterLeafSkipping(PlatformPatterns.psiElement(PsiWhiteSpace.class), PlatformPatterns.psiElement().withElementType(PhpTokenTypes.IDENTIFIER))
+            ).withParent(PlatformPatterns.psiElement(ParameterList.class).withParent(PhpAttribute.class)));
     }
 
     /**

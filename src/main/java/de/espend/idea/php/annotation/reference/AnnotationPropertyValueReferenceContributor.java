@@ -35,7 +35,7 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
         psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getPropertyValueString(), new PropertyValueReferences());
 
         // #[Route('/path', name: '<caret>')]
-        psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getAttributesValuePattern(), new AttributeValueReferences());
+        psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getAttributesValueReferencesPattern(), new AttributeValueReferences());
 
         // #[Route('<caret>')]
         psiReferenceRegistrar.registerReferenceProvider(AnnotationPattern.getAttributesDefaultPattern(), new AttributeDefaultReferences());
