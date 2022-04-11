@@ -25,7 +25,7 @@ public class PhpAnnotationTypeCompletionProvider implements PhpAnnotationComplet
     @Override
     public void getPropertyValueCompletions(AnnotationPropertyParameter annotationPropertyParameter, AnnotationCompletionProviderParameter completionParameter) {
         String propertyName = annotationPropertyParameter.getPropertyName();
-        if(!annotationPropertyParameter.getType().equals(AnnotationPropertyParameter.Type.PROPERTY_VALUE) && propertyName == null) {
+        if(annotationPropertyParameter.getType() != AnnotationPropertyParameter.Type.PROPERTY_VALUE || propertyName == null) {
             return;
         }
 

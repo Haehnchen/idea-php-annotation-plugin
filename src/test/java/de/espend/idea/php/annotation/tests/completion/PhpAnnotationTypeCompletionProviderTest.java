@@ -72,6 +72,22 @@ public class PhpAnnotationTypeCompletionProviderTest extends AnnotationLightCode
         );
     }
 
+    public void testAttributePropertyValueCompletionInClassMethodScope() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "use \\My\\Annotations\\All;\n" +
+                "#[All(strategy: '<caret>')]\n" +
+                "class Foo {}\n",
+            "AUTO"
+        );
+
+        assertCompletionNotContains(PhpFileType.INSTANCE, "<?php\n" +
+                "use \\My\\Annotations\\All;\n" +
+                "#[All(strategy: ['<caret>'])]\n" +
+                "class Foo {}\n",
+            "AUTO"
+        );
+    }
+
     public void testDocTagInlineCompletion() {
         assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
                 "use \\My\\Annotations\\All;\n" +
@@ -151,6 +167,22 @@ public class PhpAnnotationTypeCompletionProviderTest extends AnnotationLightCode
                 "class Foo {}\n" +
                 "",
             "true", "false"
+        );
+    }
+
+    public void testAttributePropertyValueCompletionForTypes() {
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "use \\My\\Annotations\\All;\n" +
+                "#[All(boolValue: '<caret>')]\n" +
+                "class Foo {}\n",
+            "true", "false"
+        );
+
+        assertCompletionNotContains(PhpFileType.INSTANCE, "<?php\n" +
+                "use \\My\\Annotations\\All;\n" +
+                "#[All(boolValue: ['<caret>'])]\n" +
+                "class Foo {}\n",
+            "true"
         );
     }
 
