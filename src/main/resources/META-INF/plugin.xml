@@ -80,7 +80,7 @@
       <fileBasedIndex implementation="de.espend.idea.php.annotation.AnnotationUsageIndex"/>
 
       <gotoDeclarationHandler implementation="de.espend.idea.php.annotation.navigation.AnnotationGoToDeclarationHandler"/>
-      <completion.contributor language="PHP" implementationClass="de.espend.idea.php.annotation.completion.AnnotationCompletionContributor"/>
+      <completion.contributor language="PHP" order="first" implementationClass="de.espend.idea.php.annotation.completion.AnnotationCompletionContributor"/>
 
       <psi.referenceContributor implementation="de.espend.idea.php.annotation.reference.AnnotationPropertyValueReferenceContributor"/>
       <psi.referenceContributor implementation="de.espend.idea.php.annotation.reference.DocTagNameAnnotationReferenceContributor"/>
