@@ -62,6 +62,9 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
         // #[Route('/path', methods: ['action'])]
         extend(CompletionType.BASIC, AnnotationPattern.getAttributesArrayPattern(), new AttributesArrayPropertyCompletion());
+
+        // #[Route('/path', methods: 'action')]
+        extend(CompletionType.BASIC, AnnotationPattern.getAttributesValuePattern(), new AttributesValuePropertyCompletion());
     }
 
     private class PhpDocDefaultValue extends CompletionProvider<CompletionParameters> {
@@ -177,6 +180,62 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                 phpClass,
                 attributeName,
                 AnnotationPropertyParameter.Type.PROPERTY_ARRAY
+            );
+
+            for(PhpAnnotationCompletionProvider phpAnnotationExtension : AnnotationUtil.EXTENSION_POINT_COMPLETION.getExtensions()) {
+                phpAnnotationExtension.getPropertyValueCompletions(annotationPropertyParameter, completionParameter);
+            }
+        }
+    }
+
+    /**
+     * #[Route('/path', methods: ['action'])]
+     */
+    private static class AttributesValuePropertyCompletion extends CompletionProvider<CompletionParameters> {
+        @Override
+        protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
+            PsiElement psiElement = parameters.getOriginalPosition();
+            if(psiElement == null) {
+                return;
+            }
+
+            PsiElement parent = psiElement.getParent();
+            if(!(parent instanceof StringLiteralExpression)) {
+                return;
+            }
+
+            PsiElement attributeNamePsi = PhpPsiUtil.getPrevSibling(parent, psiElement1 -> psiElement1 instanceof PsiWhiteSpace || psiElement1.getNode().getElementType() == PhpTokenTypes.opCOLON);
+            if (attributeNamePsi == null || attributeNamePsi.getNode().getElementType() != PhpTokenTypes.IDENTIFIER) {
+                return;
+            }
+
+            String attributeName = attributeNamePsi.getText();
+            if (StringUtils.isBlank(attributeName)) {
+                return;
+            }
+
+            PhpAttribute phpAttribute = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PhpAttribute.class);
+            if (phpAttribute == null) {
+                return;
+            }
+
+            String fqn = phpAttribute.getFQN();
+            if (fqn == null) {
+                return;
+            }
+
+            PhpClass phpClass = PhpElementsUtil.getClassInterface(psiElement.getProject(), fqn);
+            if (phpClass == null) {
+                return;
+            }
+
+            AnnotationCompletionProviderParameter completionParameter = new AnnotationCompletionProviderParameter(parameters, context, result);
+
+            AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(
+                parameters.getOriginalPosition(),
+                phpClass,
+                attributeName,
+                AnnotationPropertyParameter.Type.PROPERTY_VALUE
             );
 
             for(PhpAnnotationCompletionProvider phpAnnotationExtension : AnnotationUtil.EXTENSION_POINT_COMPLETION.getExtensions()) {
