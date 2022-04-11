@@ -10,6 +10,11 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 8.1.1
+* Use new toolbox version (Daniel Espendiller)
+* Move toolbox extension to an optional config (Daniel Espendiller)
+* Dynamic plugin support (Daniel Espendiller)
+
 ## 8.1.0
 * Fix Doctrine column type is not an array to completion (Daniel Espendiller)
 * Update build to IU-2021.3 (Daniel Espendiller)
