@@ -10,6 +10,10 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 8.2.1
+* Add plugin error submitter (Daniel Espendiller)
+* Add common "OpenApi\Annotations" alias (Daniel Espendiller)
+
 ## 8.2.0
 * [#204](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/204) Annotation with identical name to a method name is found as usage (Daniel Espendiller)
 * [#209](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/209) [#222](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/222) move annotation completion to top of completion (Daniel Espendiller)
