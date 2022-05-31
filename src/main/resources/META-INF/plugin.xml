@@ -6,13 +6,13 @@
 
   <description><![CDATA[
 
-<p>Extends PhpStorm to support annotations in DocBlocks</p>
+<p>Extends PhpStorm to support annotations in DocBlocks and extended Attributes support</p>
 
 <br/>
 
 <h1>PHP Annotation</h1>
 <br/>
-<a href="https://github.com/Haehnchen/idea-php-annotation-plugin">GitHub</a> | <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues">Issues</a> | <a href="https://www.paypal.me/DanielEspendiller">Donate</a>
+<a href="https://espend.de/phpstorm/plugin/php-annotations">Project Page / Documentation</a> | <a href="https://github.com/Haehnchen/idea-php-annotation-plugin">GitHub</a> | <a href="https://github.com/Haehnchen/idea-php-annotation-plugin/issues">Issues</a> | <a href="https://www.paypal.me/DanielEspendiller">Donate</a>
 <br/>
 
 <h2>Installation</h2>
