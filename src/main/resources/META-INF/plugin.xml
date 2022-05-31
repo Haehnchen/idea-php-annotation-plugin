@@ -92,6 +92,8 @@
 
       <codeInsight.lineMarkerProvider language="PHP" implementationClass="de.espend.idea.php.annotation.navigation.AnnotationUsageLineMarkerProvider"/>
 
+      <errorHandler implementation="de.espend.idea.php.annotation.util.ide.PluginErrorReporterSubmitter"/>
+
       <localInspection groupPath="PHP" shortName="AnnotationMissingUseInspection" displayName="[Annotations] Missing import"
                        groupName="Annotation"
                        enabledByDefault="true"
