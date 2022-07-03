@@ -10,6 +10,9 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 8.2.2
+* Support Doctrine completion and navigation inside "mappedBy" and "inversedBy" php attribute: https://github.com/Haehnchen/idea-php-symfony2-plugin/issues/1653 (Daniel Espendiller)
+
 ## 8.2.1
 * Add plugin error submitter (Daniel Espendiller)
 * Add common "OpenApi\Annotations" alias (Daniel Espendiller)

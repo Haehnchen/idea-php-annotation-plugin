@@ -136,7 +136,6 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
             getProject(),
             PhpDocTag.class, "<?php\n /** @Template(\"Foobar\", name=\"Foo\") */"
         );
-
         assertEquals("Foo", AnnotationUtil.getPropertyValueAsPsiElement(phpDocTag, "name").getContents());
     }
 
