@@ -201,6 +201,6 @@
 
   <depends>com.jetbrains.php</depends>
   <depends>com.intellij.modules.platform</depends>
-  <depends optional="true" config-file="toolbox.xml">de.espend.idea.php.toolbox</depends>
+  <depends optional="true" config-file="de.espend.idea.php.annotation-toolbox.xml">de.espend.idea.php.toolbox</depends>
 
 </idea-plugin>
