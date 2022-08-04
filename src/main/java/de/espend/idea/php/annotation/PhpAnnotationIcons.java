@@ -8,5 +8,5 @@ import javax.swing.*;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class PhpAnnotationIcons {
-    public static final Icon DOCTRINE = IconLoader.getIcon("/icons/doctrine.png");
+    public static final Icon DOCTRINE = IconLoader.getIcon("/icons/doctrine.png", PhpAnnotationIcons.class);
 }

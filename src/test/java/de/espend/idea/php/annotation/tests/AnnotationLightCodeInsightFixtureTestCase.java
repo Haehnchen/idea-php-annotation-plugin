@@ -14,6 +14,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.codeInspection.*;
+import com.intellij.codeInspection.defaultFileTemplateUsage.DefaultFileTemplateUsageInspection;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
@@ -30,7 +31,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
@@ -49,7 +50,7 @@ import java.util.*;
  * Copy of SymfonyLightCodeInsightFixtureTestCase;
  * TODO: Its time for a test framework extraction
  */
-public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCodeInsightFixtureTestCase {
+public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJavaCodeInsightFixtureTestCase {
 
     @Override
     public void setUp() throws Exception {
@@ -494,6 +495,11 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightCod
         for (LocalInspectionEP localInspectionEP : LocalInspectionEP.LOCAL_INSPECTION.getExtensions()) {
             Object object = localInspectionEP.getInstance();
             if(!(object instanceof LocalInspectionTool)) {
+                continue;
+            }
+
+            // fix for: "Default template not found: File Header"
+            if(object instanceof DefaultFileTemplateUsageInspection) {
                 continue;
             }
 
