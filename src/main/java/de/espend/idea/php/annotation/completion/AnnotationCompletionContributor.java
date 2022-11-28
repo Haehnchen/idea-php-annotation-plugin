@@ -3,7 +3,6 @@ package de.espend.idea.php.annotation.completion;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
@@ -32,7 +31,6 @@ import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import de.espend.idea.php.annotation.util.PhpIndexUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -65,6 +63,9 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
         // #[Route('/path', methods: 'action')]
         extend(CompletionType.BASIC, AnnotationPattern.getAttributesValuePattern(), new AttributesValuePropertyCompletion());
+
+        // #[Route('<caret>')]
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement().withParent(AnnotationPattern.getAttributesDefaultPattern()), new AttributeDefaultValue());
     }
 
     private class PhpDocDefaultValue extends CompletionProvider<CompletionParameters> {
@@ -85,6 +86,39 @@ public class AnnotationCompletionContributor extends CompletionContributor {
             AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(parameters.getOriginalPosition(), phpClass, AnnotationPropertyParameter.Type.DEFAULT);
             providerWalker(parameters, context, result, annotationPropertyParameter);
 
+        }
+    }
+
+    private class AttributeDefaultValue extends CompletionProvider<CompletionParameters> {
+        @Override
+        protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
+            PsiElement psiElement = parameters.getOriginalPosition();
+            if(psiElement == null) {
+                return;
+            }
+
+            PsiElement parent = psiElement.getParent();
+            if(!(parent instanceof StringLiteralExpression)) {
+                return;
+            }
+
+            PhpAttribute phpAttribute = PsiTreeUtil.getParentOfType(parent, PhpAttribute.class);
+            if (phpAttribute == null) {
+                return;
+            }
+
+            String fqn = phpAttribute.getFQN();
+            if (fqn == null) {
+                return;
+            }
+
+            PhpClass phpClass = PhpElementsUtil.getClassInterface(psiElement.getProject(), fqn);
+            if (phpClass == null) {
+                return;
+            }
+
+            AnnotationPropertyParameter annotationPropertyParameter = new AnnotationPropertyParameter(parameters.getOriginalPosition(), phpClass, AnnotationPropertyParameter.Type.DEFAULT);
+            providerWalker(parameters, context, result, annotationPropertyParameter);
         }
     }
 
