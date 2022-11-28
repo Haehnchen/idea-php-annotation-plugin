@@ -4,6 +4,7 @@ import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTest
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
+ * @see de.espend.idea.php.annotation.doctrine.inspection.DoctrineTypeDeprecatedInspection
  */
 public class DoctrineTypeDeprecatedInspectionTest extends AnnotationLightCodeInsightFixtureTestCase {
     public void setUp() throws Exception {
@@ -37,6 +38,18 @@ public class DoctrineTypeDeprecatedInspectionTest extends AnnotationLightCodeIns
             "class Foo\n" +
             "{\n" +
             "}"
+        );
+    }
+
+    public void testThatDeprecatedInspectionIsDisplayedDoctrineColumnTypesForAttribute() {
+        assertLocalInspectionContains("test.php", "<?php\n" +
+                "use Doctrine\\ORM\\Mapping as ORM;\n" +
+                "\n" +
+                "#[ORM\\Column(type: 'json<caret>_array')]\n" +
+                "class Foo\n" +
+                "{\n" +
+                "}",
+            "[Annotations] Deprecated: Use JsonType instead"
         );
     }
 }
