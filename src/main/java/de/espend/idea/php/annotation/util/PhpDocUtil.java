@@ -4,10 +4,13 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiRecursiveElementVisitor;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
+import com.jetbrains.php.config.PhpLanguageFeature;
+import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
@@ -23,9 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -33,7 +35,6 @@ import java.util.List;
 public class PhpDocUtil {
 
     public static void addPropertyOrmDocs(@NotNull Field forElement, @NotNull Document document, @NotNull PsiFile file) {
-
         PsiElement beforeElement = getBeforeElement(forElement);
         if (beforeElement == null) {
             return;
@@ -42,21 +43,57 @@ public class PhpDocUtil {
         String fieldName = forElement.getName();
         String defaultType = DoctrineUtil.guessFieldType(forElement);
 
-        if(fieldName.equals("id")) {
+        if (hasAttributeSupport(file))  {
+            addAttribute(document, forElement, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\Column", "type: '" + defaultType + "'");
 
-            PhpDocCommentAnnotation container = AnnotationUtil.getPhpDocCommentAnnotationContainer(forElement.getDocComment());
-            if(container == null || container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Id") == null) {
-                addPhpDocTag(forElement, document, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\Id", null);
+            PsiElement parent = forElement.getParent();
+
+            Set<String> currentAttributes = PsiTreeUtil.findChildrenOfType(parent, PhpAttribute.class)
+                .stream()
+                .map(PhpAttribute::getFQN)
+                .collect(Collectors.toSet());
+
+            if (fieldName.equals("id")) {
+                if (!currentAttributes.contains("\\Doctrine\\ORM\\Mapping\\GeneratedValue")) {
+                    addAttribute(document, forElement, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\GeneratedValue", "strategy: 'AUTO'");
+                }
+
+                if (!currentAttributes.contains("\\Doctrine\\ORM\\Mapping\\Id")) {
+                    addAttribute(document, forElement, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\Id", null);
+                }
+            }
+        } else {
+            if (fieldName.equals("id")) {
+                PhpDocCommentAnnotation container = AnnotationUtil.getPhpDocCommentAnnotationContainer(forElement.getDocComment());
+                if(container == null || container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Id") == null) {
+                    addPhpDocTag(forElement, document, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\Id", null);
+                }
+
+                if(container == null || container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\GeneratedValue") == null) {
+                    addPhpDocTag(forElement, document, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\GeneratedValue", "strategy=\"AUTO\"");
+                }
             }
 
-            if(container == null || container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\GeneratedValue") == null) {
-                addPhpDocTag(forElement, document, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\GeneratedValue", "strategy=\"AUTO\"");
-            }
-
+            addPhpDocTag(forElement, document, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\Column", "type=\"" + defaultType + "\"");
         }
+    }
 
-        addPhpDocTag(forElement, document, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\Column", "type=\"" + defaultType + "\"");
+    private static boolean hasAttributeSupport(@NotNull PsiFile file) {
+        final boolean[] useAttributes = {
+            PhpLanguageLevel.current(file.getProject()).hasFeature(PhpLanguageFeature.ATTRIBUTES)
+        };
 
+        file.acceptChildren(new PsiRecursiveElementVisitor() {
+            @Override
+            public void visitElement(@NotNull PsiElement element) {
+                if (element instanceof PhpAttribute) {
+                    useAttributes[0] = true;
+                }
+                super.visitElement(element);
+            }
+        });
+
+        return useAttributes[0];
     }
 
     public static void addClassOrmDocs(@NotNull PhpClass forElement, @NotNull Document document, @NotNull PsiFile file)
@@ -75,6 +112,26 @@ public class PhpDocUtil {
     public static void addClassEmbeddedDocs(@NotNull PhpClass forElement, @NotNull Document document, @NotNull PsiFile file)
     {
         addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Embeddable", null);
+    }
+
+    private static void addAttribute(@NotNull Document document, @NotNull PhpNamedElement forElement, @NotNull PsiFile file, @NotNull  PsiElement beforeElement, @NotNull String annotationClass, @Nullable String p)
+    {
+        String phpDocTagName = getQualifiedName(forElement, annotationClass);
+        if(phpDocTagName == null) {
+            return;
+        }
+
+        PhpAttributesList phpPsiFromText = PhpPsiElementFactory.createAttributesList(forElement.getProject(), phpDocTagName + (p != null ? "(" + p + ")" : ""));
+        PsiElement parent = beforeElement.getParent();
+        parent.addBefore(phpPsiFromText, beforeElement);
+
+        PsiDocumentManager.getInstance(forElement.getProject()).doPostponedOperationsAndUnblockDocument(document);
+        PsiDocumentManager.getInstance(forElement.getProject()).commitDocument(document);
+
+        PhpClassFieldsList f = PsiTreeUtil.getParentOfType(forElement, PhpClassFieldsList.class);
+        PhpAttributesList childOfType = PsiTreeUtil.findChildOfType(f, PhpAttributesList.class);
+
+        CodeStyleManager.getInstance(forElement.getProject()).reformatNewlyAddedElement(f.getNode(), childOfType.getNode());
     }
 
     private static void addPhpDocTag(@NotNull PhpNamedElement forElement, @NotNull Document document, @NotNull PsiFile file, @NotNull  PsiElement beforeElement, @NotNull String annotationClass, @Nullable String tagParameter) {
