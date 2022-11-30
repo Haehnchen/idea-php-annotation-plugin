@@ -106,4 +106,44 @@ public class DoctrineOrmFieldIntentionTest extends AnnotationLightCodeInsightFix
             "}"
         );
     }
+
+    public void testThatAddDoctrineColumnIsAvailableIsInvokedWithResultForAttributesForExistingA() {
+        myFixture.configureByText(PhpFileType.INSTANCE, "<?php\n" +
+            "\n" +
+            "use Doctrine\\ORM\\Mapping as ORM;\n" +
+            "\n" +
+            "class Foobar\n" +
+            "{\n" +
+            "    public $i<caret>d;\n" +
+            "\n" +
+            "    /**\n" +
+            "    * @ORM\\Column()\n" +
+            "    */\n" +
+            "    public $createdAt;\n" +
+            "}"
+        );
+
+        final IntentionAction action = myFixture.findSingleIntention("Add Doctrine column");
+        myFixture.launchAction(action);
+
+        myFixture.checkResult("<?php\n" +
+            "\n" +
+            "use Doctrine\\ORM\\Mapping as ORM;\n" +
+            "\n" +
+            "class Foobar\n" +
+            "{\n" +
+            "    /**\n" +
+            "     * @ORM\\Id\n" +
+            "     * @ORM\\GeneratedValue(strategy=\"AUTO\")\n" +
+            "     * @ORM\\Column(type=\"integer\")\n" +
+            "     */\n" +
+            "    public $id;\n" +
+            "\n" +
+            "    /**\n" +
+            "    * @ORM\\Column()\n" +
+            "    */\n" +
+            "    public $createdAt;\n" +
+            "}"
+        );
+    }
 }
