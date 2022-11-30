@@ -10,6 +10,13 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 8.3.0
+* Support "Embeddable" as attributes for generator (Daniel Espendiller)
+* Support attribute generation for entities on class scope (Daniel Espendiller)
+* Support attribute for generate Doctrine fields ("Add Doctrine column") (Daniel Espendiller)
+* Add abstraction for attribute default completion extension (Daniel Espendiller)
+* Support deprecation Doctrine field types for attributes https://github.com/Haehnchen/idea-php-symfony2-plugin/issues/2018 (Daniel Espendiller)
+
 ## 8.2.3
 * fix: rename toolbox.xml to avoid name collisions, fixes #248 (Shyim)
 
