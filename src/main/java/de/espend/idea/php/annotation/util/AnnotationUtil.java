@@ -6,10 +6,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
@@ -19,6 +16,8 @@ import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.ID;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
+import com.jetbrains.php.config.PhpLanguageFeature;
+import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
@@ -819,6 +818,51 @@ public class AnnotationUtil {
             || lowercase.startsWith("@phpcs")
             || lowercase.startsWith("@before") // BeforeSuite, BeforeScenario
             || lowercase.startsWith("@after"); // AfterSuite, AfterScenario
+    }
+
+    /**
+     * Decide on a given file scope if attributes or annotation should be used
+     */
+    public static boolean useAttributeForGenerateDoctrineMetadata(@NotNull PsiFile file) {
+        final boolean[] hasAnnotation = {false};
+
+        // annotation are winning if any Doctrine ORM annotation is given
+        file.acceptChildren(new PsiRecursiveElementVisitor() {
+            @Override
+            public void visitElement(@NotNull PsiElement element) {
+                if (!hasAnnotation[0] && element instanceof PhpDocTag && AnnotationUtil.isAnnotationPhpDocTag((PhpDocTag) element)) {
+                    PhpClass phpClass = AnnotationUtil.getAnnotationReference((PhpDocTag) element);
+                    if (phpClass != null && phpClass.getFQN().startsWith("\\Doctrine\\ORM")) {
+                        hasAnnotation[0] = true;
+                    }
+                }
+                super.visitElement(element);
+            }
+        });
+
+        if (hasAnnotation[0]) {
+            return false;
+        }
+
+        final boolean[] hasAttributes = {false};
+
+        // check for at least one attribute
+        file.acceptChildren(new PsiRecursiveElementVisitor() {
+            @Override
+            public void visitElement(@NotNull PsiElement element) {
+                if (element instanceof PhpAttribute) {
+                    hasAttributes[0] = true;
+                }
+                super.visitElement(element);
+            }
+        });
+
+        if (hasAttributes[0]) {
+            return true;
+        }
+
+        // fallback to project scope via PHP version
+        return PhpLanguageLevel.current(file.getProject()).hasFeature(PhpLanguageFeature.ATTRIBUTES);
     }
 }
 

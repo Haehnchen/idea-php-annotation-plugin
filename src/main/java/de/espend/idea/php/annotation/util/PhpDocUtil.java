@@ -4,13 +4,10 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiRecursiveElementVisitor;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
-import com.jetbrains.php.config.PhpLanguageFeature;
-import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
@@ -26,7 +23,10 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -43,7 +43,7 @@ public class PhpDocUtil {
         String fieldName = forElement.getName();
         String defaultType = DoctrineUtil.guessFieldType(forElement);
 
-        if (hasAttributeSupport(file))  {
+        if (AnnotationUtil.useAttributeForGenerateDoctrineMetadata(file))  {
             addAttribute(document, forElement, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\Column", "type: '" + defaultType + "'");
 
             PsiElement parent = forElement.getParent();
@@ -76,24 +76,6 @@ public class PhpDocUtil {
 
             addPhpDocTag(forElement, document, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\Column", "type=\"" + defaultType + "\"");
         }
-    }
-
-    private static boolean hasAttributeSupport(@NotNull PsiFile file) {
-        final boolean[] useAttributes = {
-            PhpLanguageLevel.current(file.getProject()).hasFeature(PhpLanguageFeature.ATTRIBUTES)
-        };
-
-        file.acceptChildren(new PsiRecursiveElementVisitor() {
-            @Override
-            public void visitElement(@NotNull PsiElement element) {
-                if (element instanceof PhpAttribute) {
-                    useAttributes[0] = true;
-                }
-                super.visitElement(element);
-            }
-        });
-
-        return useAttributes[0];
     }
 
     public static void addClassOrmDocs(@NotNull PhpClass forElement, @NotNull Document document, @NotNull PsiFile file)
