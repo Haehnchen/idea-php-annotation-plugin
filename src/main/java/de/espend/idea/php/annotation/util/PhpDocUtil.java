@@ -118,7 +118,11 @@ public class PhpDocUtil {
 
     public static void addClassEmbeddedDocs(@NotNull PhpClass forElement, @NotNull Document document, @NotNull PsiFile file)
     {
-        addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Embeddable", null);
+        if (AnnotationUtil.useAttributeForGenerateDoctrineMetadata(file)) {
+            addAttribute(document, forElement, forElement, "\\Doctrine\\ORM\\Mapping\\Embeddable", null);
+        } else {
+            addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Embeddable", null);
+        }
     }
 
     private static void addAttribute(@NotNull Document document, @NotNull PhpNamedElement forElement, @NotNull PsiElement beforeElement, @NotNull String annotationClass, @Nullable String p)
