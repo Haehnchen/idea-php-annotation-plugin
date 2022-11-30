@@ -1,4 +1,4 @@
-IntelliJ IDEA / PhpStorm PHP Annotations
+IntelliJ IDEA - PhpStorm PHP Annotations / Attributes
 ==========================
 [![Build Status](https://github.com/Haehnchen/idea-php-annotation-plugin/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/Haehnchen/idea-php-annotation-plugin/actions/workflows/gradle.yml)
 [![Version](http://phpstorm.espend.de/badge/7320/version)](https://plugins.jetbrains.com/plugin/7320)
@@ -6,16 +6,16 @@ IntelliJ IDEA / PhpStorm PHP Annotations
 [![Downloads last month](http://phpstorm.espend.de/badge/7320/last-month)](https://plugins.jetbrains.com/plugin/7320)
 [![Donate to this project using Paypal](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/DanielEspendiller)
 
-Provides PHP annotation support for PhpStorm / IntelliJ IDEA and references for "Code > Optimize Imports" action. Code extraction of [Symfony Plugin](https://github.com/Haehnchen/idea-php-symfony2-plugin)
+Provides PHP annotation extended Attribute support and for PhpStorm / IntelliJ IDEA and references for "Code > Optimize Imports" action. Code extraction of [Symfony Plugin](https://github.com/Haehnchen/idea-php-symfony2-plugin)
 
-Key         | Value
------------ | -----------
-Plugin url  | https://plugins.jetbrains.com/plugin/7320
-Id          | de.espend.idea.php.annotation
-Changelog   | [CHANGELOG](CHANGELOG.md)
+| Key        | Value                                     |
+|------------|-------------------------------------------|
+| Plugin url | https://plugins.jetbrains.com/plugin/7320 |
+| Id         | de.espend.idea.php.annotation             |
+| Changelog  | [CHANGELOG](CHANGELOG.md)                 |
 
 ### Install
-* [Download plugin](http://plugins.jetbrains.com/plugin/7320) or install directly out of PhpStorm
+* [Download plugin](https://plugins.jetbrains.com/plugin/7320) or install directly out of PhpStorm
 * Force file reindex if necessary with: `File -> Invalidate Cache`
 
 ### Settings
@@ -210,8 +210,6 @@ Annoying pressing completion shortcut? Plugin provides a nice completion confide
 
 ```php
 class Foo {
-    public $id<caret>;
-
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -221,13 +219,20 @@ class Foo {
 }
 ```
 
+```php
+class Foo {
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    public $id<caret>;
+}
+```
+
 #### ORM: class entity generator
 
 ```php
-/**
- * @ORM\Entity(repositoryClass="Foo")
- * @ORM\Table(name="bike")
- */
+#[ORM\Entity(repositoryClass: \Foo::class)]
+#[ORM\Table(name: 'bike')]
 class Foo { }
 ```
 
