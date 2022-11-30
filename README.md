@@ -6,7 +6,7 @@ IntelliJ IDEA - PhpStorm PHP Annotations / Attributes
 [![Downloads last month](http://phpstorm.espend.de/badge/7320/last-month)](https://plugins.jetbrains.com/plugin/7320)
 [![Donate to this project using Paypal](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/DanielEspendiller)
 
-Provides PHP annotation extended Attribute support and for PhpStorm / IntelliJ IDEA and references for "Code > Optimize Imports" action. Code extraction of [Symfony Plugin](https://github.com/Haehnchen/idea-php-symfony2-plugin)
+Provides PHP annotation extended Attribute support and for PhpStorm / IntelliJ IDEA and references for "Code > Optimize Imports" action.
 
 | Key        | Value                                     |
 |------------|-------------------------------------------|
