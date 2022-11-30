@@ -44,7 +44,7 @@ public class PhpDocUtil {
         String defaultType = DoctrineUtil.guessFieldType(forElement);
 
         if (AnnotationUtil.useAttributeForGenerateDoctrineMetadata(file))  {
-            addAttribute(document, forElement, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\Column", "type: '" + defaultType + "'");
+            addAttribute(document, forElement, beforeElement, "\\Doctrine\\ORM\\Mapping\\Column", "type: '" + defaultType + "'");
 
             PsiElement parent = forElement.getParent();
 
@@ -55,11 +55,11 @@ public class PhpDocUtil {
 
             if (fieldName.equals("id")) {
                 if (!currentAttributes.contains("\\Doctrine\\ORM\\Mapping\\GeneratedValue")) {
-                    addAttribute(document, forElement, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\GeneratedValue", "strategy: 'AUTO'");
+                    addAttribute(document, forElement, beforeElement, "\\Doctrine\\ORM\\Mapping\\GeneratedValue", "strategy: 'AUTO'");
                 }
 
                 if (!currentAttributes.contains("\\Doctrine\\ORM\\Mapping\\Id")) {
-                    addAttribute(document, forElement, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\Id", null);
+                    addAttribute(document, forElement, beforeElement, "\\Doctrine\\ORM\\Mapping\\Id", null);
                 }
             }
         } else {
@@ -80,23 +80,48 @@ public class PhpDocUtil {
 
     public static void addClassOrmDocs(@NotNull PhpClass forElement, @NotNull Document document, @NotNull PsiFile file)
     {
-        String repositoryClass = null;
         String entityName = forElement.getPresentableFQN() + "Repository";
         PhpClass phpClass = PhpElementsUtil.getClass(forElement.getProject(), entityName);
-        if(phpClass != null) {
-            repositoryClass = "repositoryClass=\"" + phpClass.getName() + "\"";
-        }
 
-        addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Entity", repositoryClass);
-        addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Table", "name=\"" + DoctrineUtil.underscore(forElement.getName()) + "\"");
-    }
+        if (AnnotationUtil.useAttributeForGenerateDoctrineMetadata(file)) {
+            String repositoryClass = null;
+
+            if (phpClass != null) {
+                repositoryClass = "repositoryClass: " + phpClass.getFQN() + "::class";
+
+                // import not working?
+                PhpPsiElement scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(forElement);
+                if (scopeForUseOperator != null) {
+                    PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, phpClass.getFQN(), null);
+                    PsiDocumentManager.getInstance(forElement.getProject()).doPostponedOperationsAndUnblockDocument(document);
+
+                    String phpDocTagName = getQualifiedName(forElement, phpClass.getFQN());
+                    if (phpDocTagName != null) {
+                        repositoryClass = "repositoryClass: " + phpDocTagName + "::class";
+                    }
+                }
+            }
+
+            addAttribute(document, forElement, forElement, "\\Doctrine\\ORM\\Mapping\\Table", "name: '" + DoctrineUtil.underscore(forElement.getName()) + "'");
+            addAttribute(document, forElement, forElement, "\\Doctrine\\ORM\\Mapping\\Entity", repositoryClass);
+        } else {
+            String repositoryClass = null;
+
+            if(phpClass != null) {
+                repositoryClass = "repositoryClass=\"" + phpClass.getName() + "\"";
+            }
+
+            addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Entity", repositoryClass);
+            addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Table", "name=\"" + DoctrineUtil.underscore(forElement.getName()) + "\"");
+        }
+     }
 
     public static void addClassEmbeddedDocs(@NotNull PhpClass forElement, @NotNull Document document, @NotNull PsiFile file)
     {
         addPhpDocTag(forElement, document, file, forElement, "\\Doctrine\\ORM\\Mapping\\Embeddable", null);
     }
 
-    private static void addAttribute(@NotNull Document document, @NotNull PhpNamedElement forElement, @NotNull PsiFile file, @NotNull  PsiElement beforeElement, @NotNull String annotationClass, @Nullable String p)
+    private static void addAttribute(@NotNull Document document, @NotNull PhpNamedElement forElement, @NotNull PsiElement beforeElement, @NotNull String annotationClass, @Nullable String p)
     {
         String phpDocTagName = getQualifiedName(forElement, annotationClass);
         if(phpDocTagName == null) {
@@ -110,10 +135,17 @@ public class PhpDocUtil {
         PsiDocumentManager.getInstance(forElement.getProject()).doPostponedOperationsAndUnblockDocument(document);
         PsiDocumentManager.getInstance(forElement.getProject()).commitDocument(document);
 
-        PhpClassFieldsList f = PsiTreeUtil.getParentOfType(forElement, PhpClassFieldsList.class);
-        PhpAttributesList childOfType = PsiTreeUtil.findChildOfType(f, PhpAttributesList.class);
-
-        CodeStyleManager.getInstance(forElement.getProject()).reformatNewlyAddedElement(f.getNode(), childOfType.getNode());
+        // attributes are not wrapped into a parent node on class context
+        if (forElement instanceof PhpClass) {
+            // on class scope: class Foobar {}
+            List<PhpAttributesList> childrenOfTypeAsList = PsiTreeUtil.getChildrenOfTypeAsList(forElement, PhpAttributesList.class);
+            CodeStyleManager.getInstance(forElement.getProject()).reformatRange(forElement, childrenOfTypeAsList.get(0).getTextRange().getStartOffset(), childrenOfTypeAsList.get(childrenOfTypeAsList.size() - 1).getNextPsiSibling().getTextRange().getEndOffset());
+        } else {
+            // on attribute scope: private $foo;
+            PhpClassFieldsList f = PsiTreeUtil.getParentOfType(forElement, PhpClassFieldsList.class);
+            PhpAttributesList childOfType = PsiTreeUtil.findChildOfType(f, PhpAttributesList.class);
+            CodeStyleManager.getInstance(forElement.getProject()).reformatNewlyAddedElement(f.getNode(), childOfType.getNode());
+        }
     }
 
     private static void addPhpDocTag(@NotNull PhpNamedElement forElement, @NotNull Document document, @NotNull PsiFile file, @NotNull  PsiElement beforeElement, @NotNull String annotationClass, @Nullable String tagParameter) {

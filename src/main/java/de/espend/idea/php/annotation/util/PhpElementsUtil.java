@@ -249,7 +249,7 @@ public class PhpElementsUtil {
      * @param nsClass \Class\Foo
      * @param alias Class\Foo as Bar
      */
-    public static void insertUseIfNecessary(@NotNull PhpPsiElement scopeForUseOperator, @NotNull String nsClass, @NotNull String alias) {
+    public static void insertUseIfNecessary(@NotNull PhpPsiElement scopeForUseOperator, @NotNull String nsClass, @Nullable String alias) {
         // we need absolute class, else we get duplicate imports
         if(!nsClass.startsWith("\\")) {
             nsClass = "\\" + nsClass;
