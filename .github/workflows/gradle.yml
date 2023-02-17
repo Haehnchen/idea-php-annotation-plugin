@@ -16,10 +16,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v2
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'adopt'
 
     # Cache Gradle dependencies
@@ -35,14 +35,6 @@ jobs:
       with:
         path: ~/.gradle/wrapper
         key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-
-    - name: setting env vars
-      run: echo "Main version ${ORG_GRADLE_PROJECT_ideaVersion}"
-      env:
-        ORG_GRADLE_PROJECT_ideaVersion: "IU-2021.1"
-        ORG_GRADLE_PROJECT_phpPluginVersion: "211.6693.120"
-        ORG_GRADLE_PROJECT_twigPluginVersion: "211.6693.44"
-        ORG_GRADLE_PROJECT_toolboxPluginVersion: "0.4.6"
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
