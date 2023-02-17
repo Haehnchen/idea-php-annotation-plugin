@@ -14,7 +14,6 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.codeInspection.*;
-import com.intellij.codeInspection.defaultFileTemplateUsage.DefaultFileTemplateUsageInspection;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
@@ -146,7 +145,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
 
         Set<String> classTargets = new HashSet<String>();
 
-        for (GotoDeclarationHandler gotoDeclarationHandler : Extensions.getExtensions(GotoDeclarationHandler.EP_NAME)) {
+        for (GotoDeclarationHandler gotoDeclarationHandler : GotoDeclarationHandler.EP_NAME.getExtensionList()) {
             PsiElement[] gotoDeclarationTargets = gotoDeclarationHandler.getGotoDeclarationTargets(psiElement, 0, myFixture.getEditor());
             if(gotoDeclarationTargets != null && gotoDeclarationTargets.length > 0) {
 
@@ -211,7 +210,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
 
     private void assertNavigationIsEmpty() {
         PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
-        for (GotoDeclarationHandler gotoDeclarationHandler : Extensions.getExtensions(GotoDeclarationHandler.EP_NAME)) {
+        for (GotoDeclarationHandler gotoDeclarationHandler : GotoDeclarationHandler.EP_NAME.getExtensionList()) {
             PsiElement[] gotoDeclarationTargets = gotoDeclarationHandler.getGotoDeclarationTargets(psiElement, 0, myFixture.getEditor());
             if(gotoDeclarationTargets != null && gotoDeclarationTargets.length > 0) {
                 fail(String.format("failed that PsiElement (%s) navigate is empty; found target in '%s'", psiElement.toString(), gotoDeclarationHandler.getClass()));
@@ -225,7 +224,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
 
         Set<String> targetStrings = new HashSet<String>();
 
-        for (GotoDeclarationHandler gotoDeclarationHandler : Extensions.getExtensions(GotoDeclarationHandler.EP_NAME)) {
+        for (GotoDeclarationHandler gotoDeclarationHandler : GotoDeclarationHandler.EP_NAME.getExtensionList()) {
 
             PsiElement[] gotoDeclarationTargets = gotoDeclarationHandler.getGotoDeclarationTargets(psiElement, 0, myFixture.getEditor());
             if(gotoDeclarationTargets == null || gotoDeclarationTargets.length == 0) {
@@ -249,7 +248,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
 
         Set<String> targets = new HashSet<String>();
 
-        for (GotoDeclarationHandler gotoDeclarationHandler : Extensions.getExtensions(GotoDeclarationHandler.EP_NAME)) {
+        for (GotoDeclarationHandler gotoDeclarationHandler : GotoDeclarationHandler.EP_NAME.getExtensionList()) {
             PsiElement[] gotoDeclarationTargets = gotoDeclarationHandler.getGotoDeclarationTargets(psiElement, 0, myFixture.getEditor());
             if (gotoDeclarationTargets != null && gotoDeclarationTargets.length > 0) {
                 for (PsiElement gotoDeclarationTarget : gotoDeclarationTargets) {
@@ -498,16 +497,11 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
                 continue;
             }
 
-            // fix for: "Default template not found: File Header"
-            if(object instanceof DefaultFileTemplateUsageInspection) {
-                continue;
-            }
-
             final PsiElementVisitor psiElementVisitor = ((LocalInspectionTool) object).buildVisitor(problemsHolder, false);
 
             psiFile.acceptChildren(new PsiRecursiveElementVisitor() {
                 @Override
-                public void visitElement(PsiElement element) {
+                public void visitElement(@NotNull PsiElement element) {
                     psiElementVisitor.visitElement(element);
                     super.visitElement(element);
                 }
