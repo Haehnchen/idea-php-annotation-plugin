@@ -52,7 +52,7 @@ public class AnnotationPattern {
             .afterLeafSkipping(
                 PlatformPatterns.or(
                     PlatformPatterns.psiElement(PsiWhiteSpace.class),
-                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).with(new PatternCondition<PsiElement>("Whitespace fix") {
+                    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TEXT).with(new PatternCondition<>("Whitespace fix") {
                         @Override
                         public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext processingContext) {
                             // nested issue

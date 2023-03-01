@@ -31,11 +31,10 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
 
     public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement lookupElement) {
         // "ORM\Entity"
-        if (lookupElement instanceof PhpClassAnnotationLookupElement && ((PhpClassAnnotationLookupElement) lookupElement).getAlias() != null) {
+        if (lookupElement instanceof PhpClassAnnotationLookupElement lookupElement1 && ((PhpClassAnnotationLookupElement) lookupElement).getAlias() != null) {
             PsiElement element = PsiUtilCore.getElementAtOffset(context.getFile(), context.getStartOffset());
             PhpPsiElement scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(element);
 
-            PhpClassAnnotationLookupElement lookupElement1 = (PhpClassAnnotationLookupElement) lookupElement;
             PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, "\\" + StringUtils.stripStart(lookupElement1.getAlias().getClassName(), "\\"), lookupElement1.getAlias().getAlias());
             PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(context.getDocument());
         } else {

@@ -102,12 +102,12 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
     }
 
     public void testGetPropertyValueOrDefault() {
-        Collection<String[]> dataProvider = new ArrayList<String[]>() {{
-            add(new String[] {"/** @Template(\"Foobar\") */", "property", "Foobar"});
-            add(new String[] {"/** @Template(name=\"Foo\") */", "name", "Foo"});
-            add(new String[] {"/** @Template(\"Foobar\", name=\"Foo\") */", "name", "Foo"});
-            add(new String[] {"/** @Template(\"Foobar\", foo=\"Foo\") */", "name", "Foobar"});
-            add(new String[] {"/** @Template() */", "property", null});
+        Collection<String[]> dataProvider = new ArrayList<>() {{
+            add(new String[]{"/** @Template(\"Foobar\") */", "property", "Foobar"});
+            add(new String[]{"/** @Template(name=\"Foo\") */", "name", "Foo"});
+            add(new String[]{"/** @Template(\"Foobar\", name=\"Foo\") */", "name", "Foo"});
+            add(new String[]{"/** @Template(\"Foobar\", foo=\"Foo\") */", "name", "Foobar"});
+            add(new String[]{"/** @Template() */", "property", null});
         }};
 
         for (String[] strings : dataProvider) {
@@ -117,12 +117,12 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
     }
 
     public void testGetPropertyValue() {
-        Collection<String[]> dataProvider = new ArrayList<String[]>() {{
-            add(new String[] {"/** @Template(\"Foobar\") */", "property", null});
-            add(new String[] {"/** @Template(name=\"Foo\") */", "name", "Foo"});
-            add(new String[] {"/** @Template(\"Foobar\", name=\"Foo\") */", "name", "Foo"});
-            add(new String[] {"/** @Template(\"Foobar\", foo=\"Foo\") */", "name", null});
-            add(new String[] {"/** @Template(\"Foobar\", foo=FOO::class) */", "foo", null});
+        Collection<String[]> dataProvider = new ArrayList<>() {{
+            add(new String[]{"/** @Template(\"Foobar\") */", "property", null});
+            add(new String[]{"/** @Template(name=\"Foo\") */", "name", "Foo"});
+            add(new String[]{"/** @Template(\"Foobar\", name=\"Foo\") */", "name", "Foo"});
+            add(new String[]{"/** @Template(\"Foobar\", foo=\"Foo\") */", "name", null});
+            add(new String[]{"/** @Template(\"Foobar\", foo=FOO::class) */", "foo", null});
         }};
 
         for (String[] strings : dataProvider) {
@@ -180,10 +180,10 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
     }
 
     public void testGetClassAnnotationAsUnknown() {
-        Collection<Object[]> dataProvider = new ArrayList<Object[]>() {{
-            add(new Object[] {"@Target()", AnnotationTarget.UNKNOWN});
-            add(new Object[] {"@Target", AnnotationTarget.UNKNOWN});
-            add(new Object[] {"", AnnotationTarget.UNDEFINED});
+        Collection<Object[]> dataProvider = new ArrayList<>() {{
+            add(new Object[]{"@Target()", AnnotationTarget.UNKNOWN});
+            add(new Object[]{"@Target", AnnotationTarget.UNKNOWN});
+            add(new Object[]{"", AnnotationTarget.UNDEFINED});
         }};
 
         for (Object[] objects: dataProvider) {

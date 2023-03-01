@@ -20,6 +20,7 @@ import de.espend.idea.php.annotation.extension.parameter.AnnotationVirtualProper
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
             this.addStaticClassConstTargets(psiElement, psiElements);
         }
 
-        return psiElements.toArray(new PsiElement[psiElements.size()]);
+        return psiElements.toArray(new PsiElement[0]);
     }
 
     /**
@@ -167,7 +168,7 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
 
     @Nullable
     @Override
-    public String getActionText(DataContext context) {
+    public String getActionText(@NotNull DataContext context) {
         return null;
     }
 

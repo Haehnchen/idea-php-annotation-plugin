@@ -23,7 +23,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     @NotNull
     @Override
-    public ResolveResult[] multiResolve(boolean b) {
+    public ResolveResult @NotNull [] multiResolve(boolean b) {
 
         PhpClass phpClass = PhpElementsUtil.getClassInsideAnnotation((StringLiteralExpression) getElement(), content);
         if(phpClass == null) {
@@ -37,7 +37,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
         return new Object[0];
     }
 }

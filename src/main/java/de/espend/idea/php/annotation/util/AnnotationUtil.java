@@ -58,7 +58,7 @@ public class AnnotationUtil {
     public static final ExtensionPointName<PhpAnnotationVirtualProperties> EP_VIRTUAL_PROPERTIES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationVirtualProperties");
     public static final ExtensionPointName<PhpAnnotationUseAlias> EP_USE_ALIASES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationUseAlias");
 
-    final private static Set<String> NON_ANNOTATION_TAGS = new HashSet<String>() {{
+    final private static Set<String> NON_ANNOTATION_TAGS = new HashSet<>() {{
         addAll(Arrays.asList(PhpDocUtil.ALL_TAGS));
         add("@Annotation");
         add("@inheritDoc");
@@ -116,7 +116,7 @@ public class AnnotationUtil {
 
         }
 
-        return phpClasses.toArray(new PhpClass[phpClasses.size()]);
+        return phpClasses.toArray(new PhpClass[0]);
     }
 
     /**
@@ -233,11 +233,7 @@ public class AnnotationUtil {
         for (PhpUseList phpUseList : PhpCodeInsightUtil.collectImports(scope)) {
             for(PhpUse phpUse : phpUseList.getDeclarations()) {
                 String alias = phpUse.getAliasName();
-                if (alias != null) {
-                    useImports.put(alias, phpUse.getFQN());
-                } else {
-                    useImports.put(phpUse.getName(), phpUse.getFQN());
-                }
+                useImports.put(Objects.requireNonNullElseGet(alias, phpUse::getName), phpUse.getFQN());
             }
         }
 

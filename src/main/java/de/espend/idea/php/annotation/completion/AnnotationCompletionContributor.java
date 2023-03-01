@@ -71,7 +71,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
     private class PhpDocDefaultValue extends CompletionProvider<CompletionParameters> {
 
         @Override
-        protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
+        protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
             PsiElement psiElement = parameters.getOriginalPosition();
             if(psiElement == null) {
                 return;
@@ -128,7 +128,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
     private class PhpDocArrayPropertyCompletion extends CompletionProvider<CompletionParameters> {
 
         @Override
-        protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
+        protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
             PsiElement psiElement = parameters.getOriginalPosition();
             if(psiElement == null) {
                 return;
@@ -289,7 +289,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
     private class PhpDocAttributeValue extends CompletionProvider<CompletionParameters> {
 
         @Override
-        protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
+        protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
             PsiElement psiElement = parameters.getOriginalPosition();
             if(psiElement == null) {
                 return;
@@ -449,10 +449,10 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
     }
 
-    private class PhpDocBlockTagAlias extends CompletionProvider<CompletionParameters> {
+    private static class PhpDocBlockTagAlias extends CompletionProvider<CompletionParameters> {
 
         @Override
-        protected void addCompletions(@NotNull CompletionParameters completionParameters, ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
+        protected void addCompletions(@NotNull CompletionParameters completionParameters, @NotNull ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
             PsiElement psiElement = completionParameters.getOriginalPosition();
             if(psiElement == null) {
                 return;
@@ -515,10 +515,10 @@ public class AnnotationCompletionContributor extends CompletionContributor {
     /**
      * Completion for const fields inside phpdoc @Route(name=ClassName::<FOO>)
      */
-    private class PhpDocClassConstantCompletion extends CompletionProvider<CompletionParameters> {
+    private static class PhpDocClassConstantCompletion extends CompletionProvider<CompletionParameters> {
 
         @Override
-        protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
+        protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
             PsiElement psiElement = parameters.getOriginalPosition();
             if(psiElement == null) {
                 return;

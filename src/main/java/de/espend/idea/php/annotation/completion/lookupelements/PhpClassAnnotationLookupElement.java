@@ -29,14 +29,14 @@ public class PhpClassAnnotationLookupElement extends LookupElement {
 
     private String tailText;
     private String typeText;
-    private String lookupString;
+    private final String lookupString;
 
     public PhpClassAnnotationLookupElement(PhpClass phpClass) {
         this.phpClass = phpClass;
         this.lookupString = phpClass.getName();
     }
 
-    public PhpClassAnnotationLookupElement(PhpClass phpClass, UseAliasOption alias, String lookupString) {
+    public PhpClassAnnotationLookupElement(PhpClass phpClass, @Nullable UseAliasOption alias, String lookupString) {
         this.phpClass = phpClass;
         this.alias = alias;
         this.lookupString = lookupString;

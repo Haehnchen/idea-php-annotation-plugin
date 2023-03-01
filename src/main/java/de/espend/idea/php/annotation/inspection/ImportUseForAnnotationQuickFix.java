@@ -90,7 +90,7 @@ public class ImportUseForAnnotationQuickFix extends LocalQuickFixAndIntentionAct
             .setItemChosenCallback(selected ->
                 WriteCommandAction.writeCommandAction(editor.getProject())
                     .withName("Import: " + selected)
-                    .run(() -> invoke(startElement, selected.getItem()))
+                    .run(() -> invoke(startElement, selected.item()))
             )
             .createPopup()
             .showInBestPositionFor(editor);
@@ -107,16 +107,7 @@ public class ImportUseForAnnotationQuickFix extends LocalQuickFixAndIntentionAct
         }
     }
 
-    private static class PopupChooserItem {
-        @NotNull
-        private final Pair<String, String> item;
-        private final boolean isDeprecated;
-
-        public PopupChooserItem(@NotNull Pair<String, String> item, boolean isDeprecated) {
-            this.item = item;
-            this.isDeprecated = isDeprecated;
-        }
-
+    private record PopupChooserItem(@NotNull Pair<String, String> item, boolean isDeprecated) {
         @Override
         public String toString() {
             String itemText = StringUtils.stripStart(item.getFirst(), "\\");
@@ -131,11 +122,6 @@ public class ImportUseForAnnotationQuickFix extends LocalQuickFixAndIntentionAct
             }
 
             return itemText;
-        }
-
-        @NotNull
-        public Pair<String, String> getItem() {
-            return item;
         }
     }
 }

@@ -32,7 +32,7 @@ public class IdeUtil {
         private final String targetPathRelative;
 
         @NotNull
-        private String content;
+        private final String content;
 
         RunnableCreateAndOpenFile(@NotNull Project project, @NotNull String targetPathRelative, @NotNull String fileName, @NotNull String content) {
             this.project = project;

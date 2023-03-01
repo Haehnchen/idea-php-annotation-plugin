@@ -53,7 +53,7 @@ public class DoctrineAnnotationFieldTypeProvider implements PhpAnnotationReferen
 
         @NotNull
         @Override
-        public ResolveResult[] multiResolve(boolean b) {
+        public ResolveResult @NotNull [] multiResolve(boolean b) {
 
             String contents = psiElement.getContents();
             if(StringUtils.isBlank(contents)) {
@@ -67,7 +67,7 @@ public class DoctrineAnnotationFieldTypeProvider implements PhpAnnotationReferen
 
         @NotNull
         @Override
-        public Object[] getVariants() {
+        public Object @NotNull [] getVariants() {
             return DoctrineUtil.getTypes(psiElement.getProject()).toArray();
         }
     }

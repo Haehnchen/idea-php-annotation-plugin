@@ -55,7 +55,7 @@ public class SettingsForm implements Configurable {
     }
 
     @Override
-    public void apply() throws ConfigurationException {
+    public void apply() {
         ApplicationSettings.getInstance().appendRoundBracket = appendRoundBracket.isSelected();
     }
 

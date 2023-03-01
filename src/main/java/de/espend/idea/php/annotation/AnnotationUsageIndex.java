@@ -17,7 +17,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -90,10 +89,8 @@ public class AnnotationUsageIndex extends FileBasedIndexExtension<String, Set<St
     private static class StringSetDataExternalizer implements DataExternalizer<Set<String>> {
         public synchronized void save(@NotNull DataOutput out, Set<String> value) throws IOException {
             out.writeInt(value.size());
-            Iterator var = value.iterator();
 
-            while(var.hasNext()) {
-                String s = (String)var.next();
+            for (String s : value) {
                 EnumeratorStringDescriptor.INSTANCE.save(out, s);
             }
         }
