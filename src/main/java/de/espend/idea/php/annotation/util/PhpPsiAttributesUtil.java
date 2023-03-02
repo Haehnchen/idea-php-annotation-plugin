@@ -1,5 +1,6 @@
 package de.espend.idea.php.annotation.util;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
@@ -13,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -99,5 +101,20 @@ public class PhpPsiAttributesUtil {
         }
 
         return collection;
+    }
+
+    public static void insertNamedArgumentForAttribute(@NotNull Editor editor, @NotNull PhpAttribute phpAttribute, @NotNull String namedArgument, String value) {
+        PsiElement lastChild = phpAttribute.getLastChild();
+        if (lastChild instanceof ClassReference) {
+            editor.getDocument().insertString(lastChild.getTextRange().getEndOffset(), MessageFormat.format("({0}: {1})", namedArgument, value));
+        } else {
+            String format = MessageFormat.format("{0}: {1}", namedArgument, value);
+
+            if (phpAttribute.getArguments().size() > 0) {
+                format = ", " + format;
+            }
+
+            editor.getDocument().insertString(lastChild.getTextRange().getStartOffset(), format);
+        }
     }
 }

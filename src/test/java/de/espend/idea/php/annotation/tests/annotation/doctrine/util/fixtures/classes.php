@@ -2,10 +2,6 @@
 
 namespace Doctrine\ORM\Mapping
 {
-    interface Annotation
-    {
-    }
-
     /**
      * @Annotation
      * @Target({"PROPERTY","ANNOTATION"})
@@ -14,12 +10,10 @@ namespace Doctrine\ORM\Mapping
     {
     }
 
-    class Entity
+    /**
+     * @Annotation()
+     */
+    final class Entity
     {
     }
-}
-
-namespace App\Entity\Repository
-{
-    class UserRepository {}
 }

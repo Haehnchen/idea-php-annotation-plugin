@@ -71,6 +71,13 @@
               text="Embedded Class">
           <add-to-group group-id="GenerateGroup" anchor="last" />
       </action>
+
+      <action icon="PhpAnnotationIcons.DOCTRINE"
+              id="PhpAnnotation.Doctrine.Orm.DoctrineAddRepositoryGenerateAction"
+              class="de.espend.idea.php.annotation.doctrine.action.DoctrineAddRepositoryGenerateAction"
+              text="Add Entity Repository">
+          <add-to-group group-id="GenerateGroup" anchor="last" />
+      </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -167,6 +174,7 @@
       </intentionAction>
 
       <internalFileTemplate name="Doctrine Entity Repository"/>
+      <internalFileTemplate name="Doctrine Entity ServiceRepository"/>
   </extensions>
 
   <extensionPoints>

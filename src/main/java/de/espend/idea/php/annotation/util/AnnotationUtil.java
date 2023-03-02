@@ -1,5 +1,6 @@
 package de.espend.idea.php.annotation.util;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -39,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -814,6 +816,21 @@ public class AnnotationUtil {
             || lowercase.startsWith("@phpcs")
             || lowercase.startsWith("@before") // BeforeSuite, BeforeScenario
             || lowercase.startsWith("@after"); // AfterSuite, AfterScenario
+    }
+
+    public static void insertNamedArgumentForAnnotation(@NotNull Editor editor, @NotNull PhpDocTag phpDocTag, @NotNull String namedArgument, @NotNull String value) {
+        PsiElement lastChild = phpDocTag.getLastChild();
+        if (lastChild == null) {
+            return;
+        }
+
+        if (getDefaultPropertyValue(phpDocTag) != null) {
+            String attr = MessageFormat.format(", {0}={1}", namedArgument, value);
+            editor.getDocument().insertString(lastChild.getTextRange().getEndOffset() - 1, attr);
+        } else {
+            String attr = MessageFormat.format("{0}={1}", namedArgument, value);
+            editor.getDocument().insertString(lastChild.getTextRange().getEndOffset() - 1, attr);
+        }
     }
 
     /**
