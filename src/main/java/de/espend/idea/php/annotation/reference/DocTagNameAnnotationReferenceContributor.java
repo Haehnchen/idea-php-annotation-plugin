@@ -68,7 +68,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
                     return PsiReference.EMPTY_ARRAY;
                 }
 
-                PhpDocTag docTag = PhpPsiUtil.getParentByCondition(element, PhpDocTag.INSTANCEOF);
+                PhpDocTag docTag = PhpPsiUtil.getParentByCondition(element, true, PhpDocTag.INSTANCEOF, null);
                 if (docTag == null) {
                     return PsiReference.EMPTY_ARRAY;
                 }

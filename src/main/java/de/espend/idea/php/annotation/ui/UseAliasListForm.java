@@ -1,7 +1,6 @@
 package de.espend.idea.php.annotation.ui;
 
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.ui.ColumnInfo;
@@ -43,12 +42,9 @@ public class UseAliasListForm implements Configurable {
             tableView.getTableViewModel().fireTableDataChanged();
             changed = true;
             resetList();
-            try {
-                apply();
-                ApplicationSettings.getInstance().provideDefaults = false;
-                JOptionPane.showMessageDialog(panel, "Default alias applied");
-            } catch (ConfigurationException ignored) {
-            }
+            apply();
+            ApplicationSettings.getInstance().provideDefaults = false;
+            JOptionPane.showMessageDialog(panel, "Default alias applied");
         });
 
         initList();
@@ -131,7 +127,7 @@ public class UseAliasListForm implements Configurable {
     }
 
     @Override
-    public void apply() throws ConfigurationException {
+    public void apply() {
         ApplicationSettings.getInstance().useAliasOptions = new ArrayList<>(this.tableView.getListTableModel().getItems());
         ApplicationSettings.getInstance().provideDefaults = false;
         this.changed = false;
