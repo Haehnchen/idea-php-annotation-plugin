@@ -4,7 +4,8 @@
 namespace ${NAMESPACE};
 
 use ${ENTITY_NAMESPACE}\\${ENTITY_NAME};
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method ${ENTITY_NAME}|null find(\$id, \$lockMode = null, \$lockVersion = null)
@@ -12,6 +13,10 @@ use Doctrine\ORM\EntityRepository;
  * @method ${ENTITY_NAME}[] findAll()
  * @method ${ENTITY_NAME}[] findBy(array \$criteria, array \$orderBy = null, \$limit = null, \$offset = null)
  */
-class ${NAME} extends EntityRepository
+class ${NAME} extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry \$registry)
+    {
+        parent::__construct(\$registry, ${ENTITY_NAME}::class);
+    }
 }

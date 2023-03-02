@@ -1,8 +1,10 @@
 package de.espend.idea.php.annotation.doctrine.intention;
 
+import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -11,16 +13,19 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import de.espend.idea.php.annotation.PhpAnnotationIcons;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
 import de.espend.idea.php.annotation.util.PhpDocUtil;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  *
  * Intention: "private $id<carpet>;"
  */
-public class DoctrineOrmFieldIntention extends PsiElementBaseIntentionAction {
+public class DoctrineOrmFieldIntention extends PsiElementBaseIntentionAction implements Iconable, HighPriorityAction {
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
         if(!DoctrineUtil.isDoctrineOrmInVendor(project)) {
@@ -88,5 +93,10 @@ public class DoctrineOrmFieldIntention extends PsiElementBaseIntentionAction {
         }
 
         return context;
+    }
+
+    @Override
+    public Icon getIcon(int flags) {
+        return PhpAnnotationIcons.DOCTRINE;
     }
 }

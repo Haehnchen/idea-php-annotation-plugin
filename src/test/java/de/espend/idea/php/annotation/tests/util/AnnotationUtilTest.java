@@ -1,15 +1,22 @@
 package de.espend.idea.php.annotation.tests.util;
 
+import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.PhpAttribute;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import de.espend.idea.php.annotation.dict.PhpAnnotation;
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
+import de.espend.idea.php.annotation.util.PhpPsiAttributesUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -242,6 +249,62 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
 
         Map<String, String> possibleImportClasses = AnnotationUtil.getPossibleImportClasses(phpDocTag);
         assertEquals(0, possibleImportClasses.size());
+    }
+
+    public void testInsertNamedArgumentForAnnotation() {
+        PhpDocTag phpDocTag = createAnnotation("Foobar()");
+
+        WriteCommandAction.runWriteCommandAction(
+            getProject(),
+            () -> AnnotationUtil.insertNamedArgumentForAnnotation(getEditor(), phpDocTag, "foo", "Foobar::class")
+        );
+
+        PsiDocumentManager.getInstance(getProject()).doPostponedOperationsAndUnblockDocument(getEditor().getDocument());
+        PsiDocumentManager.getInstance(getProject()).commitDocument(getEditor().getDocument());
+
+        String text = getEditor().getDocument().getText();
+        assertTrue(text.contains("@Foobar(foo=Foobar::class)"));
+    }
+
+    public void testInsertNamedArgumentForAnnotation2() {
+        PhpDocTag phpDocTag = createAnnotation("Foobar(\"foobar\")");
+
+        WriteCommandAction.runWriteCommandAction(
+            getProject(),
+            () -> AnnotationUtil.insertNamedArgumentForAnnotation(getEditor(), phpDocTag, "foo", "Foobar::class")
+        );
+
+        PsiDocumentManager.getInstance(getProject()).doPostponedOperationsAndUnblockDocument(getEditor().getDocument());
+        PsiDocumentManager.getInstance(getProject()).commitDocument(getEditor().getDocument());
+
+        String text = getEditor().getDocument().getText();
+        assertTrue(text.contains("@Foobar(\"foobar\", foo=Foobar::class)"));
+    }
+
+    public void testInsertNamedArgumentForAnnotation3() {
+        PhpDocTag phpDocTag = createAnnotation("Foobar(name=\"test\")");
+
+        WriteCommandAction.runWriteCommandAction(
+            getProject(),
+            () -> AnnotationUtil.insertNamedArgumentForAnnotation(getEditor(), phpDocTag, "foo", "Foobar::class")
+        );
+
+        PsiDocumentManager.getInstance(getProject()).doPostponedOperationsAndUnblockDocument(getEditor().getDocument());
+        PsiDocumentManager.getInstance(getProject()).commitDocument(getEditor().getDocument());
+
+        String text = getEditor().getDocument().getText();
+        assertTrue(text.contains("@Foobar(name=\"test\", foo=Foobar::class)"));
+    }
+
+    private PhpDocTag createAnnotation(@NotNull String attribute) {
+        PsiFile file = myFixture.configureByText("test.php", "<?php\n" +
+            "/**\n" +
+            "* @" + attribute + "\n" +
+            "*/\n" +
+            "class FooBar()\n"
+        );
+
+        return PsiTreeUtil.collectElementsOfType(file, PhpDocTag.class).iterator().next();
     }
 
     public void testAttributeVisitingForAnnotationClass() {

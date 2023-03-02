@@ -90,13 +90,15 @@ public class DoctrineUtil {
 
     public static boolean isOrmColumnProperty(@NotNull Field field) {
         PhpDocComment docComment = field.getDocComment();
-        if(docComment == null) {
-            return false;
+        if(docComment != null) {
+            PhpDocCommentAnnotation container = AnnotationUtil.getPhpDocCommentAnnotationContainer(docComment);
+            if (container != null && (container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Column") != null || container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\JoinColumn") != null)) {
+                return true;
+            }
         }
 
-        PhpDocCommentAnnotation container = AnnotationUtil.getPhpDocCommentAnnotationContainer(docComment);
-        return container != null
-            && (container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Column") != null || container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\JoinColumn") != null);
+        return field.getAttributes("\\Doctrine\\ORM\\Mapping\\Column").size() > 0
+            || field.getAttributes("\\Doctrine\\ORM\\Mapping\\JoinColumn").size() > 0;
     }
 
     @Nullable
@@ -121,7 +123,8 @@ public class DoctrineUtil {
     public static boolean isDoctrineOrmInVendor(@NotNull Project project)
     {
         return
-            PhpIndex.getInstance(project).getInterfacesByFQN("Doctrine\\ORM\\Mapping\\Annotation").size() > 0;
+            PhpIndex.getInstance(project).getInterfacesByFQN("Doctrine\\ORM\\Mapping\\Annotation").size() > 0
+            || PhpIndex.getInstance(project).getClassesByFQN("Doctrine\\ORM\\Mapping\\Entity").size() > 0;
     }
 
     public static String trimBlackSlashes(@NotNull String namespaceName) {
@@ -217,6 +220,31 @@ public class DoctrineUtil {
         }
 
         PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, DOCTRINE_ORM_MAPPING, "ORM");
+    }
+
+    public static boolean hasCreateRepositoryClassSupport(@NotNull PhpClass phpClass)
+    {
+        PhpDocComment docComment = phpClass.getDocComment();
+        if(docComment != null) {
+            PhpDocCommentAnnotation container = AnnotationUtil.getPhpDocCommentAnnotationContainer(docComment);
+            if(container != null) {
+                PhpDocTagAnnotation phpDocBlock = container.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Entity");
+
+                if (phpDocBlock != null) {
+                    return AnnotationUtil.getPropertyValueAsPsiElement(phpDocBlock.getPhpDocTag(), "repositoryClass") == null;
+                }
+            }
+        }
+
+        Collection<@NotNull PhpAttribute> attributes = phpClass.getAttributes("\\Doctrine\\ORM\\Mapping\\Entity");
+        if (attributes.size() == 0) {
+            return false;
+        }
+
+        return attributes
+            .stream()
+            .flatMap(attribute -> attribute.getArguments().stream())
+            .noneMatch(argument -> "repositoryClass".equals(argument.getName()));
     }
 
     public static boolean repositoryClassExists(PhpDocTag phpDocTag)
