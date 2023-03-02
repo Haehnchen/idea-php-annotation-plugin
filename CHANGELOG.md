@@ -1,7 +1,8 @@
 # Changelog
 
 ## Versions
-* 8.x: PhpStorm 2020.3+
+* 9.x: PhpStorm 2022.3+
+* 8.x: PhpStorm 2020.3+ (no support)
 * 7.x: PhpStorm 2020.1+ (no support)
 * 6.x: PhpStorm 2019.1+ (no support)
 * 5.x: PhpStorm 2017.1+ (no support)
@@ -9,6 +10,14 @@
 * 3.x: PhpStorm 2016.1+ (no support)
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
+
+## 9.0.0
+* Support attributes for Entity::repository (Daniel Espendiller)
+* Add generator for repositoryClass (Daniel Espendiller)
+* Fix some detection issue for attribute in inspection, indention and generator (Daniel Espendiller)
+* Provide template for Symfony server repository and use if bundle exists (Daniel Espendiller)
+* Java language level code migration (Daniel Espendiller)
+* Update gradle / build infrastructure to 2022.3.2 (Daniel Espendiller)
 
 ## 8.3.0
 * Support "Embeddable" as attributes for generator (Daniel Espendiller)
