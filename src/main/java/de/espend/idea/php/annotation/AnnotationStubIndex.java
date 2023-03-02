@@ -33,18 +33,18 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
     @NotNull
     @Override
     public DataIndexer<String, Void, FileContent> getIndexer() {
-        return new DataIndexer<String, Void, FileContent>() {
+        return new DataIndexer<>() {
             @NotNull
             @Override
             public Map<String, Void> map(@NotNull FileContent inputData) {
                 final Map<String, Void> map = new THashMap<>();
 
                 PsiFile psiFile = inputData.getPsiFile();
-                if(!(psiFile instanceof PhpFile)) {
+                if (!(psiFile instanceof PhpFile)) {
                     return map;
                 }
 
-                if(!AnnotationUtil.isValidForIndex(inputData)) {
+                if (!AnnotationUtil.isValidForIndex(inputData)) {
                     return map;
                 }
 
@@ -60,7 +60,7 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
 
                     private void visitPhpClass(PhpClass phpClass) {
                         String fqn = phpClass.getFQN();
-                        if(fqn.startsWith("\\")) {
+                        if (fqn.startsWith("\\")) {
                             fqn = fqn.substring(1);
                         }
 

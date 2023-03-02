@@ -34,7 +34,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
             new PsiReferenceProvider() {
                 @NotNull
                 @Override
-                public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+                public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
                     if(!(element instanceof PhpDocTag)) {
                         return new PsiReference[0];
                     }
@@ -52,7 +52,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
         psiReferenceRegistrar.registerReferenceProvider(PlatformPatterns.psiElement(PhpDocToken.class), new PsiReferenceProvider() {
             @NotNull
             @Override
-            public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+            public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
                 if (element.getNode().getElementType() != PhpDocTokenTypes.DOC_IDENTIFIER) {
                     return PsiReference.EMPTY_ARRAY;
                 }
@@ -130,7 +130,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
          *
          * @return TextRange of DocTag without @ char
          */
-        public TextRange getRangeInElement() {
+        public @NotNull TextRange getRangeInElement() {
             String tagName = getElement().getName();
             int rangeStart = 0;
             int rangeEnd = tagName.length();
@@ -153,7 +153,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
 
         @NotNull
         @Override
-        public ResolveResult[] multiResolve(boolean b) {
+        public ResolveResult @NotNull [] multiResolve(boolean b) {
 
             PhpClass phpClass = AnnotationUtil.getAnnotationReference(getElement());
             if(phpClass == null) {
@@ -165,7 +165,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
 
         @NotNull
         @Override
-        public Object[] getVariants() {
+        public Object @NotNull [] getVariants() {
             return new Object[0];
         }
 
@@ -241,7 +241,7 @@ public class DocTagNameAnnotationReferenceContributor extends PsiReferenceContri
 
         @NotNull
         @Override
-        public Object[] getVariants() {
+        public Object @NotNull [] getVariants() {
             return new Object[0];
         }
     }

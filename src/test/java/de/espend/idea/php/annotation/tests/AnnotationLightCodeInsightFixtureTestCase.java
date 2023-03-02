@@ -17,7 +17,6 @@ import com.intellij.codeInspection.*;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.Pair;
@@ -143,7 +142,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
             targetShortcut = "\\" + targetShortcut;
         }
 
-        Set<String> classTargets = new HashSet<String>();
+        Set<String> classTargets = new HashSet<>();
 
         for (GotoDeclarationHandler gotoDeclarationHandler : GotoDeclarationHandler.EP_NAME.getExtensionList()) {
             PsiElement[] gotoDeclarationTargets = gotoDeclarationHandler.getGotoDeclarationTargets(psiElement, 0, myFixture.getEditor());
@@ -222,7 +221,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
 
         PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
 
-        Set<String> targetStrings = new HashSet<String>();
+        Set<String> targetStrings = new HashSet<>();
 
         for (GotoDeclarationHandler gotoDeclarationHandler : GotoDeclarationHandler.EP_NAME.getExtensionList()) {
 
@@ -246,7 +245,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
         myFixture.configureByText(languageFileType, configureByText);
         PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
 
-        Set<String> targets = new HashSet<String>();
+        Set<String> targets = new HashSet<>();
 
         for (GotoDeclarationHandler gotoDeclarationHandler : GotoDeclarationHandler.EP_NAME.getExtensionList()) {
             PsiElement[] gotoDeclarationTargets = gotoDeclarationHandler.getGotoDeclarationTargets(psiElement, 0, myFixture.getEditor());
@@ -410,7 +409,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
     public void assertIndex(@NotNull ID<String, ?> id, boolean notCondition, @NotNull String... keys) {
         for (String key : keys) {
 
-            final Collection<VirtualFile> virtualFiles = new ArrayList<VirtualFile>();
+            final Collection<VirtualFile> virtualFiles = new ArrayList<>();
 
             FileBasedIndex.getInstance().getFilesWithKey(id, new HashSet<>(Collections.singletonList(key)), virtualFile -> {
                 virtualFiles.add(virtualFile);
@@ -441,7 +440,7 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
     }
 
     public void assertLocalInspectionContains(String filename, String content, String contains) {
-        Set<String> matches = new HashSet<String>();
+        Set<String> matches = new HashSet<>();
 
         Pair<List<ProblemDescriptor>, Integer> localInspectionsAtCaret = getLocalInspectionsAtCaret(filename, content);
         for (ProblemDescriptor result : localInspectionsAtCaret.getFirst()) {
@@ -575,12 +574,12 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
 
     @NotNull
     private List<PsiElement> collectPsiElementsRecursive(@NotNull PsiElement psiElement) {
-        final List<PsiElement> elements = new ArrayList<PsiElement>();
+        final List<PsiElement> elements = new ArrayList<>();
         elements.add(psiElement.getContainingFile());
 
         psiElement.acceptChildren(new PsiRecursiveElementVisitor() {
             @Override
-            public void visitElement(PsiElement element) {
+            public void visitElement(@NotNull PsiElement element) {
                 elements.add(element);
                 super.visitElement(element);
             }
@@ -683,12 +682,9 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
                         }
 
                         // overwrite behavior and force completion + insertHandler
-                        CommandProcessor.getInstance().executeCommand(indicator.getProject(), new Runnable() {
-                            @Override
-                            public void run() {
-                                //indicator.setMergeCommand(); Currently method has package level access
-                                indicator.getLookup().finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR, lookupElement);
-                            }
+                        CommandProcessor.getInstance().executeCommand(indicator.getProject(), () -> {
+                            //indicator.setMergeCommand(); Currently method has package level access
+                            indicator.getLookup().finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR, lookupElement);
                         }, "Autocompletion", null);
                     }
                 };

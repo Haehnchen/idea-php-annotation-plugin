@@ -19,7 +19,7 @@ public class AnnotationDeprecatedInspection extends LocalInspectionTool {
     public PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
         return new PsiElementVisitor() {
             @Override
-            public void visitElement(PsiElement element) {
+            public void visitElement(@NotNull PsiElement element) {
                 if (element instanceof PhpDocTag && AnnotationUtil.isAnnotationPhpDocTag((PhpDocTag) element)) {
                     visitAnnotationDocTag((PhpDocTag) element, holder);
                 }

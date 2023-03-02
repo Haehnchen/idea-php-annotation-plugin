@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -221,7 +220,7 @@ public class PhpElementsUtil {
         final Set<String> values = new HashSet<>();
         method.acceptChildren(new PsiRecursiveElementWalkingVisitor() {
             @Override
-            public void visitElement(PsiElement element) {
+            public void visitElement(@NotNull PsiElement element) {
 
                 if(PhpElementsUtil.getMethodReturnPattern().accepts(element)) {
                     String value = PhpElementsUtil.getStringValue(element);
@@ -255,7 +254,7 @@ public class PhpElementsUtil {
             nsClass = "\\" + nsClass;
         }
 
-        if(!PhpCodeInsightUtil.getAliasesInScope(scopeForUseOperator).values().contains(nsClass)) {
+        if(!PhpCodeInsightUtil.getAliasesInScope(scopeForUseOperator).containsValue(nsClass)) {
             PhpAliasImporter.insertUseStatement(nsClass, alias, scopeForUseOperator);
         }
     }

@@ -2,23 +2,14 @@ package de.espend.idea.php.annotation.doctrine.inspection;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import de.espend.idea.php.annotation.doctrine.intention.DoctrineOrmRepositoryIntention;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
-import de.espend.idea.php.annotation.util.PhpElementsUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -62,7 +53,7 @@ public class RepositoryClassInspection extends LocalInspectionTool {
         }
 
         @Override
-        public void visitElement(PsiElement psiElement) {
+        public void visitElement(@NotNull PsiElement psiElement) {
             if(!(psiElement instanceof PhpDocTag)) {
                 super.visitElement(psiElement);
                 return;

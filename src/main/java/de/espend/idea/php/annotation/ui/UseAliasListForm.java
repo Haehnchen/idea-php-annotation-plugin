@@ -14,15 +14,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class UseAliasListForm implements Configurable {
 
-    private ListTableModel<UseAliasOption> modelList;
-    private TableView<UseAliasOption> tableView;
+    private final ListTableModel<UseAliasOption> modelList;
+    private final TableView<UseAliasOption> tableView;
     private boolean changed = false;
 
     private JPanel panel1;
@@ -82,7 +81,7 @@ public class UseAliasListForm implements Configurable {
     @Nullable
     @Override
     public JComponent createComponent() {
-        ToolbarDecorator tablePanel = ToolbarDecorator.createDecorator(this.tableView, new ElementProducer<UseAliasOption>() {
+        ToolbarDecorator tablePanel = ToolbarDecorator.createDecorator(this.tableView, new ElementProducer<>() {
             @Override
             public UseAliasOption createElement() {
                 return null;
@@ -133,11 +132,7 @@ public class UseAliasListForm implements Configurable {
 
     @Override
     public void apply() throws ConfigurationException {
-        List<UseAliasOption> options = new ArrayList<>();
-
-        options.addAll(this.tableView.getListTableModel().getItems());
-
-        ApplicationSettings.getInstance().useAliasOptions = options;
+        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<>(this.tableView.getListTableModel().getItems());
         ApplicationSettings.getInstance().provideDefaults = false;
         this.changed = false;
     }

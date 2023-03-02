@@ -30,7 +30,7 @@ public class DoctrineRepositoryReference extends PsiPolyVariantReferenceBase<Psi
 
     @NotNull
     @Override
-    public ResolveResult[] multiResolve(boolean b) {
+    public ResolveResult @NotNull [] multiResolve(boolean b) {
 
         PhpClass phpClass = PhpElementsUtil.getClassInsideAnnotation((StringLiteralExpression) getElement(), content);
         if(phpClass == null) {
@@ -44,7 +44,7 @@ public class DoctrineRepositoryReference extends PsiPolyVariantReferenceBase<Psi
 
     @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
 
         List<LookupElement> lookupElements = PhpIndex.getInstance(getElement().getProject())
             .getAllSubclasses("\\Doctrine\\Common\\Persistence\\ObjectRepository").stream()

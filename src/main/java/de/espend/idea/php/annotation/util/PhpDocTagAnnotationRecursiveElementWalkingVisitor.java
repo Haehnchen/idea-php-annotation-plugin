@@ -23,7 +23,7 @@ public class PhpDocTagAnnotationRecursiveElementWalkingVisitor extends PsiRecurs
     }
 
     @Override
-    public void visitElement(PsiElement element) {
+    public void visitElement(@NotNull PsiElement element) {
         if ((element instanceof PhpDocTag)) {
             visitPhpDocTag((PhpDocTag) element);
         }

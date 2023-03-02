@@ -49,7 +49,7 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
 
         @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
             PhpClass phpClass = getValidAnnotationClass(psiElement);
             if(phpClass == null) {
                 return new PsiReference[0];
@@ -68,7 +68,7 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
 
         @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
             PhpClass phpClass = getValidAnnotationClass(psiElement);
             if(phpClass == null) {
                 return new PsiReference[0];
@@ -92,7 +92,7 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
 
         @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
             if(!(psiElement instanceof StringLiteralExpression)) {
                 return new PsiReference[0];
             }
@@ -135,7 +135,7 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
 
         @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
             if(!(psiElement instanceof StringLiteralExpression)) {
                 return new PsiReference[0];
             }
@@ -182,7 +182,7 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
             }
         }
 
-        return psiReferences.toArray(new PsiReference[psiReferences.size()]);
+        return psiReferences.toArray(new PsiReference[0]);
     }
 
 }
