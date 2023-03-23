@@ -26,6 +26,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
+import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import de.espend.idea.php.annotation.AnnotationStubIndex;
@@ -218,11 +219,11 @@ public class AnnotationUtil {
     }
 
     /*
-    * Collect file use imports and resolve alias with their class name
-    *
-    * @param PhpDocComment current doc scope
-    * @return map with class names as key and fqn on value
-    */
+     * Collect file use imports and resolve alias with their class name
+     *
+     * @param PhpDocComment current doc scope
+     * @return map with class names as key and fqn on value
+     */
     @NotNull
     public static Map<String, String> getUseImportMap(@NotNull PsiElement phpDocComment) {
         PhpPsiElement scope = PhpCodeInsightUtil.findScopeForUseOperator(phpDocComment);
@@ -676,17 +677,17 @@ public class AnnotationUtil {
      * @param fqnClassName Foobar\ClassName
      * @return targets
      */
-    public static Collection<PhpDocTag> getImplementationsForAnnotation(@NotNull Project project, @NotNull String fqnClassName) {
-        Collection<PhpDocTag> psiElements = new HashSet<>();
+    public static Collection<PsiElement> getImplementationsForAnnotation(@NotNull Project project, @NotNull String fqnClassName) {
+        Collection<PsiElement> psiElements = new HashSet<>();
 
         for (PsiFile psiFile : getFilesImplementingAnnotation(project, fqnClassName)) {
-            psiFile.accept(new PhpDocTagAnnotationRecursiveElementWalkingVisitor(pair -> {
+            PhpDocTagAnnotationVisitorUtil.visitElement((PhpFile) psiFile, pair -> {
                 if(StringUtils.stripStart(pair.getFirst(), "\\").equalsIgnoreCase(StringUtils.stripStart(fqnClassName, "\\"))) {
                     psiElements.add(pair.getSecond());
                 }
 
                 return true;
-            }));
+            });
         }
 
         return psiElements;

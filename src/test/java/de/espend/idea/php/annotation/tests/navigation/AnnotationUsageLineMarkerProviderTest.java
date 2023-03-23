@@ -31,6 +31,19 @@ public class AnnotationUsageLineMarkerProviderTest extends AnnotationLightCodeIn
         ), new LineMarker.ToolTipEqualsAssert("Navigate to implementations"));
     }
 
+    public void testThatLineMarkerIsProvidedForAttributeClass() {
+        assertLineMarker(PhpPsiElementFactory.createPsiFileFromText(getProject(), "<?php\n" +
+            "namespace Doctrine\\ORM\\Mapping;\n" +
+            "" +
+            "{\n" +
+            "   #[\\Attribute]\n" +
+            "   class Embedded\n" +
+            "   {\n" +
+            "   }\n" +
+            "}"
+        ), new LineMarker.ToolTipEqualsAssert("Navigate to implementations"));
+    }
+
     public void testThatNonAnnotationClassMustNotProvideLineMarker() {
         assertLineMarkerIsEmpty(PhpPsiElementFactory.createPsiFileFromText(getProject(), "<?php\n" +
             "namespace Doctrine\\ORM\\Mapping;\n" +

@@ -1,8 +1,6 @@
 package de.espend.idea.php.annotation;
 
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
@@ -11,10 +9,11 @@ import com.intellij.util.io.VoidDataExternalizer;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -33,50 +32,35 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
     @NotNull
     @Override
     public DataIndexer<String, Void, FileContent> getIndexer() {
-        return new DataIndexer<>() {
-            @NotNull
-            @Override
-            public Map<String, Void> map(@NotNull FileContent inputData) {
-                final Map<String, Void> map = new THashMap<>();
+        return inputData -> {
+            final Map<String, Void> map = new HashMap<>();
 
-                PsiFile psiFile = inputData.getPsiFile();
-                if (!(psiFile instanceof PhpFile)) {
-                    return map;
-                }
-
-                if (!AnnotationUtil.isValidForIndex(inputData)) {
-                    return map;
-                }
-
-                psiFile.accept(new PsiRecursiveElementWalkingVisitor() {
-                    @Override
-                    public void visitElement(@NotNull PsiElement element) {
-                        if ((element instanceof PhpClass)) {
-                            visitPhpClass((PhpClass) element);
-                        }
-
-                        super.visitElement(element);
-                    }
-
-                    private void visitPhpClass(PhpClass phpClass) {
-                        String fqn = phpClass.getFQN();
-                        if (fqn.startsWith("\\")) {
-                            fqn = fqn.substring(1);
-                        }
-
-                        // doctrine has many tests: Doctrine\Tests\Common\Annotations\Fixtures
-                        // we are on index process, project is not fully loaded here, so filter name based tests
-                        // eg PhpUnitUtil.isTestClass not possible
-                        if (!fqn.contains("\\Tests\\") && !fqn.contains("\\Fixtures\\") && AnnotationUtil.isAnnotationClass(phpClass)) {
-                            map.put(fqn, null);
-                        }
-
-                    }
-
-                });
-
+            PsiFile psiFile = inputData.getPsiFile();
+            if (!(psiFile instanceof PhpFile)) {
                 return map;
             }
+
+            if (!AnnotationUtil.isValidForIndex(inputData)) {
+                return map;
+            }
+
+            for (PhpNamedElement topLevelElement : ((PhpFile) psiFile).getTopLevelDefs().values()) {
+                if (topLevelElement instanceof PhpClass phpClass) {
+                    String fqn = phpClass.getFQN();
+                    if (fqn.startsWith("\\")) {
+                        fqn = fqn.substring(1);
+                    }
+
+                    // doctrine has many tests: Doctrine\Tests\Common\Annotations\Fixtures
+                    // we are on index process, project is not fully loaded here, so filter name based tests
+                    // e.g. PhpUnitUtil.isTestClass not possible
+                    if (!fqn.contains("\\Tests\\") && !fqn.contains("\\Fixtures\\") && AnnotationUtil.isAnnotationClass(phpClass)) {
+                        map.put(fqn, null);
+                    }
+                }
+            }
+
+            return map;
         };
     }
 
