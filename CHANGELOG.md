@@ -11,6 +11,10 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 9.1.0
+* Improve index performance (Daniel Espendiller)
+* Support "Attribute" usages resolving for linemarker (Daniel Espendiller)
+
 ## 9.0.0
 * Support attributes for Entity::repository (Daniel Espendiller)
 * Add generator for repositoryClass (Daniel Espendiller)
