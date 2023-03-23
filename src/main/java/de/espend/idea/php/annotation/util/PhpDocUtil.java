@@ -217,7 +217,7 @@ public class PhpDocUtil {
             return null;
         }
 
-        PhpReference reference = PhpPsiUtil.getParentByCondition(psiElement, false, PhpReference.INSTANCEOF);
+        PhpReference reference = PhpPsiUtil.getParentByCondition(psiElement, false, PhpReference.INSTANCEOF, null);
         String qualifiedName = PhpCodeInsightUtil.createQualifiedName(scopeForUseOperator, fqn, reference, false);
         if (!PhpLangUtil.isFqn(qualifiedName)) {
             return qualifiedName;

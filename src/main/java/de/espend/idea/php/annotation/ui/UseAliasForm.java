@@ -1,5 +1,6 @@
 package de.espend.idea.php.annotation.ui;
 
+import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.refactoring.PhpNameUtil;
 import de.espend.idea.php.annotation.dict.UseAliasOption;
 import org.apache.commons.lang.StringUtils;
@@ -54,13 +55,13 @@ public class UseAliasForm extends JDialog {
 
     private void onOK() {
         String classText = StringUtils.strip(textClassName.getText(), "\\");
-        if(!PhpNameUtil.isValidNamespaceFullName(classText)) {
+        if(!PhpNameUtil.isValidNamespaceFullName(classText, PhpLanguageLevel.DEFAULT)) {
             JOptionPane.showMessageDialog(this, "Invalid class name");
             return;
         }
 
         String alias = textAlias.getText();
-        if(!PhpNameUtil.isValidNamespaceFullName(alias)) {
+        if(!PhpNameUtil.isValidNamespaceFullName(alias, PhpLanguageLevel.DEFAULT)) {
             JOptionPane.showMessageDialog(this, "Invalid alias");
             return;
         }

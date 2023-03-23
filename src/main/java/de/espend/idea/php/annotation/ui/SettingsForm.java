@@ -1,7 +1,6 @@
 package de.espend.idea.php.annotation.ui;
 
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
 import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.util.PluginUtil;
 import org.jetbrains.annotations.Nls;
