@@ -34,3 +34,11 @@ namespace My\Model
         private $foo;
     }
 }
+
+namespace My\Attr\Foo
+{
+    #[\My\Route]
+    class RouteAttribute
+    {
+    }
+}

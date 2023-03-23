@@ -2,9 +2,14 @@ package de.espend.idea.php.annotation.util;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.util.Processor;
+import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
+import com.jetbrains.php.lang.psi.PhpFile;
+import com.jetbrains.php.lang.psi.elements.PhpAttribute;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,33 +19,39 @@ import java.util.Map;
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
-public class PhpDocTagAnnotationRecursiveElementWalkingVisitor extends PsiRecursiveElementWalkingVisitor {
-    @NotNull
-    private final Processor<Pair<String, PhpDocTag>> processor;
+public class PhpDocTagAnnotationVisitorUtil {
+    public static void visitElement(@NotNull PhpFile psiFile, @NotNull Processor<Pair<String, PsiElement>> processor) {
+        for (PhpNamedElement topLevelElement : psiFile.getTopLevelDefs().values()) {
+            if (topLevelElement instanceof PhpClass clazz) {
+                PhpDocComment docComment = clazz.getDocComment();
+                if (docComment != null) {
+                    PhpDocUtil.processTagElementsByName(docComment, null, docTag -> {
+                        visitPhpDocTag(docTag, processor);
+                        return true;
+                    });
+                }
 
-    public PhpDocTagAnnotationRecursiveElementWalkingVisitor(@NotNull Processor<Pair<String, PhpDocTag>> processor) {
-        this.processor = processor;
-    }
-
-    @Override
-    public void visitElement(@NotNull PsiElement element) {
-        if ((element instanceof PhpDocTag)) {
-            visitPhpDocTag((PhpDocTag) element);
+                for (PhpAttribute attribute : clazz.getAttributes()) {
+                    String fqn = attribute.getFQN();
+                    if (fqn != null && !fqn.isEmpty()) {
+                        processor.process(Pair.create(StringUtils.stripStart(fqn, "\\"), attribute));
+                    }
+                }
+            }
         }
-
-        super.visitElement(element);
     }
 
-    private void visitPhpDocTag(@NotNull PhpDocTag phpDocTag) {
-        // "@var" and user non related tags dont need an action
-        if(AnnotationUtil.isBlockedAnnotationTag(phpDocTag.getName())) {
+    private static void visitPhpDocTag(@NotNull PhpDocTag phpDocTag, @NotNull Processor<Pair<String, PsiElement>> processor) {
+        // "@var" and user non-related tags don't need an action
+        String name = phpDocTag.getName();
+        if (AnnotationUtil.isBlockedAnnotationTag(name)) {
             return;
         }
 
         String annotationFqnName = StringUtils.stripStart(getClassNameReference(phpDocTag, AnnotationUtil.getUseImportMap((PsiElement) phpDocTag)), "\\");
 
-        if(annotationFqnName != null && StringUtils.isNotBlank(annotationFqnName)) {
-            this.processor.process(Pair.create(annotationFqnName, phpDocTag));
+        if (StringUtils.isNotBlank(annotationFqnName)) {
+            processor.process(Pair.create(annotationFqnName, phpDocTag));
         }
     }
 

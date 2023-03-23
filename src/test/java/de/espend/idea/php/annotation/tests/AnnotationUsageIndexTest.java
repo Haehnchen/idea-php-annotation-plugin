@@ -19,5 +19,6 @@ public class AnnotationUsageIndexTest extends AnnotationLightCodeInsightFixtureT
 
     public void testThatUsagesAreInIndex() {
         assertIndexContains(AnnotationUsageIndex.KEY, "Doctrine\\ORM\\Mapping\\Embedded");
+        assertIndexContains(AnnotationUsageIndex.KEY, "My\\Route");
     }
 }

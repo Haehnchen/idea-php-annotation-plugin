@@ -8,14 +8,13 @@ import com.intellij.util.io.KeyDescriptor;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.psi.PhpFile;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
-import de.espend.idea.php.annotation.util.PhpDocTagAnnotationRecursiveElementWalkingVisitor;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
+import de.espend.idea.php.annotation.util.PhpDocTagAnnotationVisitorUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +37,7 @@ public class AnnotationUsageIndex extends FileBasedIndexExtension<String, Set<St
     @Override
     public DataIndexer<String, Set<String>, FileContent> getIndexer() {
         return inputData -> {
-            final Map<String, Set<String>> map = new THashMap<>();
+            final Map<String, Set<String>> map = new HashMap<>();
 
             PsiFile psiFile = inputData.getPsiFile();
             if(!(psiFile instanceof PhpFile)) {
@@ -49,10 +48,10 @@ public class AnnotationUsageIndex extends FileBasedIndexExtension<String, Set<St
                 return map;
             }
 
-            psiFile.accept(new PhpDocTagAnnotationRecursiveElementWalkingVisitor(pair -> {
+            PhpDocTagAnnotationVisitorUtil.visitElement((PhpFile) psiFile, pair -> {
                 map.put(pair.getFirst(), new HashSet<>());
                 return true;
-            }));
+            });
 
             return map;
         };
@@ -96,7 +95,7 @@ public class AnnotationUsageIndex extends FileBasedIndexExtension<String, Set<St
         }
 
         public synchronized Set<String> read(@NotNull DataInput in) throws IOException {
-            Set<String> set = new THashSet<>();
+            Set<String> set = new HashSet<>();
 
             for(int r = in.readInt(); r > 0; --r) {
                 set.add(EnumeratorStringDescriptor.INSTANCE.read(in));

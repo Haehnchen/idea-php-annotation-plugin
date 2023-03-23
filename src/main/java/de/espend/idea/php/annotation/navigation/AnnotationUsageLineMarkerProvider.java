@@ -3,7 +3,6 @@ package de.espend.idea.php.annotation.navigation;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
@@ -44,12 +43,18 @@ public class AnnotationUsageLineMarkerProvider implements LineMarkerProvider {
                 continue;
             }
 
-            PsiElement phpClass = psiElement.getContext();
-            if(!(phpClass instanceof PhpClass) || !AnnotationUtil.isAnnotationClass((PhpClass) phpClass)) {
+            if (!(psiElement.getContext() instanceof PhpClass phpClass)) {
+                continue;
+            }
+
+            boolean isAnnotationOrAttribute = AnnotationUtil.isAnnotationClass(phpClass)
+                || !phpClass.getAttributes("\\Attribute").isEmpty();
+
+            if (!isAnnotationOrAttribute) {
                 return;
             }
 
-            String fqn = StringUtils.stripStart(((PhpClass) phpClass).getFQN(), "\\");
+            String fqn = StringUtils.stripStart(phpClass.getFQN(), "\\");
 
             // find one index annotation class and stop processing on first match
             final boolean[] processed = {false};
@@ -63,7 +68,7 @@ public class AnnotationUsageLineMarkerProvider implements LineMarkerProvider {
             // we found at least one target to provide lazy target linemarker
             if(processed[0]) {
                 NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(PhpIcons.IMPLEMENTS)
-                    .setTargets(new CollectionNotNullLazyValue(psiElement.getProject(), fqn))
+                    .setTargets(NotNullLazyValue.lazy(() -> AnnotationUtil.getImplementationsForAnnotation(psiElement.getProject(), fqn)))
                     .setTooltipText("Navigate to implementations");
 
                 results.add(builder.createLineMarkerInfo(psiElement));
@@ -83,24 +88,5 @@ public class AnnotationUsageLineMarkerProvider implements LineMarkerProvider {
             )
             .withParent(PhpClass.class)
             .withLanguage(PhpLanguage.INSTANCE);
-    }
-
-    private static class CollectionNotNullLazyValue extends NotNullLazyValue<Collection<? extends PsiElement>> {
-        @NotNull
-        private final Project project;
-
-        @NotNull
-        private final String fqn;
-
-        CollectionNotNullLazyValue(@NotNull Project project, @NotNull String fqn) {
-            this.project = project;
-            this.fqn = fqn;
-        }
-
-        @NotNull
-        @Override
-        protected Collection<? extends PsiElement> compute() {
-            return AnnotationUtil.getImplementationsForAnnotation(project, fqn);
-        }
     }
 }
