@@ -445,4 +445,26 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
             lookupElement -> "ORM\\Entity".equals(lookupElement.getLookupString())
         );
     }
+
+    public void testTheInternalAliasProvideCompletionAndImportsForAttributes() {
+        assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
+                "namespace {\n" +
+                "  class Foo {\n" +
+                "    #[<caret>]\n" +
+                "    function foo() {}\n" +
+                "  }\n" +
+                "}",
+            "<?php\n" +
+                "namespace {\n" +
+                "\n" +
+                "    use Doctrine\\ORM\\Mapping as ORM;\n" +
+                "\n" +
+                "    class Foo {\n" +
+                "    #[ORM\\Entity()]\n" +
+                "    function foo() {}\n" +
+                "  }\n" +
+                "}",
+            lookupElement -> "ORM\\Entity".equals(lookupElement.getLookupString())
+        );
+    }
 }

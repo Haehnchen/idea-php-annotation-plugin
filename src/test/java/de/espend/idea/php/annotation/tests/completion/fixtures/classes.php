@@ -19,6 +19,7 @@ namespace My\Annotations
      *     @Attribute("has_access", type="bool"),
      * )
      */
+     #[\Attribute(\Attribute::TARGET_ALL)]
     class All
     {
         /**
@@ -53,6 +54,7 @@ namespace My\Annotations
      * @Target("CLASS")
      * @deprecated
      */
+    #[\Attribute(\Attribute::TARGET_CLASS)]
     class AClazzDeprecated
     {
     }
@@ -61,6 +63,7 @@ namespace My\Annotations
      * @Annotation
      * @Target("CLASS")
      */
+    #[\Attribute(\Attribute::TARGET_CLASS)]
     class Clazz
     {
     }
@@ -70,6 +73,7 @@ namespace My\Annotations
      * @Target("CLASS")
      * @deprecated
      */
+    #[\Attribute(\Attribute::TARGET_CLASS)]
     class ClazzDeprecated
     {
     }
@@ -78,6 +82,7 @@ namespace My\Annotations
      * @Annotation
      * @Target("PROPERTY")
      */
+    #[\Attribute(\Attribute::TARGET_PROPERTY)]
     class Property
     {
     }
@@ -86,6 +91,7 @@ namespace My\Annotations
      * @Annotation
      * @Target("METHOD")
      */
+    #[\Attribute(\Attribute::TARGET_METHOD)]
     class Method
     {
     }
@@ -101,5 +107,6 @@ namespace Doctrine\ORM\Mapping
     /**
      * @Annotation
      */
+    #[\Attribute]
     class Entity {}
 }

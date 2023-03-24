@@ -8,15 +8,21 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.PhpIcons;
+import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
+import com.jetbrains.php.lang.inspections.attributes.PhpClassCantBeUsedAsAttributeInspection;
+import com.jetbrains.php.lang.inspections.attributes.PhpInapplicableAttributeTargetDeclarationInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiUtil;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.stubs.indexes.PhpAttributesFQNsIndex;
 import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.completion.insert.AnnotationTagInsertHandler;
+import de.espend.idea.php.annotation.completion.insert.AttributeAliasInsertHandler;
 import de.espend.idea.php.annotation.completion.lookupelements.PhpAnnotationPropertyLookupElement;
 import de.espend.idea.php.annotation.completion.lookupelements.PhpClassAnnotationLookupElement;
 import de.espend.idea.php.annotation.dict.*;
@@ -32,8 +38,8 @@ import de.espend.idea.php.annotation.util.PhpIndexUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -45,6 +51,9 @@ public class AnnotationCompletionContributor extends CompletionContributor {
         // @<caret>
         // * @<caret>
         extend(CompletionType.BASIC, AnnotationPattern.getDocBlockTag(), new PhpDocBlockTagAnnotations());
+
+        // #[<caret>] but only provide alias feature
+        extend(CompletionType.BASIC, AnnotationPattern.getAttributeNamePattern(), new PhpAttributeAlias());
 
         // @Callback("", <caret>)
         extend(CompletionType.BASIC, AnnotationPattern.getDocAttribute(), new PhpDocAttributeList());
@@ -369,6 +378,85 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                     );
                 }
             }
+        }
+    }
+
+    /**
+     * Extends attribute completion, but only for alias
+     */
+    private static class PhpAttributeAlias extends CompletionProvider<CompletionParameters> {
+        protected void addCompletions(@NotNull CompletionParameters completionParameters, @NotNull ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
+            PsiElement psiElement = completionParameters.getOriginalPosition();
+            if(psiElement == null) {
+                return;
+            }
+
+            PhpAttributesList parentOfType = PsiTreeUtil.getParentOfType(psiElement, PhpAttributesList.class);
+            if(parentOfType == null) {
+                return;
+            }
+
+            attachLookupElements(psiElement.getProject(), parentOfType, completionResultSet);
+        }
+
+        private void attachLookupElements(@NotNull Project project, @NotNull PhpAttributesList phpAttributesList, @NotNull CompletionResultSet completionResultSet) {
+            Map<String, String> items = new HashMap<>();
+            for (UseAliasOption useAliasOption : ApplicationSettings.getUseAliasOptionsWithDefaultFallback()) {
+                items.put(useAliasOption.getAlias(), useAliasOption.getClassName());
+            }
+
+            items.putAll(getUseAsMap(phpAttributesList));
+
+            for (String fqnClass: FileBasedIndex.getInstance().getAllKeys(PhpAttributesFQNsIndex.KEY, project)) {
+                if(!fqnClass.startsWith("\\")) {
+                    fqnClass = "\\" + fqnClass;
+                }
+
+                // attach class also "@ORM\Entity" if there is not import but an alias via settings
+                for (Map.Entry<String, String> aliasFqn : items.entrySet()) {
+                    String className = "\\" + StringUtils.stripStart(aliasFqn.getValue(), "\\") + "\\";
+
+                    if (!fqnClass.startsWith(className)) {
+                        continue;
+                    }
+
+                    String substring = fqnClass.substring(className.length());
+
+                    String lookupString = aliasFqn.getKey() + "\\" + substring;
+
+                    PhpClass underlyingClass = PhpElementsUtil.getClassInterface(project, fqnClass);
+                    if (underlyingClass != null) {
+                        // check if Attribute is target allowed for context
+                        // @see com.jetbrains.php.completion.PhpCompletionContributor.PhpClassRefCompletionProvider.shouldAddElement
+                        List<PhpAttribute> rootAttributes = PhpClassCantBeUsedAsAttributeInspection.rootAttributes(underlyingClass).collect(Collectors.toList());
+                        if (!rootAttributes.isEmpty() && PhpInapplicableAttributeTargetDeclarationInspection.getInapplicableDeclarationName(phpAttributesList.getParent(), rootAttributes) == null) {
+                            PhpClassAnnotationLookupElement phpClassAnnotationLookupElement = new PhpClassAnnotationLookupElement(underlyingClass, new UseAliasOption(aliasFqn.getValue(), aliasFqn.getKey(), true), lookupString);
+                            phpClassAnnotationLookupElement.withInsertHandler(AttributeAliasInsertHandler.getInstance());
+                            completionResultSet.addElement(underlyingClass.isDeprecated() ? PrioritizedLookupElement.withPriority(phpClassAnnotationLookupElement, -1000) : phpClassAnnotationLookupElement);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static Map<String, String> getUseAsMap(@NotNull PsiElement phpDocComment) {
+            PhpPsiElement scope = PhpCodeInsightUtil.findScopeForUseOperator(phpDocComment);
+            if(scope == null) {
+                return Collections.emptyMap();
+            }
+
+            Map<String, String> useImports = new HashMap<>();
+
+            for (PhpUseList phpUseList : PhpCodeInsightUtil.collectImports(scope)) {
+                for(PhpUse phpUse : phpUseList.getDeclarations()) {
+                    String alias = phpUse.getAliasName();
+                    if (alias != null) {
+                        useImports.put(alias, phpUse.getFQN());
+                    }
+                }
+            }
+
+            return useImports;
         }
     }
 
