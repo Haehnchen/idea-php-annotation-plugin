@@ -15,7 +15,6 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.stubs.indexes.PhpAttributeIndex;
 import com.jetbrains.php.refactoring.PhpAliasImporter;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import org.apache.commons.lang.StringUtils;
@@ -273,7 +272,7 @@ public class PhpElementsUtil {
             nsClass = "\\" + nsClass;
         }
 
-        if(!PhpCodeInsightUtil.getAliasesInScope(scopeForUseOperator).containsValue(nsClass)) {
+        if(!PhpCodeInsightUtil.getAliasesInScope(scopeForUseOperator).containsKey(alias)) {
             PhpAliasImporter.insertUseStatement(nsClass, alias, scopeForUseOperator);
         }
     }

@@ -11,6 +11,11 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 9.2.0
+* [#266](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/266) provide attribute alias support for completion (Daniel Espendiller)
+* Provide extension points language tags (Daniel Espendiller)
+* Replace some deprecated API usages (Daniel Espendiller)
+
 ## 9.1.0
 * Improve index performance (Daniel Espendiller)
 * Support "Attribute" usages resolving for linemarker (Daniel Espendiller)
