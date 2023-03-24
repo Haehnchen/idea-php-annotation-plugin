@@ -36,13 +36,28 @@ class NotBlank extends Constraint {}
 
 `Languages & Framework > PHP > Annotations -> Use Alias`
 
+##### Annotations
+
 ```php
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @Id() -> @ORM\Id()
+ * @NotBlank() -> @Assert\NotBlank()
  */
+class Foo {}
+```
+
+##### Attributes
+
+
+```php
+
+use Doctrine\ORM\Mapping as ORM;
+
+#[Id] -> #[ORM\Id()]
+#[NotBlank] -> #[Assert\NotBlank()]
 class Foo {}
 ```
 

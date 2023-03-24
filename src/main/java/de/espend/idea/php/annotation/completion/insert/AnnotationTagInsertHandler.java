@@ -65,7 +65,7 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
     /**
      * Insert class alias before PhpStorm tries to import a new use statement "\Foo\Bar as Car"
      */
-    private void preAliasInsertion(@NotNull InsertionContext context, @NotNull LookupElement lookupElement) {
+    public static void preAliasInsertion(@NotNull InsertionContext context, @NotNull LookupElement lookupElement) {
         Collection<UseAliasOption> importsAliases = AnnotationUtil.getActiveImportsAliasesFromSettings();
         if(importsAliases.size() == 0) {
             return;

@@ -9,11 +9,13 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
+import com.jetbrains.php.completion.PhpLanguagesAttributeCompletionContributor;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.stubs.indexes.PhpAttributeIndex;
 import com.jetbrains.php.refactoring.PhpAliasImporter;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import org.apache.commons.lang.StringUtils;
@@ -59,6 +61,23 @@ public class PhpElementsUtil {
             if(groupStatement != null && groupStatement.getFirstChild() instanceof PhpClass) {
                 return AnnotationTarget.CLASS;
             }
+        }
+
+        return null;
+    }
+
+    static public AnnotationTarget findAttributeTarget(@NotNull PhpAttributesList phpAttributesList) {
+        PsiElement parent = phpAttributesList.getParent();
+        if (parent instanceof Method) {
+            return AnnotationTarget.METHOD;
+        }
+
+        if(parent.getNode().getElementType() == PhpElementTypes.CLASS_FIELDS) {
+            return AnnotationTarget.PROPERTY;
+        }
+
+        if(parent instanceof PhpClass) {
+            return AnnotationTarget.CLASS;
         }
 
         return null;

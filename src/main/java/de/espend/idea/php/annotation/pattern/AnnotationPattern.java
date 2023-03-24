@@ -39,6 +39,13 @@ public class AnnotationPattern {
             );
     }
 
+    public static ElementPattern<PsiElement> getAttributeNamePattern() {
+        return PlatformPatterns.psiElement(PhpTokenTypes.IDENTIFIER)
+            .withParent(
+                PlatformPatterns.psiElement(ClassReference.class).withParent(PhpAttribute.class)
+            );
+    }
+
     /**
      * fire on: @Callback(<completion>), @Callback("", <completion>)
      * * @ORM\Column(
