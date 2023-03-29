@@ -32,13 +32,11 @@ public class PhpDocTagWithUsePsiElementVisitor extends PsiElementVisitor {
             Collection<PhpDocTag> phpDocTags = new HashSet<>();
 
             // there os no "getAllTags", we can only search by name; so use same internal logic but without name
-            PhpDocUtil.processTagElementsByName((PhpDocComment) element, null, phpDocTag -> {
+            PhpDocUtil.consumeTagElementsByName((PhpDocComment) element, null, phpDocTag -> {
                 String name = phpDocTag.getName();
                 if (StringUtils.isNotBlank(name) && !AnnotationUtil.isBlockedAnnotationTag(name)) {
                     phpDocTags.add(phpDocTag);
                 }
-
-                return true;
             });
 
             // our scope are the full DocComment; so collect the imports for them but lazy only if we need them
