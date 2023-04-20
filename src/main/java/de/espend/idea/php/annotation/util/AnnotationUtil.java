@@ -829,8 +829,16 @@ public class AnnotationUtil {
             String attr = MessageFormat.format(", {0}={1}", namedArgument, value);
             editor.getDocument().insertString(lastChild.getTextRange().getEndOffset() - 1, attr);
         } else {
+            int endOffset = lastChild.getTextRange().getEndOffset();
+
+            // append "()"
+            if (!phpDocTag.getText().endsWith("()")) {
+                editor.getDocument().insertString(endOffset, "()");
+                endOffset = endOffset + 2;
+            }
+
             String attr = MessageFormat.format("{0}={1}", namedArgument, value);
-            editor.getDocument().insertString(lastChild.getTextRange().getEndOffset() - 1, attr);
+            editor.getDocument().insertString(endOffset - 1, attr);
         }
     }
 
