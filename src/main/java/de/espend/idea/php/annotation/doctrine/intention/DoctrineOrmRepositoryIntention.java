@@ -63,9 +63,14 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
-
         PhpClass phpClass = getScopedPhpClass(element);
         if(phpClass == null) {
+            return;
+        }
+
+        // skip for preview
+        PsiDirectory containingDirectory = phpClass.getContainingFile().getContainingDirectory();
+        if (containingDirectory == null) {
             return;
         }
 
@@ -87,9 +92,8 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
         }
 
         String fileName = phpClass.getName() + "Repository.php";
-
         PsiDirectory repositoryDir = null;
-        PsiDirectory parentDirectory = phpClass.getContainingFile().getContainingDirectory().getParentDirectory();
+        PsiDirectory parentDirectory = containingDirectory.getParentDirectory();
         if (parentDirectory != null) {
             repositoryDir = parentDirectory.findSubdirectory("Repository");
             if (repositoryDir == null) {
