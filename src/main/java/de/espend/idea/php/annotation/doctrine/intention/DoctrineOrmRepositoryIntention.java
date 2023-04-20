@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -81,9 +82,35 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
             return;
         }
 
-        int i = fqn.lastIndexOf("\\");
+        String[] split = StringUtils.split(StringUtils.stripStart(fqn, "\\"), "\\");
+
+        // Foo\Entity\Foobar => Foo\Repository\FoobarRepository
+        if (split.length > 2) {
+            String repoNamespace = "\\" + StringUtils.join(Arrays.copyOfRange(split, 0, split.length -2), "\\") + "\\Repository\\" + split[split.length - 1] + "Repository";
+            if (PhpElementsUtil.getClass(project, repoNamespace) != null) {
+                insertRepositoryClass(editor, element, phpClass, repoNamespace);
+                return;
+            }
+        }
+
+        // Foo\Entity\Foo\Foobar => Foo\Repository\Foo\FoobarRepository
+        int i = fqn.lastIndexOf("\\Entity\\");
         if (i > 0) {
-            String repoNamespace = new StringBuilder(fqn).insert(i, "\\Repository") +  "Repository";
+            String repoNamespace = new StringBuilder(fqn)
+                .replace(i, i + "\\Entity\\".length(), "\\Repository\\")
+                .append("Repository")
+                .toString();
+
+            if (PhpElementsUtil.getClass(project, repoNamespace) != null) {
+                insertRepositoryClass(editor, element, phpClass, repoNamespace);
+                return;
+            }
+        }
+
+        // Foo\Entity\Foobar => Foo\Entity\Repository\FoobarRepository
+        int i1 = fqn.lastIndexOf("\\");
+        if (i1 > 0) {
+            String repoNamespace = new StringBuilder(fqn).insert(i1, "\\Repository") +  "Repository";
 
             if (PhpElementsUtil.getClass(project, repoNamespace) != null) {
                 insertRepositoryClass(editor, element, phpClass, repoNamespace);

@@ -266,6 +266,21 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
         assertTrue(text.contains("@Foobar(foo=Foobar::class)"));
     }
 
+    public void testInsertNamedArgumentForAnnotationA() {
+        PhpDocTag phpDocTag = createAnnotation("Foobar");
+
+        WriteCommandAction.runWriteCommandAction(
+            getProject(),
+            () -> AnnotationUtil.insertNamedArgumentForAnnotation(getEditor(), phpDocTag, "foo", "Foobar::class")
+        );
+
+        PsiDocumentManager.getInstance(getProject()).doPostponedOperationsAndUnblockDocument(getEditor().getDocument());
+        PsiDocumentManager.getInstance(getProject()).commitDocument(getEditor().getDocument());
+
+        String text = getEditor().getDocument().getText();
+        assertTrue(text.contains("@Foobar(foo=Foobar::class)"));
+    }
+
     public void testInsertNamedArgumentForAnnotation2() {
         PhpDocTag phpDocTag = createAnnotation("Foobar(\"foobar\")");
 
