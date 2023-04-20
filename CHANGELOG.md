@@ -11,6 +11,10 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 9.2.1
+* Fix path detection for repository and support adding "()" for annotation inserts (Daniel Espendiller)
+* Fix for preview feature "Add Doctrine repository": "Cannot invoke "com.intellij.psi.PsiDirectory.getParentDirectory()" because the return value of "com.intellij.psi.PsiFile.getContainingDirectory()" is null" (Daniel Espendiller)
+
 ## 9.2.0
 * [#266](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/266) provide attribute alias support for completion (Daniel Espendiller)
 * Provide extension points language tags (Daniel Espendiller)
