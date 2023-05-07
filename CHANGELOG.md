@@ -11,6 +11,15 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 9.3.0
+* Add cache for Doctrine types and plugin class activation check (Daniel Espendiller)
+* Replace recursive visiting for Doctrine field types name returns (Daniel Espendiller)
+* Only show Doctrine column generation if properties exists (Daniel Espendiller)
+* Guess array columns to "json"; array type is deprecated and replacement is json (Daniel Espendiller)
+* [#274](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/274) Remove inspection preview feature for "Add Doctrine repository" (Daniel Espendiller)
+* Fix wrong path for namespace placeholder in Doctrine repository creation (Daniel Espendiller)
+* Support "nullable" when generating entity columns (Daniel Espendiller)
+
 ## 9.2.1
 * Fix path detection for repository and support adding "()" for annotation inserts (Daniel Espendiller)
 * Fix for preview feature "Add Doctrine repository": "Cannot invoke "com.intellij.psi.PsiDirectory.getParentDirectory()" because the return value of "com.intellij.psi.PsiFile.getContainingDirectory()" is null" (Daniel Espendiller)
