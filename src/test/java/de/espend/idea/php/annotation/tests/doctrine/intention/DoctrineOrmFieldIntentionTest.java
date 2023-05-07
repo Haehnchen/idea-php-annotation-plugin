@@ -54,6 +54,30 @@ public class DoctrineOrmFieldIntentionTest extends AnnotationLightCodeInsightFix
         );
     }
 
+    public void testThatAddDoctrineColumnIsAvailableIsInvokedWithResultForNullable() {
+        myFixture.configureByText(PhpFileType.INSTANCE, "<?php\n" +
+            "\n" +
+            "class Foobar\n" +
+            "{\n" +
+            "   public ?int $foo<caret>bar;\n" +
+            "}");
+
+        final IntentionAction action = myFixture.findSingleIntention("Add Doctrine column");
+        myFixture.launchAction(action);
+
+        myFixture.checkResult("<?php\n" +
+            "\n" +
+            "use Doctrine\\ORM\\Mapping as ORM;\n" +
+            "\n" +
+            "class Foobar\n" +
+            "{\n" +
+            "    /**\n" +
+            "     * @ORM\\Column(type=\"integer\", nullable=true)\n" +
+            "     */public ?int $foobar;\n" +
+            "}"
+        );
+    }
+
     public void testThatAddDoctrineColumnIsAvailableIsInvokedWithResultForAttributes() {
         myFixture.configureByText(PhpFileType.INSTANCE, "<?php\n" +
             "\n" +
@@ -77,6 +101,20 @@ public class DoctrineOrmFieldIntentionTest extends AnnotationLightCodeInsightFix
             "    #[ORM\\GeneratedValue(strategy: 'AUTO')]\n" +
             "    #[ORM\\Column(type: 'integer')]\n" +
             "    public $id;\n" +
+            "}"
+        );
+    }
+
+    public void testThatAddDoctrineColumnIsAvailableIsInvokedWithResultForAttributesWithNullable() {
+        myFixture.configureByText(PhpFileType.INSTANCE, "<?php\n" +
+            "\n" +
+            "use Doctrine\\ORM\\Mapping as ORM;\n" +
+            "\n" +
+            "#[Foo]\n" +
+            "class Foobar\n" +
+            "{\n" +
+            "    #[ORM\\Column(type: 'string')]\n" +
+            "    public $foobar;\n" +
             "}"
         );
     }
