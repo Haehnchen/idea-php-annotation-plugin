@@ -3,8 +3,12 @@ package de.espend.idea.php.annotation.doctrine.util;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.*;
+import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.indexing.ID;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
 import com.jetbrains.php.lang.PhpLangUtil;
@@ -12,6 +16,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.jetbrains.php.lang.psi.stubs.indexes.PhpClassNameIndex;
 import de.espend.idea.php.annotation.PhpAnnotationIcons;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
@@ -22,10 +27,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -41,6 +44,9 @@ public class DoctrineUtil {
         "\\Doctrine\\ORM\\Mapping\\OneToMany",
         "\\Doctrine\\ORM\\Mapping\\ManyToMany",
     };
+
+    private static final Key<CachedValue<Map<String, Set<String>>>> ANNOTATIONS_TARGETS_CACHE = new Key<>("ANNOTATIONS_TARGETS_CACHE");
+    private static final Key<CachedValue<Boolean>> IS_DOCTRINE_PROJECT_CACHE = new Key<>("ANNOTATIONS_DOCTRINE_PROJECT");
 
     public static String guessFieldType(@NotNull Field field) {
         String fieldName = field.getName();
@@ -122,9 +128,17 @@ public class DoctrineUtil {
 
     public static boolean isDoctrineOrmInVendor(@NotNull Project project)
     {
-        return
-            PhpIndex.getInstance(project).getInterfacesByFQN("Doctrine\\ORM\\Mapping\\Annotation").size() > 0
-            || PhpIndex.getInstance(project).getClassesByFQN("Doctrine\\ORM\\Mapping\\Entity").size() > 0;
+        return CachedValuesManager.getManager(project).getCachedValue(
+            project,
+            IS_DOCTRINE_PROJECT_CACHE,
+            () -> {
+                Boolean hasClass = PhpIndex.getInstance(project).getInterfacesByFQN("Doctrine\\ORM\\Mapping\\Annotation").size() > 0
+                    || PhpIndex.getInstance(project).getClassesByFQN("Doctrine\\ORM\\Mapping\\Entity").size() > 0;
+
+                return CachedValueProvider.Result.create(hasClass, getModificationTrackerForIndexId(project, PhpClassNameIndex.KEY));
+            },
+            false
+        );
     }
 
     public static String trimBlackSlashes(@NotNull String namespaceName) {
@@ -165,38 +179,66 @@ public class DoctrineUtil {
     public static Collection<LookupElement> getTypes(@NotNull Project project) {
         final Collection<LookupElement> lookupElements = new ArrayList<>();
 
-        visitCustomTypes(project, (name, phpClass, psiElement) -> {
-            LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(name).withIcon(PhpAnnotationIcons.DOCTRINE);
+        for (Map.Entry<String, Set<String>> entry : getColumnTypes(project).entrySet()) {
+            LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(entry.getKey()).withIcon(PhpAnnotationIcons.DOCTRINE);
 
-            if(phpClass != null) {
-                lookupElementBuilder = lookupElementBuilder.withTypeText(phpClass.getName(), true);
+            for (String clazz : entry.getValue()) {
+                PhpClass phpClass = PhpElementsUtil.getClassInterface(project, clazz);
+                if (phpClass != null) {
+                    lookupElementBuilder = lookupElementBuilder.withTypeText(phpClass.getName(), true);
 
-                if (phpClass.isDeprecated()) {
-                    lookupElementBuilder = lookupElementBuilder.withStrikeoutness(true);
+                    if (phpClass.isDeprecated()) {
+                        lookupElementBuilder = lookupElementBuilder.withStrikeoutness(true);
+                    }
                 }
             }
 
             lookupElements.add(lookupElementBuilder);
-        });
+        }
 
         return lookupElements;
     }
 
     @NotNull
     public static Collection<PhpClass> getColumnTypesTargets(@NotNull Project project, final @NotNull String contents) {
-        final Collection<PhpClass> targets = new ArrayList<>();
+        Set<String> strings = getColumnTypes(project).get(contents);
+        if (strings == null) {
+            return Collections.emptyList();
+        }
 
-        visitCustomTypes(project, (name, phpClass, psiElement) -> {
-            if(!name.equals(contents)) {
-                return;
-            }
+        return strings.stream()
+            .map(clazz -> PhpElementsUtil.getClassInterface(project, clazz))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
 
-            if(phpClass != null) {
-                targets.add(phpClass);
-            }
-        });
+    @NotNull
+    private static Map<String, Set<String>> getColumnTypes(@NotNull Project project) {
+        return CachedValuesManager.getManager(project).getCachedValue(
+            project,
+            ANNOTATIONS_TARGETS_CACHE,
+            () -> {
+                Map<String, Set<String>> items = new HashMap<>();
 
-        return targets;
+                visitCustomTypes(project, (name, phpClass, psiElement) -> {
+                    if (!items.containsKey(name)) {
+                        items.put(name, Collections.emptySet());
+                    }
+
+                    if (phpClass != null) {
+                        Set<String> current = new HashSet<>(items.get(name));
+                        current.add(phpClass.getFQN());
+
+                        items.put(name, Collections.unmodifiableSet(current));
+                    }
+                });
+
+                // PhpClassNameIndex
+
+                return CachedValueProvider.Result.create(Collections.unmodifiableMap(items), PsiModificationTracker.MODIFICATION_COUNT);
+            },
+            false
+        );
     }
 
     public static void importOrmUseAliasIfNotExists(@NotNull PhpClassMember field) {
@@ -283,5 +325,9 @@ public class DoctrineUtil {
         PhpClass repoPhpClass = PhpElementsUtil.getClass(phpClassContext.getProject(), classPath);
 
         return repoPhpClass != null;
+    }
+
+    private static ModificationTracker getModificationTrackerForIndexId(@NotNull Project project, @NotNull final ID<?, ?> id) {
+        return () -> FileBasedIndex.getInstance().getIndexModificationStamp(id, project);
     }
 }
