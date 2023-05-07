@@ -4,12 +4,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
-import com.jetbrains.php.completion.PhpLanguagesAttributeCompletionContributor;
+import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
+import com.jetbrains.php.codeInsight.controlFlow.PhpInstructionProcessor;
+import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpReturnInstruction;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
@@ -225,37 +226,36 @@ public class PhpElementsUtil {
 
     /**
      * Find a string return value of a method context "function() { return 'foo'}"
-     * First match wins
      */
     @Nullable
-    static public String getMethodReturnAsString(@NotNull PhpClass phpClass, @NotNull String methodName) {
-
+    public static String getMethodReturnAsString(@NotNull PhpClass phpClass, @NotNull String methodName) {
         Method method = phpClass.findMethodByName(methodName);
         if(method == null) {
             return null;
         }
 
-        final Set<String> values = new HashSet<>();
-        method.acceptChildren(new PsiRecursiveElementWalkingVisitor() {
+        Set<String> values = new HashSet<>();
+
+        PhpControlFlowUtil.processFlow(method.getControlFlow(), new PhpInstructionProcessor() {
             @Override
-            public void visitElement(@NotNull PsiElement element) {
+            public boolean processReturnInstruction(PhpReturnInstruction instruction) {
+                PsiElement element = instruction.getArgument();
 
                 if(PhpElementsUtil.getMethodReturnPattern().accepts(element)) {
                     String value = PhpElementsUtil.getStringValue(element);
-                    if(value != null && StringUtils.isNotBlank(value)) {
+                    if(StringUtils.isNotBlank(value)) {
                         values.add(value);
                     }
                 }
 
-                super.visitElement(element);
+                return super.processReturnInstruction(instruction);
             }
         });
 
-        if(values.size() == 0) {
+        if (values.isEmpty()) {
             return null;
         }
 
-        // we support only first item
         return values.iterator().next();
     }
 
