@@ -42,9 +42,16 @@ public class PhpDocUtil {
 
         String fieldName = forElement.getName();
         String defaultType = DoctrineUtil.guessFieldType(forElement);
+        boolean isNullable = forElement.getType().isNullable();
 
         if (AnnotationUtil.useAttributeForGenerateDoctrineMetadata(file))  {
-            addAttribute(document, forElement, beforeElement, "\\Doctrine\\ORM\\Mapping\\Column", "type: '" + defaultType + "'");
+            String arguments = "type: '" + defaultType + "'";
+
+            if (isNullable) {
+                arguments += ", nullable: true";
+            }
+
+            addAttribute(document, forElement, beforeElement, "\\Doctrine\\ORM\\Mapping\\Column", arguments);
 
             PsiElement parent = forElement.getParent();
 
@@ -74,7 +81,13 @@ public class PhpDocUtil {
                 }
             }
 
-            addPhpDocTag(forElement, document, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\Column", "type=\"" + defaultType + "\"");
+            String arguments = "type=\"" + defaultType + "\"";
+
+            if (isNullable) {
+                arguments += ", nullable=true";
+            }
+
+            addPhpDocTag(forElement, document, file, beforeElement, "\\Doctrine\\ORM\\Mapping\\Column", arguments);
         }
     }
 
