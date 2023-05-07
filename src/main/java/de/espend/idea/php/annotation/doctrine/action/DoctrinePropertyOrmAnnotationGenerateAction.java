@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.actions.generation.PhpGenerateFieldAccessorHandlerBase;
 import com.jetbrains.php.lang.intentions.generators.PhpAccessorMethodData;
 import com.jetbrains.php.lang.psi.PhpFile;
@@ -63,25 +64,30 @@ public class DoctrinePropertyOrmAnnotationGenerateAction extends CodeInsightActi
     @Override
     protected boolean isValidForFile(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
 
-        if(!(file instanceof PhpFile) || !DoctrineUtil.isDoctrineOrmInVendor(project)) {
+        if (!(file instanceof PhpFile) || !DoctrineUtil.isDoctrineOrmInVendor(project)) {
             return false;
         }
 
         int offset = editor.getCaretModel().getOffset();
-        if(offset <= 0) {
+        if (offset <= 0) {
             return false;
         }
 
         PsiElement psiElement = file.findElementAt(offset);
-        if(psiElement == null) {
+        if (psiElement == null) {
             return false;
         }
 
-        if(!PlatformPatterns.psiElement().inside(PhpClass.class).accepts(psiElement)) {
+        if (!PlatformPatterns.psiElement().inside(PhpClass.class).accepts(psiElement)) {
             return false;
         }
 
-        return true;
+        PhpClass parentOfType = PsiTreeUtil.getParentOfType(psiElement, PhpClass.class);
+        if (parentOfType == null) {
+            return false;
+        }
+
+        return parentOfType.getOwnFields().length > 0;
     }
 
     @NotNull
