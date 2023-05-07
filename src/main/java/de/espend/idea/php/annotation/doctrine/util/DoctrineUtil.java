@@ -69,6 +69,11 @@ public class DoctrineUtil {
                     return "integer";
                 }
 
+                // array is deprecated
+                if ("array".equals(typeStrip)) {
+                    return "json";
+                }
+
                 return typeStrip;
             }
 
