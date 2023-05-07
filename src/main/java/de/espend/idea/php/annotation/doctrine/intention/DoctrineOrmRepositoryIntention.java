@@ -153,7 +153,9 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
 
         Properties properties = new Properties(defaultProperties);
 
-        String repoClass = new StringBuilder(fqn).insert(fqn.lastIndexOf("\\"), "\\Repository") +  "Repository";
+        // Foo\Entity\Foobar => Foo\Repository\FoobarRepository
+        String repoClass = "\\" + StringUtils.join(Arrays.copyOfRange(split, 0, split.length -2), "\\") + "\\Repository\\" + split[split.length - 1] + "Repository";
+
         properties.setProperty("NAMESPACE", StringUtils.stripStart(repoClass.substring(0, repoClass.lastIndexOf("\\")), "\\"));
         properties.setProperty("NAME", phpClass.getName() + "Repository");
 
