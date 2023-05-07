@@ -3,6 +3,7 @@ package de.espend.idea.php.annotation.doctrine.intention;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplate;
@@ -16,6 +17,7 @@ import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
@@ -46,7 +48,6 @@ import java.util.Properties;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionAction implements LocalQuickFix, Iconable, HighPriorityAction {
-
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
 
@@ -270,5 +271,14 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
 
     public Icon getIcon(int flags) {
         return PhpAnnotationIcons.DOCTRINE;
+    }
+
+    public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+        return IntentionPreviewInfo.EMPTY;
+    }
+
+    @Override
+    public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull ProblemDescriptor previewDescriptor) {
+        return IntentionPreviewInfo.EMPTY;
     }
 }
