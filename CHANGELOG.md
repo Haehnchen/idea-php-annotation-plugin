@@ -11,6 +11,9 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 9.3.1
+* [#260](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/260) use namespace scope for decided between Annotation and Attribute (Daniel Espendiller)
+
 ## 9.3.0
 * Add cache for Doctrine types and plugin class activation check (Daniel Espendiller)
 * Replace recursive visiting for Doctrine field types name returns (Daniel Espendiller)
