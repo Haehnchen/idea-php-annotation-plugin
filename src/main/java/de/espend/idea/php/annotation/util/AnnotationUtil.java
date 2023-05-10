@@ -1,5 +1,7 @@
 package de.espend.idea.php.annotation.util;
 
+import com.intellij.codeInsight.completion.PlainPrefixMatcher;
+import com.intellij.codeInsight.completion.StartOnlyMatcher;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
@@ -16,6 +18,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.ID;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
@@ -45,6 +48,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -842,45 +846,88 @@ public class AnnotationUtil {
         }
     }
 
-    /**
-     * Decide on a given file scope if attributes or annotation should be used
-     */
-    public static boolean useAttributeForGenerateDoctrineMetadata(@NotNull PsiFile file) {
-        final boolean[] hasAnnotation = {false};
+    private enum MetadataType {
+        ANNOTATION,
+        ATTRIBUTE,
+        UNKNOWN
+    }
 
-        // annotation are winning if any Doctrine ORM annotation is given
-        file.acceptChildren(new PsiRecursiveElementVisitor() {
+    @NotNull
+    private static MetadataType getAnnotationMetadataUsage(@NotNull PsiElement psiElement) {
+        final boolean[] hasAnnotation = {false};
+        final boolean[] hasAttributes = {false};
+
+        psiElement.acceptChildren(new PsiRecursiveElementVisitor() {
             @Override
             public void visitElement(@NotNull PsiElement element) {
-                if (!hasAnnotation[0] && element instanceof PhpDocTag && AnnotationUtil.isAnnotationPhpDocTag((PhpDocTag) element)) {
+                if (hasAnnotation[0] || hasAttributes[0]) {
+                    return;
+                }
+
+                if (element instanceof PhpDocTag && AnnotationUtil.isAnnotationPhpDocTag((PhpDocTag) element)) {
                     PhpClass phpClass = AnnotationUtil.getAnnotationReference((PhpDocTag) element);
                     if (phpClass != null && phpClass.getFQN().startsWith("\\Doctrine\\ORM")) {
                         hasAnnotation[0] = true;
+                        return;
                     }
                 }
-                super.visitElement(element);
-            }
-        });
 
-        if (hasAnnotation[0]) {
-            return false;
-        }
-
-        final boolean[] hasAttributes = {false};
-
-        // check for at least one attribute
-        file.acceptChildren(new PsiRecursiveElementVisitor() {
-            @Override
-            public void visitElement(@NotNull PsiElement element) {
                 if (element instanceof PhpAttribute) {
                     hasAttributes[0] = true;
+                    return;
                 }
+
                 super.visitElement(element);
             }
         });
 
         if (hasAttributes[0]) {
-            return true;
+            return MetadataType.ATTRIBUTE;
+        }
+
+        if (hasAnnotation[0]) {
+            return MetadataType.ANNOTATION;
+        }
+
+        return MetadataType.UNKNOWN;
+    }
+
+    /**
+     * Decide on a given file scope if attributes or annotation should be used
+     */
+    public static boolean useAttributeForGenerateDoctrineMetadata(@NotNull PsiFile file) {
+        MetadataType annotationMetadataUsage = getAnnotationMetadataUsage(file);
+        if (annotationMetadataUsage != MetadataType.UNKNOWN) {
+            return annotationMetadataUsage == MetadataType.ATTRIBUTE;
+        }
+
+        for (PhpNamedElement topLevelElement : ((PhpFile) file).getTopLevelDefs().values()) {
+            if (topLevelElement instanceof PhpClass phpClass)  {
+                String fqn = phpClass.getFQN();
+
+                int i = fqn.lastIndexOf("\\");
+                if (i < 1) {
+                    continue;
+                }
+
+                String parentFqn = fqn.substring(0, i);
+
+                Collection<String> limit = PhpIndex.getInstance(file.getProject())
+                    .getAllClassFqns(new StartOnlyMatcher(new PlainPrefixMatcher(parentFqn)))
+                    .stream()
+                    .sorted(Comparator.comparingDouble(x -> Math.random()))
+                    .limit(5)
+                    .collect(Collectors.toSet());
+
+                for (String s : limit) {
+                    for (PhpClass aClass : PhpIndex.getInstance(file.getProject()).getAnyByFQN(s)) {
+                        MetadataType usage = getAnnotationMetadataUsage(aClass.getParent());
+                        if (usage != MetadataType.UNKNOWN) {
+                            return usage == MetadataType.ATTRIBUTE;
+                        }
+                    }
+                }
+            }
         }
 
         // fallback to project scope via PHP version
