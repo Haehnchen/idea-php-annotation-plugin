@@ -16,6 +16,8 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.stubs.indexes.expectedArguments.PhpExpectedFunctionClassConstantArgument;
+import com.jetbrains.php.lang.psi.stubs.indexes.expectedArguments.PhpExpectedFunctionScalarArgument;
 import com.jetbrains.php.refactoring.PhpAliasImporter;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
 import org.apache.commons.lang.StringUtils;
@@ -293,6 +295,24 @@ public class PhpElementsUtil {
                         }
                     }
                 }
+            }
+        }
+
+        return null;
+    }
+
+    public static String getAttributeArgumentStringByName(@NotNull PhpAttribute phpAttribute, @NotNull String attributeName) {
+        for (PhpAttribute.PhpAttributeArgument argument : phpAttribute.getArguments()) {
+            if (!attributeName.equals(argument.getName())) {
+                continue;
+            }
+
+            if (argument.getArgument() instanceof PhpExpectedFunctionClassConstantArgument phpExpectedFunctionClassConstantArgument) {
+                return phpExpectedFunctionClassConstantArgument.getClassFqn();
+            }
+
+            if (argument.getArgument() instanceof PhpExpectedFunctionScalarArgument phpExpectedFunctionScalarArgument) {
+                return phpExpectedFunctionScalarArgument.getNormalizedValue().replaceAll("^\"|\"$|\'|\'$", "");
             }
         }
 
