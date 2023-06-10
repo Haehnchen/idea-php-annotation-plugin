@@ -44,5 +44,19 @@ public class ColumnNameCompletionProviderTest extends AnnotationLightCodeInsight
                 "}",
             "attribute_id"
         );
+
+        assertCompletionContains("test.php", "<?php\n" +
+                "use Doctrine\\ORM\\Mapping as ORM;\n" +
+                "\n" +
+                "class Foo\n" +
+                "{" +
+                "    public function __construct(\n" +
+                "        #[ORM\\Column(name: '<caret>')]\n" +
+                "        private readonly int $attributeId,\n" +
+                "    )\n" +
+                "    {" +
+                "}",
+            "attribute_id"
+        );
     }
 }
