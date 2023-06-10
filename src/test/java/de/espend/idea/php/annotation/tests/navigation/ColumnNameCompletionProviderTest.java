@@ -15,7 +15,7 @@ public class ColumnNameCompletionProviderTest extends AnnotationLightCodeInsight
         return "src/test/java/de/espend/idea/php/annotation/tests/navigation/fixtures";
     }
 
-    public void testThatDoctrineORMColumnTypeStringIsCompletedForAnnotation() {
+    public void testThatDoctrineORMColumnNameCompletionForAnnotation() {
         assertCompletionContains("test.php", "<?php\n" +
                 "use Doctrine\\ORM\\Mapping as ORM;\n" +
                 "\n" +
@@ -24,20 +24,25 @@ public class ColumnNameCompletionProviderTest extends AnnotationLightCodeInsight
                 " */\n" +
                 "class Foo\n" +
                 "{\n" +
+                "    /**\n" +
+                "    * @ORM\\Column(name=\"<caret>\")\n" +
+                "    */\n" +
+                "    public $createdAt;\n" +
                 "}",
-            "json_array"
+            "created_at"
         );
     }
 
-    public void testThatDoctrineORMColumnTypeStringIsCompletedForAttribute() {
+    public void testThatDoctrineORMColumnNameCompletionForAttribute() {
         assertCompletionContains("test.php", "<?php\n" +
                 "use Doctrine\\ORM\\Mapping as ORM;\n" +
                 "\n" +
-                "#[ORM\\Column(type: 'json<caret>')]\n" +
                 "class Foo\n" +
-                "{\n" +
+                "{" +
+                "   #[ORM\\Column(name: '<caret>')]\n" +
+                "   private int $attributeId;" +
                 "}",
-            "json_array"
+            "attribute_id"
         );
     }
 }
