@@ -1,18 +1,18 @@
 package de.espend.idea.php.annotation.doctrine.navigation;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.PhpAttributesList;
+import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
+import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.psi.elements.impl.PhpPromotedFieldParameterImpl;
 import de.espend.idea.php.annotation.PhpAnnotationIcons;
-import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
 import de.espend.idea.php.annotation.extension.PhpAnnotationCompletionProvider;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationCompletionProviderParameter;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
-import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -45,7 +45,10 @@ public class ColumnNameCompletionProvider implements PhpAnnotationCompletionProv
 
             PhpAttributesList parentOfType = PsiTreeUtil.getParentOfType(annotationPropertyParameter.getElement(), PhpAttributesList.class);
             if (parentOfType != null && parentOfType.getParent() instanceof PhpPsiElement phpPsiElement) {
-                PhpNamedElement phpNamedElement = PsiTreeUtil.getChildOfType(phpPsiElement, PhpNamedElement.class);
+                PhpNamedElement phpNamedElement = phpPsiElement instanceof PhpPromotedFieldParameterImpl phpPromotedFieldParameter
+                    ? phpPromotedFieldParameter
+                    : PsiTreeUtil.getChildOfType(phpPsiElement, PhpNamedElement.class);
+
                 if (phpNamedElement != null && StringUtils.isNotBlank(phpNamedElement.getName())) {
                     completionParameter.getResult().addElement(LookupElementBuilder.create(underscore(phpNamedElement.getName())).withIcon(PhpAnnotationIcons.DOCTRINE));
                 }
