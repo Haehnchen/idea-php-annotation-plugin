@@ -9,6 +9,7 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.PhpPromotedFieldParameterImpl;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
@@ -90,21 +91,31 @@ public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<
 
                 lookupElement = lookupElement.withTailText(String.format("(%s)", relation.getPhpClass().getName()), true);
             }
-        } else if (field.getParent() instanceof PhpPsiElement phpPsiElement) {
-            for (PhpAttributesList phpAttributesList : PsiTreeUtil.getChildrenOfTypeAsList(phpPsiElement, PhpAttributesList.class)) {
-                for (PhpAttribute attribute : phpAttributesList.getAttributes("\\Doctrine\\ORM\\Mapping\\Column")) {
-                    String value = PhpElementsUtil.getAttributeArgumentStringByName(attribute, "type");
-                    if (value != null) {
-                        lookupElement = lookupElement.withTypeText(value, true);
-                    }
-                }
+        } else  {
+            List<PhpAttributesList> childrenOfTypeAsList = null;
 
-                for (String doctrineRelationField : DoctrineUtil.DOCTRINE_RELATION_FIELDS) {
-                    for (PhpAttribute attribute : phpAttributesList.getAttributes(doctrineRelationField)) {
-                        String value = PhpElementsUtil.getAttributeArgumentStringByName(attribute, "targetEntity");
-                        if(value != null) {
-                            lookupElement = lookupElement.withTypeText(StringUtils.stripStart(value, "\\"), true);
-                            lookupElement = lookupElement.withBoldness(true);
+            if (field instanceof PhpPromotedFieldParameterImpl) {
+                childrenOfTypeAsList = PsiTreeUtil.getChildrenOfTypeAsList(field, PhpAttributesList.class);
+            } else if (field.getParent() instanceof PhpPsiElement phpPsiElement) {
+                childrenOfTypeAsList = PsiTreeUtil.getChildrenOfTypeAsList(phpPsiElement, PhpAttributesList.class);
+            }
+
+            if (childrenOfTypeAsList !=  null) {
+                for (PhpAttributesList phpAttributesList : childrenOfTypeAsList) {
+                    for (PhpAttribute attribute : phpAttributesList.getAttributes("\\Doctrine\\ORM\\Mapping\\Column")) {
+                        String value = PhpElementsUtil.getAttributeArgumentStringByName(attribute, "type");
+                        if (value != null) {
+                            lookupElement = lookupElement.withTypeText(value, true);
+                        }
+                    }
+
+                    for (String doctrineRelationField : DoctrineUtil.DOCTRINE_RELATION_FIELDS) {
+                        for (PhpAttribute attribute : phpAttributesList.getAttributes(doctrineRelationField)) {
+                            String value = PhpElementsUtil.getAttributeArgumentStringByName(attribute, "targetEntity");
+                            if (value != null) {
+                                lookupElement = lookupElement.withTypeText(StringUtils.stripStart(value, "\\"), true);
+                                lookupElement = lookupElement.withBoldness(true);
+                            }
                         }
                     }
                 }
