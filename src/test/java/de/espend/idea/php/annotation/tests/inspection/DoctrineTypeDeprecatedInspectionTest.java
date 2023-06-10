@@ -51,5 +51,14 @@ public class DoctrineTypeDeprecatedInspectionTest extends AnnotationLightCodeIns
                 "}",
             "[Annotations] Deprecated: Use JsonType instead"
         );
+
+        assertLocalInspectionIsEmpty("test.php", "<?php\n" +
+                "use Doctrine\\ORM\\Mapping as ORM;\n" +
+                "\n" +
+                "#[ORM\\Foobar(type: 'json<caret>_array')]\n" +
+                "class Foo\n" +
+                "{\n" +
+                "}"
+        );
     }
 }

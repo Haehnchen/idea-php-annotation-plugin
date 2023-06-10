@@ -49,7 +49,11 @@ public class DoctrineTypeDeprecatedInspection extends LocalInspectionTool {
 
         @Override
         public void visitElement(@NotNull PsiElement element) {
-            String contents = getContentIfTypeValid(element, "\\Doctrine\\ORM\\Mapping\\Column", "type");
+            if (!(element instanceof StringLiteralExpression stringLiteralExpression)) {
+                return;
+            }
+
+            String contents = getContentIfTypeValid(stringLiteralExpression, "\\Doctrine\\ORM\\Mapping\\Column", "type");
             if (contents != null) {
                 for (PhpClass columnPhpClass : DoctrineUtil.getColumnTypesTargets(holder.getProject(), contents)) {
                     if (!columnPhpClass.isDeprecated()) {
@@ -73,32 +77,23 @@ public class DoctrineTypeDeprecatedInspection extends LocalInspectionTool {
     }
 
     @Nullable
-    private static String getContentIfTypeValid(@NotNull PsiElement psiElement, @NotNull String clazz, @NotNull String property) {
-        if (AnnotationPattern.getAttributesValueReferencesPattern().accepts(psiElement)) {
-            PsiElement attributeNamePsi = PhpPsiUtil.getPrevSibling(psiElement, psiElement1 -> psiElement1 instanceof PsiWhiteSpace || psiElement1.getNode().getElementType() == PhpTokenTypes.opCOLON);
-            if (attributeNamePsi != null && attributeNamePsi.getNode().getElementType() == PhpTokenTypes.IDENTIFIER) {
-                String text = attributeNamePsi.getText();
-                if (text.equals("type")) {
-                    PhpAttribute phpAttribute = PsiTreeUtil.getParentOfType(psiElement, PhpAttribute.class);
-                    if (phpAttribute != null) {
-                        String fqn = phpAttribute.getFQN();
-                        if (fqn != null) {
-                            return ((StringLiteralExpression) psiElement).getContents();
-                        }
-                    }
+    private static String getContentIfTypeValid(@NotNull StringLiteralExpression stringLiteralExpression, @NotNull String clazz, @NotNull String property) {
+        if (AnnotationPattern.getAttributesValueReferencesPattern().accepts(stringLiteralExpression)) {
+            PsiElement attributeNamePsi = PhpPsiUtil.getPrevSibling(stringLiteralExpression, psiElement1 -> psiElement1 instanceof PsiWhiteSpace || psiElement1.getNode().getElementType() == PhpTokenTypes.opCOLON);
+            if (attributeNamePsi != null && attributeNamePsi.getNode().getElementType() == PhpTokenTypes.IDENTIFIER && property.equals(attributeNamePsi.getText())) {
+                PhpAttribute phpAttribute = PsiTreeUtil.getParentOfType(stringLiteralExpression, PhpAttribute.class);
+                if (phpAttribute != null && PhpLangUtil.equalsClassNames(clazz, phpAttribute.getFQN())) {
+                    return stringLiteralExpression.getContents();
                 }
             }
-
-        } else {
-            if (psiElement instanceof StringLiteralExpression && psiElement.getNode().getElementType() == PhpDocElementTypes.phpDocString) {
-                PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(psiElement, PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER));
-                if(propertyName != null && property.equals(propertyName.getText())) {
-                    PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(psiElement, PhpDocTag.class);
-                    if (phpDocTag != null) {
-                        PhpDocTagAnnotation phpDocAnnotationContainer = AnnotationUtil.getPhpDocAnnotationContainer(phpDocTag);
-                        if (phpDocAnnotationContainer != null && PhpLangUtil.equalsClassNames(phpDocAnnotationContainer.getPhpClass().getFQN(), clazz)) {
-                            return ((StringLiteralExpression) psiElement).getContents();
-                        }
+        } else if (stringLiteralExpression.getNode().getElementType() == PhpDocElementTypes.phpDocString) {
+            PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(stringLiteralExpression, PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER));
+            if (propertyName != null && property.equals(propertyName.getText())) {
+                PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(stringLiteralExpression, PhpDocTag.class);
+                if (phpDocTag != null) {
+                    PhpDocTagAnnotation phpDocAnnotationContainer = AnnotationUtil.getPhpDocAnnotationContainer(phpDocTag);
+                    if (phpDocAnnotationContainer != null && PhpLangUtil.equalsClassNames(phpDocAnnotationContainer.getPhpClass().getFQN(), clazz)) {
+                        return stringLiteralExpression.getContents();
                     }
                 }
             }
