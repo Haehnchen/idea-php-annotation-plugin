@@ -34,7 +34,7 @@ public class PhpPsiAttributesUtil {
                 return contents;
             }
         } else if(nextSibling instanceof ClassConstantReference) {
-            return resoClassReferenceValue(attribute, (ClassConstantReference) nextSibling);
+            return resolveClassReferenceValue((ClassConstantReference) nextSibling);
         }
 
         return null;
@@ -72,12 +72,12 @@ public class PhpPsiAttributesUtil {
     }
 
     @Nullable
-    private static String resoClassReferenceValue(@NotNull PhpAttribute attribute, @NotNull ClassConstantReference nextSibling) {
-        PhpExpression classReference = nextSibling.getClassReference();
-        if (classReference != null) {
-            String text = classReference.getText();
-            if (StringUtils.isNotBlank(text)) {
-                return text;
+    private static String resolveClassReferenceValue(@NotNull ClassConstantReference nextSibling) {
+        if (nextSibling.getClassReference() instanceof ClassReference classReference) {
+            String fqn = classReference.getFQN();
+
+            if (StringUtils.isNotBlank(fqn)) {
+                return fqn;
             }
         }
 

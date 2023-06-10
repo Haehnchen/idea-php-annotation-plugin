@@ -6,14 +6,15 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
-import com.jetbrains.php.lang.psi.elements.Field;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.dict.PhpDocTagAnnotation;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
+import de.espend.idea.php.annotation.util.PhpElementsUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -61,39 +62,55 @@ public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<
     }
 
     private LookupElementBuilder attachLookupInformation(Field field, LookupElementBuilder lookupElement) {
-
         // get some more presentable completion information
         PhpDocComment docBlock = field.getDocComment();
-        if(docBlock == null) {
-            return lookupElement;
-        }
+        if (docBlock != null) {
+            PhpDocCommentAnnotation phpDocCommentAnnotation = AnnotationUtil.getPhpDocCommentAnnotationContainer(docBlock);
+            if (phpDocCommentAnnotation == null) {
+                return lookupElement;
+            }
 
-        PhpDocCommentAnnotation phpDocCommentAnnotation = AnnotationUtil.getPhpDocCommentAnnotationContainer(docBlock);
-        if(phpDocCommentAnnotation == null) {
-            return lookupElement;
-        }
+            // search column type
+            PhpDocTagAnnotation phpDocTagAnnotation = phpDocCommentAnnotation.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Column");
+            if (phpDocTagAnnotation != null) {
+                String value = phpDocTagAnnotation.getPropertyValue("type");
+                if(value != null) {
+                    lookupElement = lookupElement.withTypeText(value, true);
+                }
+            }
 
-        // search column type
-        PhpDocTagAnnotation phpDocTagAnnotation = phpDocCommentAnnotation.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Column");
-        if(phpDocTagAnnotation != null) {
-            String value = phpDocTagAnnotation.getPropertyValue("type");
-            if(value != null) {
-                lookupElement = lookupElement.withTypeText(value, true);
+            // search for relations
+            PhpDocTagAnnotation relation = phpDocCommentAnnotation.getFirstPhpDocBlock(DoctrineUtil.DOCTRINE_RELATION_FIELDS);
+            if (relation != null) {
+                String value = relation.getPropertyValue("targetEntity");
+                if(value != null) {
+                    lookupElement = lookupElement.withTypeText(StringUtils.stripStart(value, "\\"), true);
+                    lookupElement = lookupElement.withBoldness(true);
+                }
+
+                lookupElement = lookupElement.withTailText(String.format("(%s)", relation.getPhpClass().getName()), true);
+            }
+        } else if (field.getParent() instanceof PhpPsiElement phpPsiElement) {
+            for (PhpAttributesList phpAttributesList : PsiTreeUtil.getChildrenOfTypeAsList(phpPsiElement, PhpAttributesList.class)) {
+                for (PhpAttribute attribute : phpAttributesList.getAttributes("\\Doctrine\\ORM\\Mapping\\Column")) {
+                    String value = PhpElementsUtil.getAttributeArgumentStringByName(attribute, "type");
+                    if (value != null) {
+                        lookupElement = lookupElement.withTypeText(value, true);
+                    }
+                }
+
+                for (String doctrineRelationField : DoctrineUtil.DOCTRINE_RELATION_FIELDS) {
+                    for (PhpAttribute attribute : phpAttributesList.getAttributes(doctrineRelationField)) {
+                        String value = PhpElementsUtil.getAttributeArgumentStringByName(attribute, "targetEntity");
+                        if(value != null) {
+                            lookupElement = lookupElement.withTypeText(StringUtils.stripStart(value, "\\"), true);
+                            lookupElement = lookupElement.withBoldness(true);
+                        }
+                    }
+                }
             }
         }
 
-        // search for relations
-        PhpDocTagAnnotation relation = phpDocCommentAnnotation.getFirstPhpDocBlock(DoctrineUtil.DOCTRINE_RELATION_FIELDS);
-        if(relation != null) {
-
-            String value = relation.getPropertyValue("targetEntity");
-            if(value != null) {
-                lookupElement = lookupElement.withTypeText(value, true);
-                lookupElement = lookupElement.withBoldness(true);
-            }
-
-            lookupElement = lookupElement.withTailText(String.format("(%s)", relation.getPhpClass().getName()), true);
-        }
 
         return lookupElement;
     }

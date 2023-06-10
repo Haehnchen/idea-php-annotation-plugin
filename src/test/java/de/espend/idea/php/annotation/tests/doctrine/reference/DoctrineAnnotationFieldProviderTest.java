@@ -70,5 +70,15 @@ public class DoctrineAnnotationFieldProviderTest extends AnnotationLightCodeInsi
                 "}",
             "bar2"
         );
+
+        assertCompletionContains(PhpFileType.INSTANCE, "<?php\n" +
+                "use Doctrine\\ORM\\Mapping as ORM;\n" +
+                "class Foo\n" +
+                "{\n" +
+                "   #[ORM\\ManyToMany(targetEntity: Foo::class, inversedBy: \"<caret>\")]" +
+                "   private $foobar;\n" +
+                "}",
+            "foobar"
+        );
     }
 }
