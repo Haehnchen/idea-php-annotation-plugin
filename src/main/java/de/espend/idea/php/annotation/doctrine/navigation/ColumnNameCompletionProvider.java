@@ -25,13 +25,17 @@ public class ColumnNameCompletionProvider implements PhpAnnotationCompletionProv
 
     @Override
     public void getPropertyValueCompletions(AnnotationPropertyParameter annotationPropertyParameter, AnnotationCompletionProviderParameter completionParameter) {
-
         String propertyName = annotationPropertyParameter.getPropertyName();
-        if(propertyName == null) {
+        if (!"name".equals(propertyName)) {
             return;
         }
 
-        if(propertyName.equals("name") && PhpLangUtil.equalsClassNames(annotationPropertyParameter.getPhpClass().getFQN(), "\\Doctrine\\ORM\\Mapping\\Column")) {
+        String fqn = annotationPropertyParameter.getPhpClass().getFQN();
+        boolean isColumn = PhpLangUtil.equalsClassNames(fqn, "\\Doctrine\\ORM\\Mapping\\Column")
+            || PhpLangUtil.equalsClassNames(fqn, "\\Doctrine\\ORM\\Mapping\\JoinColumn")
+            || PhpLangUtil.equalsClassNames(fqn, "\\Doctrine\\ORM\\Mapping\\InverseJoinColumn");
+
+        if (isColumn) {
             PhpDocComment phpDocComment = PsiTreeUtil.getParentOfType(annotationPropertyParameter.getElement(), PhpDocComment.class);
             if (phpDocComment != null) {
                 PhpPsiElement classField = phpDocComment.getNextPsiSibling();
