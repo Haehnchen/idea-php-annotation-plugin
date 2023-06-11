@@ -11,6 +11,13 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 9.4.0
+* Support additional information for metadata inside constructor property promotion (Daniel Espendiller)
+* Add PromotedField support for column names completion (Daniel Espendiller)
+* Support Doctrine column name completion for attributes (Daniel Espendiller)
+* Fix [#259](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/259) Incorrect Doctrine deprecation flagged on OpenApi attributes (Daniel Espendiller)
+* targetEntity for Doctrine relations should be resolved to support same namespace (Daniel Espendiller)
+
 ## 9.3.1
 * [#260](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/260) use namespace scope for decided between Annotation and Attribute (Daniel Espendiller)
 
