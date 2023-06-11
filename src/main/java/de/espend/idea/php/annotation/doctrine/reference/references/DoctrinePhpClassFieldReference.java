@@ -2,11 +2,13 @@ package de.espend.idea.php.annotation.doctrine.reference.references;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.PhpPromotedFieldParameterImpl;
@@ -17,9 +19,13 @@ import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -51,18 +57,31 @@ public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<
     public Object @NotNull [] getVariants() {
         List<LookupElement> lookupElements = new ArrayList<>();
 
-        for(Field field: this.phpClass.getFields()) {
-            if(!field.isConstant()) {
-                LookupElementBuilder lookupElement = LookupElementBuilder.createWithIcon(field);
-                lookupElement = attachLookupInformation(field, lookupElement);
-                lookupElements.add(lookupElement);
-            }
+        PhpClass entity = PsiTreeUtil.getParentOfType(getElement(), PhpClass.class);
+        for (Field field: this.phpClass.getFields().stream().filter(field -> !field.isConstant()).toList()) {
+            LookupElementBuilder lookupElement = LookupElementBuilder.createWithIcon(field);
+            lookupElement = attachLookupInformation(field, lookupElement, entity);
+            lookupElements.add(lookupElement);
         }
 
         return lookupElements.toArray();
     }
 
-    private LookupElementBuilder attachLookupInformation(Field field, LookupElementBuilder lookupElement) {
+    private LookupElementBuilder attachLookupInformation(@NotNull Field field, @NotNull LookupElementBuilder lookupElement, @Nullable PhpClass entity) {
+        boolean matchForeignType = false;
+
+        if (entity != null) {
+            Project project = field.getProject();
+            String fqn = entity.getFQN();
+
+            for (String type : PhpIndex.getInstance(project).completeType(project, field.getType(), new HashSet<>()).getTypes()) {
+                if (type.equals(fqn) || type.equals(fqn + "[]")) {
+                    matchForeignType = true;
+                    break;
+                }
+            }
+        }
+
         // get some more presentable completion information
         PhpDocComment docBlock = field.getDocComment();
         if (docBlock != null) {
@@ -75,7 +94,7 @@ public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<
             PhpDocTagAnnotation phpDocTagAnnotation = phpDocCommentAnnotation.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Column");
             if (phpDocTagAnnotation != null) {
                 String value = phpDocTagAnnotation.getPropertyValue("type");
-                if(value != null) {
+                if (value != null) {
                     lookupElement = lookupElement.withTypeText(value, true);
                 }
             }
@@ -84,9 +103,9 @@ public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<
             PhpDocTagAnnotation relation = phpDocCommentAnnotation.getFirstPhpDocBlock(DoctrineUtil.DOCTRINE_RELATION_FIELDS);
             if (relation != null) {
                 String value = relation.getPropertyValue("targetEntity");
-                if(value != null) {
+                if (value != null) {
                     lookupElement = lookupElement.withTypeText(StringUtils.stripStart(value, "\\"), true);
-                    lookupElement = lookupElement.withBoldness(true);
+                    lookupElement = lookupElement.withBoldness(matchForeignType);
                 }
 
                 lookupElement = lookupElement.withTailText(String.format("(%s)", relation.getPhpClass().getName()), true);
@@ -114,7 +133,7 @@ public class DoctrinePhpClassFieldReference extends PsiPolyVariantReferenceBase<
                             String value = PhpElementsUtil.getAttributeArgumentStringByName(attribute, "targetEntity");
                             if (value != null) {
                                 lookupElement = lookupElement.withTypeText(StringUtils.stripStart(value, "\\"), true);
-                                lookupElement = lookupElement.withBoldness(true);
+                                lookupElement = lookupElement.withBoldness(matchForeignType);
                             }
                         }
                     }
