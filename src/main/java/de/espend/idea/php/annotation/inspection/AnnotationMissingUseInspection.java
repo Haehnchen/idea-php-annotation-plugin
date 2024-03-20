@@ -61,7 +61,7 @@ public class AnnotationMissingUseInspection extends LocalInspectionTool {
         }
 
         Map<String, String> phpClasses = AnnotationUtil.getPossibleImportClasses(phpDocTag);
-        if (phpClasses.size() > 0) {
+        if (!phpClasses.isEmpty()) {
             Collection<Pair<String, String>> collect = phpClasses.entrySet().stream()
                 .map(entry -> Pair.create(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());

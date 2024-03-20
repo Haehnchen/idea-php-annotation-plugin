@@ -110,7 +110,7 @@ public class PhpPsiAttributesUtil {
         } else {
             String format = MessageFormat.format("{0}: {1}", namedArgument, value);
 
-            if (phpAttribute.getArguments().size() > 0) {
+            if (!phpAttribute.getArguments().isEmpty()) {
                 format = ", " + format;
             }
 

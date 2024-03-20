@@ -199,7 +199,7 @@ public class DoctrineOrmRepositoryIntention extends PsiElementBaseIntentionActio
         }
 
         Collection<@NotNull PhpAttribute> attributes = phpClass.getAttributes("\\Doctrine\\ORM\\Mapping\\Entity");
-        if (attributes.size() > 0) {
+        if (!attributes.isEmpty()) {
             PhpPsiAttributesUtil.insertNamedArgumentForAttribute(editor, attributes.iterator().next(), "repositoryClass", phpDocTagName + "::class");
         }
     }

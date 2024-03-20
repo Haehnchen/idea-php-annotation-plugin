@@ -28,7 +28,7 @@ public class DoctrineAddRepositoryGenerateAction extends CodeInsightAction {
                 PhpClass phpClass = getPhpClassOnValidScope(editor, file);
                 if (phpClass == null) {
                     return;
-                };
+                }
 
                 new DoctrineOrmRepositoryIntention().invoke(project, editor, phpClass.getFirstChild());
             }
@@ -44,7 +44,7 @@ public class DoctrineAddRepositoryGenerateAction extends CodeInsightAction {
         PhpClass phpClass = getPhpClassOnValidScope(editor, file);
         if (phpClass == null) {
             return false;
-        };
+        }
 
         return new DoctrineOrmRepositoryIntention().isAvailable(project, editor, phpClass.getFirstChild());
     }

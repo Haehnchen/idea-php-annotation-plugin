@@ -58,7 +58,7 @@ public class PhpDocTagAnnotationVisitorUtil {
     @Nullable
     private static String getClassNameReference(@NotNull PhpDocTag phpDocTag, @NotNull Map<String, String> useImports) {
 
-        if(useImports.size() == 0) {
+        if(useImports.isEmpty()) {
             return null;
         }
 

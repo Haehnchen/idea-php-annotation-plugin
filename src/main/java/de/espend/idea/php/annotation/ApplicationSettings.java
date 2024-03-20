@@ -61,8 +61,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
 
         for (PhpAnnotationUseAlias extensions: AnnotationUtil.EP_USE_ALIASES.getExtensions()) {
             options.addAll(extensions.getAliases().entrySet().stream().map(
-                entry -> new UseAliasOption(entry.getValue(), entry.getKey(), true)).collect(Collectors.toList()
-            ));
+                entry -> new UseAliasOption(entry.getValue(), entry.getKey(), true)).toList());
         }
 
         return options;
@@ -70,7 +69,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
 
     @NotNull
     public static Collection<UseAliasOption> getUseAliasOptionsWithDefaultFallback() {
-        if(getInstance().provideDefaults && getInstance().useAliasOptions.size() == 0) {
+        if(getInstance().provideDefaults && getInstance().useAliasOptions.isEmpty()) {
             return getDefaultUseAliasOption();
         }
 

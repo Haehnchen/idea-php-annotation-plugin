@@ -16,8 +16,6 @@ import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
