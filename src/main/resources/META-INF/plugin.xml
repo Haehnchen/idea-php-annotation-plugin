@@ -20,7 +20,7 @@
   <li>Just install and be happy</li>
   <li>Optional: Install <a href="https://plugins.jetbrains.com/plugin/7219-symfony-support">Symfony Support</a></li>
   <li>Optional: Install <a href="https://plugins.jetbrains.com/plugin/8133-php-toolbox">PHP Toolbox</a></li>
-  <li>Optional: Configure plugin "Languages & Framework > PHP > Annotations"</li>
+  <li>Optional: Configure plugin "PHP > Annotations / Attributes"</li>
 </ul>
 
 <h2>Features</h2>
@@ -148,7 +148,7 @@
       <applicationService serviceImplementation="de.espend.idea.php.annotation.ApplicationSettings"/>
 
       <projectConfigurable instance="de.espend.idea.php.annotation.ui.SettingsForm"
-                           displayName="Annotations"
+                           displayName="Annotations / Attributes"
                            id="PhpAnnotations.SettingsForm"
                            groupId="reference.webide.settings.project.settings.php"
                            nonDefaultProject="true"
