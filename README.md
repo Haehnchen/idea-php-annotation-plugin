@@ -20,7 +20,7 @@ Provides PHP annotation extended Attribute support and for PhpStorm / IntelliJ I
 
 ### Settings
 
-`Languages & Framework > PHP > Annotations`
+`PHP > Annotations / Attributes`
 
 #### Round brackets
 
@@ -34,7 +34,7 @@ class NotBlank extends Constraint {}
 
 #### Use / Import alias
 
-`Languages & Framework > PHP > Annotations -> Use Alias`
+`PHP -> Annotations / Attributes -> Use Alias`
 
 ##### Annotations
 
