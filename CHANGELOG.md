@@ -13,6 +13,11 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 10.0.0
+* Drop support for older PhpStorm version, prepare upcoming version (Daniel Espendiller)
+* Lookupelement for Doctrine mapping relations match in type should be bold (Daniel Espendiller)
+* Support all column attribute for name completion (Daniel Espendiller)
+
 ## 9.4.0
 * Support additional information for metadata inside constructor property promotion (Daniel Espendiller)
 * Add PromotedField support for column names completion (Daniel Espendiller)
