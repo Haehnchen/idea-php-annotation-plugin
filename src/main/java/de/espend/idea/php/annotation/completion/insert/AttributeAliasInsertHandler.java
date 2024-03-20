@@ -13,7 +13,7 @@ import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import de.espend.idea.php.annotation.ApplicationSettings;
 import de.espend.idea.php.annotation.completion.lookupelements.PhpClassAnnotationLookupElement;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

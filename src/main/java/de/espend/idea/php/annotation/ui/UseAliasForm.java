@@ -3,7 +3,7 @@ package de.espend.idea.php.annotation.ui;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.refactoring.PhpNameUtil;
 import de.espend.idea.php.annotation.dict.UseAliasOption;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

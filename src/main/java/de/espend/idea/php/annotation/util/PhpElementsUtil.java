@@ -20,7 +20,7 @@ import com.jetbrains.php.lang.psi.stubs.indexes.expectedArguments.PhpExpectedFun
 import com.jetbrains.php.lang.psi.stubs.indexes.expectedArguments.PhpExpectedFunctionScalarArgument;
 import com.jetbrains.php.refactoring.PhpAliasImporter;
 import de.espend.idea.php.annotation.dict.AnnotationTarget;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

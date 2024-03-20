@@ -34,7 +34,7 @@ import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpDocUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import de.espend.idea.php.annotation.util.PhpPsiAttributesUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

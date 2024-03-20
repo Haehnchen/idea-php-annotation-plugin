@@ -14,7 +14,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import de.espend.idea.php.annotation.dict.PhpDocCommentAnnotation;
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
