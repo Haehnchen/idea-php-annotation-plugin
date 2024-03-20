@@ -20,7 +20,6 @@ public class PluginUtil {
 
         for(ID<?,?> id: indexIds) {
             FileBasedIndex.getInstance().requestRebuild(id);
-            FileBasedIndex.getInstance().scheduleRebuild(id, new Throwable());
         }
     }
 }

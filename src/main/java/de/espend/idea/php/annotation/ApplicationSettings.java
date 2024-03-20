@@ -1,7 +1,7 @@
 package de.espend.idea.php.annotation;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
@@ -43,7 +42,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
     }
 
     public static ApplicationSettings getInstance() {
-        return ServiceManager.getService(ApplicationSettings.class);
+        return ApplicationManager.getApplication().getService(ApplicationSettings.class);
     }
 
     public static Collection<UseAliasOption> getDefaultUseAliasOption() {
@@ -60,8 +59,13 @@ public class ApplicationSettings implements PersistentStateComponent<Application
         options.add(new UseAliasOption("OpenApi\\Annotations", "OA", true));
 
         for (PhpAnnotationUseAlias extensions: AnnotationUtil.EP_USE_ALIASES.getExtensions()) {
-            options.addAll(extensions.getAliases().entrySet().stream().map(
-                entry -> new UseAliasOption(entry.getValue(), entry.getKey(), true)).toList());
+            options.addAll(
+                extensions.getAliases()
+                .entrySet()
+                .stream()
+                .map(entry -> new UseAliasOption(entry.getValue(), entry.getKey(), true))
+                .toList()
+            );
         }
 
         return options;
