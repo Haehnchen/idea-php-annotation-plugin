@@ -25,9 +25,8 @@ public class PhpDocTagAnnotationVisitorUtil {
             if (topLevelElement instanceof PhpClass clazz) {
                 PhpDocComment docComment = clazz.getDocComment();
                 if (docComment != null) {
-                    PhpDocUtil.processTagElementsByName(docComment, null, docTag -> {
+                    PhpDocUtil.consumeTagElementsByName(docComment, null, docTag -> {
                         visitPhpDocTag(docTag, processor);
-                        return true;
                     });
                 }
 
