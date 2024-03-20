@@ -1,7 +1,9 @@
 # Changelog
 
 ## Versions
-* 9.x: PhpStorm 2022.3+
+* 11.x: PhpStorm 2024.1+ (upcoming)
+* 10.x: PhpStorm 2023.1+
+* 9.x: PhpStorm 2022.3+ (no support)
 * 8.x: PhpStorm 2020.3+ (no support)
 * 7.x: PhpStorm 2020.1+ (no support)
 * 6.x: PhpStorm 2019.1+ (no support)
