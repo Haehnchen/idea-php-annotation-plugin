@@ -40,7 +40,7 @@ import de.espend.idea.php.annotation.extension.*;
 import de.espend.idea.php.annotation.extension.parameter.AnnotationGlobalNamespacesLoaderParameter;
 import de.espend.idea.php.annotation.inspection.AnnotationInspectionUtil;
 import de.espend.idea.php.annotation.pattern.AnnotationPattern;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

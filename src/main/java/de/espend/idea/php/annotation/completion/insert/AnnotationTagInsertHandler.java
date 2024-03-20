@@ -17,7 +17,7 @@ import de.espend.idea.php.annotation.completion.lookupelements.PhpClassAnnotatio
 import de.espend.idea.php.annotation.dict.UseAliasOption;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

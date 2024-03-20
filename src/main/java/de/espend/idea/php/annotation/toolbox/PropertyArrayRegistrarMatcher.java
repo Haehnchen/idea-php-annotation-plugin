@@ -13,7 +13,7 @@ import de.espend.idea.php.annotation.util.AnnotationUtil;
 import de.espend.idea.php.toolbox.dict.json.JsonSignature;
 import de.espend.idea.php.toolbox.dict.matcher.LanguageMatcherParameter;
 import de.espend.idea.php.toolbox.extension.LanguageRegistrarMatcherInterface;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public class PropertyArrayRegistrarMatcher implements LanguageRegistrarMatcherIn
             StringUtils.isNotBlank(jsonSignature.getClassName())
         );
 
-        if(filter.size() == 0) {
+        if(filter.isEmpty()) {
             return false;
         }
 

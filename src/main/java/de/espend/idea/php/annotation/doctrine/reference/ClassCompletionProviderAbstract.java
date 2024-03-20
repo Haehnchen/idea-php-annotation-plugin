@@ -11,7 +11,7 @@ import de.espend.idea.php.annotation.extension.parameter.AnnotationCompletionPro
 import de.espend.idea.php.annotation.extension.parameter.AnnotationPropertyParameter;
 import de.espend.idea.php.annotation.extension.parameter.PhpAnnotationReferenceProviderParameter;
 import de.espend.idea.php.annotation.reference.references.PhpClassReference;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 /**
