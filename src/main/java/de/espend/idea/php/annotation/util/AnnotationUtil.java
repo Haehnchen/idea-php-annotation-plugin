@@ -176,7 +176,7 @@ public class AnnotationUtil {
             targets.add(AnnotationTarget.UNDEFINED);
         }
 
-        if(targets.size() == 0) {
+        if(targets.isEmpty()) {
             return null;
         }
 
@@ -389,7 +389,7 @@ public class AnnotationUtil {
             for (String key : stringSet) {
                 Collection fileCollection = FileBasedIndex.getInstance().getContainingFiles(id, key, GlobalSearchScope.allScope(this.project));
 
-                if (fileCollection.size() > 0) {
+                if (!fileCollection.isEmpty()) {
                     set.add(key);
                 }
 
@@ -461,11 +461,8 @@ public class AnnotationUtil {
         }
 
         PsiElement nextPsiElement = phpDocComment.getNextPsiSibling();
-        if(nextPsiElement == null || !(nextPsiElement instanceof Method || nextPsiElement instanceof PhpClass || nextPsiElement.getNode().getElementType() == PhpElementTypes.CLASS_FIELDS)) {
-            return false;
-        }
-
-        return true;
+        return nextPsiElement != null
+            && (nextPsiElement instanceof Method || nextPsiElement instanceof PhpClass || nextPsiElement.getNode().getElementType() == PhpElementTypes.CLASS_FIELDS);
     }
 
     public static Map<String, String> getPossibleImportClasses(@NotNull PhpDocTag phpDocTag) {
@@ -565,7 +562,7 @@ public class AnnotationUtil {
             return contents;
         }
 
-        return contents;
+        return null;
     }
 
     /**
@@ -700,7 +697,7 @@ public class AnnotationUtil {
     @NotNull
     public static Collection<UseAliasOption> getActiveImportsAliasesFromSettings() {
         Collection<UseAliasOption> useAliasOptions = ApplicationSettings.getUseAliasOptionsWithDefaultFallback();
-        if(useAliasOptions.size() == 0) {
+        if(useAliasOptions.isEmpty()) {
             return Collections.emptyList();
         }
 

@@ -108,8 +108,8 @@ public class DoctrineUtil {
             }
         }
 
-        return field.getAttributes("\\Doctrine\\ORM\\Mapping\\Column").size() > 0
-            || field.getAttributes("\\Doctrine\\ORM\\Mapping\\JoinColumn").size() > 0;
+        return !field.getAttributes("\\Doctrine\\ORM\\Mapping\\Column").isEmpty()
+            || !field.getAttributes("\\Doctrine\\ORM\\Mapping\\JoinColumn").isEmpty();
     }
 
     @Nullable
@@ -137,8 +137,8 @@ public class DoctrineUtil {
             project,
             IS_DOCTRINE_PROJECT_CACHE,
             () -> {
-                Boolean hasClass = PhpIndex.getInstance(project).getInterfacesByFQN("Doctrine\\ORM\\Mapping\\Annotation").size() > 0
-                    || PhpIndex.getInstance(project).getClassesByFQN("Doctrine\\ORM\\Mapping\\Entity").size() > 0;
+                Boolean hasClass = !PhpIndex.getInstance(project).getInterfacesByFQN("Doctrine\\ORM\\Mapping\\Annotation").isEmpty()
+                    || !PhpIndex.getInstance(project).getClassesByFQN("Doctrine\\ORM\\Mapping\\Entity").isEmpty();
 
                 return CachedValueProvider.Result.create(hasClass, getModificationTrackerForIndexId(project, PhpClassNameIndex.KEY));
             },
@@ -284,7 +284,7 @@ public class DoctrineUtil {
         }
 
         Collection<@NotNull PhpAttribute> attributes = phpClass.getAttributes("\\Doctrine\\ORM\\Mapping\\Entity");
-        if (attributes.size() == 0) {
+        if (attributes.isEmpty()) {
             return false;
         }
 

@@ -67,7 +67,7 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
      */
     public static void preAliasInsertion(@NotNull InsertionContext context, @NotNull LookupElement lookupElement) {
         Collection<UseAliasOption> importsAliases = AnnotationUtil.getActiveImportsAliasesFromSettings();
-        if(importsAliases.size() == 0) {
+        if(importsAliases.isEmpty()) {
             return;
         }
 

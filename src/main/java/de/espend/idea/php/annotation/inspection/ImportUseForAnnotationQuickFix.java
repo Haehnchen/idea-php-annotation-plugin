@@ -66,7 +66,7 @@ public class ImportUseForAnnotationQuickFix extends LocalQuickFixAndIntentionAct
             return;
         }
 
-        if(this.classes.size() == 0) {
+        if(this.classes.isEmpty()) {
             HintManager.getInstance().showErrorHint(editor, "Ops, nothing found");
             return;
         }

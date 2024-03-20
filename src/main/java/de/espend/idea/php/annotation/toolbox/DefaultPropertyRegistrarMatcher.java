@@ -27,7 +27,7 @@ public class DefaultPropertyRegistrarMatcher implements LanguageRegistrarMatcher
 
         List<JsonSignature> filter = ContainerUtil.filter(parameter.getSignatures(), jsonSignature -> "annotation".equals(jsonSignature.getType()) && StringUtils.isNotBlank(jsonSignature.getClassName()));
 
-        if(filter.size() == 0) {
+        if(filter.isEmpty()) {
             return false;
         }
 

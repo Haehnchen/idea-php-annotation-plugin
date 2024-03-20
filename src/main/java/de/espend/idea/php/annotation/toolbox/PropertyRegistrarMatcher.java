@@ -32,7 +32,7 @@ public class PropertyRegistrarMatcher implements LanguageRegistrarMatcherInterfa
         StringUtils.isNotBlank(jsonSignature.getField()) &&
         StringUtils.isNotBlank(jsonSignature.getClassName()));
 
-        if(filter.size() == 0) {
+        if(filter.isEmpty()) {
             return false;
         }
 

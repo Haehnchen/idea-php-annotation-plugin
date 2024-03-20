@@ -100,7 +100,7 @@ public class PhpElementsUtil {
     @Nullable
     static public PhpClass getClassInterface(@NotNull Project project, @NotNull String className) {
         Collection<PhpClass> phpClasses = PhpIndex.getInstance(project).getAnyByFQN(className);
-        return phpClasses.size() == 0 ? null : phpClasses.iterator().next();
+        return phpClasses.isEmpty() ? null : phpClasses.iterator().next();
     }
 
     @Nullable
@@ -312,7 +312,7 @@ public class PhpElementsUtil {
             }
 
             if (argument.getArgument() instanceof PhpExpectedFunctionScalarArgument phpExpectedFunctionScalarArgument) {
-                return phpExpectedFunctionScalarArgument.getNormalizedValue().replaceAll("^\"|\"$|\'|\'$", "");
+                return phpExpectedFunctionScalarArgument.getNormalizedValue().replaceAll("^\"|\"$|'|'$", "");
             }
         }
 
