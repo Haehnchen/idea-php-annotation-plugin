@@ -12,6 +12,9 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import de.espend.idea.php.annotation.util.PhpElementsUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
@@ -41,9 +44,13 @@ public class DoctrineRepositoryReference extends PsiPolyVariantReferenceBase<Psi
     @NotNull
     @Override
     public Object @NotNull [] getVariants() {
+        Collection<PhpClass> phpClasses = new ArrayList<>();
+        PhpIndex.getInstance(getElement().getProject()).processAllSubclasses("\\Doctrine\\Common\\Persistence\\ObjectRepository", phpClass -> {
+            phpClasses.add(phpClass);
+            return true;
+        });
 
-        return PhpIndex.getInstance(getElement().getProject())
-            .getAllSubclasses("\\Doctrine\\Common\\Persistence\\ObjectRepository")
+        return phpClasses
             .stream()
             .map(phpClass -> LookupElementBuilder.create(phpClass.getPresentableFQN()).withIcon(PhpIcons.CLASS))
             .toArray();

@@ -160,10 +160,15 @@ public class DoctrineUtil {
     }
 
     public static void visitCustomTypes(@NotNull Project project, @NotNull ColumnTypeVisitor visitor) {
-
         Set<String> found = new HashSet<>();
 
-        for (PhpClass phpClass : PhpIndex.getInstance(project).getAllSubclasses("\\Doctrine\\DBAL\\Types\\Type")) {
+        Collection<PhpClass> phpClasses = new ArrayList<>();
+        PhpIndex.getInstance(project).processAllSubclasses("\\Doctrine\\DBAL\\Types\\Type", phpClass -> {
+            phpClasses.add(phpClass);
+            return true;
+        });
+
+        for (PhpClass phpClass : phpClasses) {
             String name = PhpElementsUtil.getMethodReturnAsString(phpClass, "getName");
             if(name != null) {
                 found.add(name);
