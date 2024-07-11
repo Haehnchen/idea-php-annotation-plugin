@@ -2,10 +2,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 fun properties(key: String) = project.findProperty(key).toString()
 
+tasks {
+    buildSearchableOptions {
+        enabled = false
+    }
+}
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.9.22"
-    id("org.jetbrains.intellij") version "1.17.2"
+    id("org.jetbrains.kotlin.jvm") version "2.0.0"
+    id("org.jetbrains.intellij") version "1.17.4"
     id("org.jetbrains.changelog") version "1.3.1"
     id("org.jetbrains.qodana") version "0.1.13"
 }
