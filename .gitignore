@@ -3,3 +3,4 @@ out/
 /php-annotation.jar
 /build
 /.gradle
+.intellijPlatform
