@@ -1,7 +1,7 @@
 # Changelog
 
 ## Versions
-* 11.x: PhpStorm 2024.1+ (upcoming)
+* 11.x: PhpStorm 2024.2+ (upcoming)
 * 10.x: PhpStorm 2023.1+
 * 9.x: PhpStorm 2022.3+ (no support)
 * 8.x: PhpStorm 2020.3+ (no support)
@@ -12,6 +12,9 @@
 * 3.x: PhpStorm 2016.1+ (no support)
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
+
+## 11.0.1
+* PhpStorm 2024.2 build
 
 ## 10.0.0
 * Drop support for older PhpStorm version, prepare upcoming version (Daniel Espendiller)
