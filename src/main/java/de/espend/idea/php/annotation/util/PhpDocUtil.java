@@ -156,7 +156,7 @@ public class PhpDocUtil {
         if (forElement instanceof PhpClass) {
             // on class scope: class Foobar {}
             List<PhpAttributesList> childrenOfTypeAsList = PsiTreeUtil.getChildrenOfTypeAsList(forElement, PhpAttributesList.class);
-            CodeStyleManager.getInstance(forElement.getProject()).reformatRange(forElement, childrenOfTypeAsList.get(0).getTextRange().getStartOffset(), childrenOfTypeAsList.get(childrenOfTypeAsList.size() - 1).getNextPsiSibling().getTextRange().getEndOffset());
+            CodeStyleManager.getInstance(forElement.getProject()).reformatRange(forElement, childrenOfTypeAsList.getFirst().getTextRange().getStartOffset(), childrenOfTypeAsList.getLast().getNextPsiSibling().getTextRange().getEndOffset());
         } else {
             // on attribute scope: private $foo;
             PhpClassFieldsList f = PsiTreeUtil.getParentOfType(forElement, PhpClassFieldsList.class);

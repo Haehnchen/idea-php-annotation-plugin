@@ -13,11 +13,15 @@ import org.apache.commons.lang3.StringUtils;
 public class SymfonyCompletionProvider implements PhpAnnotationCompletionProvider {
     @Override
     public void getPropertyValueCompletions(AnnotationPropertyParameter parameter, AnnotationCompletionProviderParameter completion) {
-        if(parameter.getType() != AnnotationPropertyParameter.Type.PROPERTY_ARRAY) {
+        if (parameter.getType() != AnnotationPropertyParameter.Type.PROPERTY_ARRAY) {
             return;
         }
 
-        if("methods".equals(parameter.getPropertyName()) && PhpLangUtil.equalsClassNames(StringUtils.stripStart(parameter.getPhpClass().getFQN(), "\\"), "Symfony\\Component\\Routing\\Annotation\\Route")) {
+        boolean b = "methods".equals(parameter.getPropertyName()) &&
+            (PhpLangUtil.equalsClassNames(StringUtils.stripStart(parameter.getPhpClass().getFQN(), "\\"), "Symfony\\Component\\Routing\\Annotation\\Route") || PhpLangUtil.equalsClassNames(StringUtils.stripStart(parameter.getPhpClass().getFQN(), "\\"), "Symfony\\Component\\Routing\\Attribute\\Route")
+        );
+
+        if (b) {
             for (String s : new String[]{"HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "PURGE", "OPTIONS", "TRACE", "CONNECT"}) {
                 completion.getResult().addElement(LookupElementBuilder.create(s));
             }
