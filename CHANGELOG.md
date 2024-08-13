@@ -1,8 +1,8 @@
 # Changelog
 
 ## Versions
-* 11.x: PhpStorm 2024.2+ (upcoming)
-* 10.x: PhpStorm 2023.1+
+* 11.x: PhpStorm 2024.2+
+* 10.x: PhpStorm 2023.1+ (no support)
 * 9.x: PhpStorm 2022.3+ (no support)
 * 8.x: PhpStorm 2020.3+ (no support)
 * 7.x: PhpStorm 2020.1+ (no support)
@@ -12,6 +12,10 @@
 * 3.x: PhpStorm 2016.1+ (no support)
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
+
+## 11.0.2
+* Temporary disable settings form to fix [#312](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/312) "Cannot create configurable" exception with IntelliJ IDEA 2024.2 (Daniel Espendiller)
+* Support "Symfony\Component\Routing\Attribute\Route" for method completion (Daniel Espendiller)
 
 ## 11.0.1
 * PhpStorm 2024.2 build
