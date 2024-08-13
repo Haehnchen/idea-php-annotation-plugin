@@ -147,6 +147,7 @@
 
       <applicationService serviceImplementation="de.espend.idea.php.annotation.ApplicationSettings"/>
 
+      <!--
       <projectConfigurable instance="de.espend.idea.php.annotation.ui.SettingsForm"
                            displayName="Annotations / Attributes"
                            id="PhpAnnotations.SettingsForm"
@@ -160,6 +161,7 @@
                            groupId="PhpAnnotations.SettingsForm"
                            nonDefaultProject="true"
       />
+      -->
 
       <iconProvider implementation="de.espend.idea.php.annotation.AnnotationIconProvider"/>
 
