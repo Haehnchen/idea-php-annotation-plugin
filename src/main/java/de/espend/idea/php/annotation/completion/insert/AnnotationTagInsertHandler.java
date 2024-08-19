@@ -48,7 +48,7 @@ public class AnnotationTagInsertHandler implements InsertHandler<LookupElement> 
         }
 
         // force "@Foo" => "@Foo(<caret>)"
-        if(ApplicationSettings.getInstance().appendRoundBracket && !PhpInsertHandlerUtil.isStringAtCaret(context.getEditor(), "(")) {
+        if(ApplicationSettings.getInstance().getState().appendRoundBracket && !PhpInsertHandlerUtil.isStringAtCaret(context.getEditor(), "(")) {
             PhpInsertHandlerUtil.insertStringAtCaret(context.getEditor(), "()");
             context.getEditor().getCaretModel().moveCaretRelatively(-1, 0, false, false, true);
         }

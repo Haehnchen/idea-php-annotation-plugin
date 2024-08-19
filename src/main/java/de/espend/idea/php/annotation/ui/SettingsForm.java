@@ -49,13 +49,13 @@ public class SettingsForm implements Configurable {
     @Override
     public boolean isModified() {
         return
-            !appendRoundBracket.isSelected() == ApplicationSettings.getInstance().appendRoundBracket
+            !appendRoundBracket.isSelected() == ApplicationSettings.getInstance().getState().appendRoundBracket
         ;
     }
 
     @Override
     public void apply() {
-        ApplicationSettings.getInstance().appendRoundBracket = appendRoundBracket.isSelected();
+        ApplicationSettings.getInstance().getState().appendRoundBracket = appendRoundBracket.isSelected();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class SettingsForm implements Configurable {
     }
 
     private void updateUIFromSettings() {
-        appendRoundBracket.setSelected(ApplicationSettings.getInstance().appendRoundBracket);
+        appendRoundBracket.setSelected(ApplicationSettings.getInstance().getState().appendRoundBracket);
     }
 
     @Override

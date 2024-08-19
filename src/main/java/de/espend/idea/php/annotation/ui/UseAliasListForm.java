@@ -43,7 +43,7 @@ public class UseAliasListForm implements Configurable {
             changed = true;
             resetList();
             apply();
-            ApplicationSettings.getInstance().provideDefaults = false;
+            ApplicationSettings.getInstance().getState().provideDefaults = false;
             JOptionPane.showMessageDialog(panel, "Default alias applied");
         });
 
@@ -128,8 +128,8 @@ public class UseAliasListForm implements Configurable {
 
     @Override
     public void apply() {
-        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<>(this.tableView.getListTableModel().getItems());
-        ApplicationSettings.getInstance().provideDefaults = false;
+        ApplicationSettings.getInstance().getState().useAliasOptions = new ArrayList<>(this.tableView.getListTableModel().getItems());
+        ApplicationSettings.getInstance().getState().provideDefaults = false;
         this.changed = false;
     }
 

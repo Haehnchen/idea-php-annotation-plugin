@@ -221,7 +221,7 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
     }
 
     public void testThatAnnotationCompletionInsertUseAndClassNameWithoutRoundBracket() {
-        ApplicationSettings.getInstance().appendRoundBracket = false;
+        ApplicationSettings.getInstance().getState().appendRoundBracket = false;
 
         assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
                 "namespace {\n" +
@@ -247,12 +247,12 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
             lookupElement -> "All".equals(lookupElement.getLookupString())
         );
 
-        ApplicationSettings.getInstance().appendRoundBracket = true;
+        ApplicationSettings.getInstance().getState().appendRoundBracket = true;
     }
 
     public void testThatAnnotationCompletionInsertUseAlias() {
-        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<>();
-        ApplicationSettings.getInstance().useAliasOptions.add(new UseAliasOption("My\\Annotations", "Bar", true));
+        ApplicationSettings.getInstance().getState().useAliasOptions = new ArrayList<>();
+        ApplicationSettings.getInstance().getState().useAliasOptions.add(new UseAliasOption("My\\Annotations", "Bar", true));
 
         assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
                 "namespace {\n" +
@@ -278,12 +278,12 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
             lookupElement -> "All".equals(lookupElement.getLookupString())
         );
 
-        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<>();
+        ApplicationSettings.getInstance().getState().useAliasOptions = new ArrayList<>();
     }
 
     public void testThatDisabledUseAliasNotImported() {
-        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<>();
-        ApplicationSettings.getInstance().useAliasOptions.add(new UseAliasOption("My\\Annotations", "Bar", false));
+        ApplicationSettings.getInstance().getState().useAliasOptions = new ArrayList<>();
+        ApplicationSettings.getInstance().getState().useAliasOptions.add(new UseAliasOption("My\\Annotations", "Bar", false));
 
         assertCompletionResultEquals(PhpFileType.INSTANCE, "<?php\n" +
                 "namespace {\n" +
@@ -309,7 +309,7 @@ public class AnnotationCompletionContributorTest extends AnnotationLightCodeInsi
             lookupElement -> "All".equals(lookupElement.getLookupString())
         );
 
-        ApplicationSettings.getInstance().useAliasOptions = new ArrayList<>();
+        ApplicationSettings.getInstance().getState().useAliasOptions = new ArrayList<>();
     }
 
     public void testCompletionOfAliasScope() {

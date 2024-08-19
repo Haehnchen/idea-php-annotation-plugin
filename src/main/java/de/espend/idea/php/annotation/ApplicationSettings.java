@@ -2,47 +2,47 @@ package de.espend.idea.php.annotation;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.util.xmlb.XmlSerializerUtil;
 import de.espend.idea.php.annotation.dict.UseAliasOption;
 import de.espend.idea.php.annotation.extension.PhpAnnotationUseAlias;
 import de.espend.idea.php.annotation.util.AnnotationUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
-@State(name = "PhpAnnotationsPlugin", storages = @Storage())
-public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
-
-    public boolean appendRoundBracket = true;
-
-    public List<UseAliasOption> useAliasOptions = new ArrayList<>();
-
-    /**
-     * First user change, so that can provide defaults
-     */
-    public boolean provideDefaults = true;
-
-    @Nullable
-    @Override
-    public ApplicationSettings getState() {
-        return this;
-    }
-
-    @Override
-    public void loadState(@NotNull ApplicationSettings insightApplicationSettings) {
-        XmlSerializerUtil.copyBean(insightApplicationSettings, this);
-    }
+@Service
+@State(name = "PhpAnnotationsPluginV2")
+final public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings.State> {
+    private State myState = new State();
 
     public static ApplicationSettings getInstance() {
         return ApplicationManager.getApplication().getService(ApplicationSettings.class);
+    }
+
+    @Override
+    public State getState() {
+        return myState;
+    }
+
+    @Override
+    public void loadState(@NotNull State state) {
+        myState = state;
+    }
+
+    public static class State {
+        public boolean appendRoundBracket = true;
+        public List<UseAliasOption> useAliasOptions = new ArrayList<>();
+        /**
+         * First user change, so that can provide defaults
+         */
+        public boolean provideDefaults = true;
     }
 
     public static Collection<UseAliasOption> getDefaultUseAliasOption() {
@@ -73,10 +73,15 @@ public class ApplicationSettings implements PersistentStateComponent<Application
 
     @NotNull
     public static Collection<UseAliasOption> getUseAliasOptionsWithDefaultFallback() {
-        if(getInstance().provideDefaults && getInstance().useAliasOptions.isEmpty()) {
+        State state = getInstance().getState();
+        if (state == null) {
+            return Collections.emptyList();
+        }
+
+        if (state.provideDefaults && state.useAliasOptions.isEmpty()) {
             return getDefaultUseAliasOption();
         }
 
-        return getInstance().useAliasOptions;
+        return state.useAliasOptions;
     }
 }
