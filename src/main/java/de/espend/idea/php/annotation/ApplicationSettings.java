@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
-@State(name = "PhpAnnotationsPlugin", storages = @Storage())
+@State(name = "PhpAnnotationsPlugin", storages = @Storage("PhpAnnotationsPlugin.xml"))
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
 
     public boolean appendRoundBracket = true;
