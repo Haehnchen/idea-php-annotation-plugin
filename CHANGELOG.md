@@ -13,6 +13,9 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 11.0.3
+* 2024.2 build and fixes (Daniel Espendiller)
+
 ## 11.0.2
 * Temporary disable settings form to fix [#312](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/312) "Cannot create configurable" exception with IntelliJ IDEA 2024.2 (Daniel Espendiller)
 * Support "Symfony\Component\Routing\Attribute\Route" for method completion (Daniel Espendiller)
