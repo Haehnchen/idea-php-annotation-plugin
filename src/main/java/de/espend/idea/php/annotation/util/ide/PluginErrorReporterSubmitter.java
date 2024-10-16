@@ -14,11 +14,9 @@ import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.util.Consumer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.StringEntity;
@@ -88,8 +86,6 @@ public class PluginErrorReporterSubmitter extends ErrorReportSubmitter {
                 ApplicationManager.getApplication().invokeLater(() -> {
                     CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
-
-                    boolean success = false;
                     try {
                         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>() {{
                             add(new BasicNameValuePair("plugin", pluginId));
@@ -100,20 +96,11 @@ public class PluginErrorReporterSubmitter extends ErrorReportSubmitter {
                         request.addHeader("x-plugin-version", pluginVersion);
 
                         request.setEntity(new StringEntity(s));
-                        CloseableHttpResponse execute = httpClient.execute(request);
+                        httpClient.execute(request);
                         httpClient.close();
-
-                        int statusCode = execute.getStatusLine().getStatusCode();
-                        success = statusCode >= 200 && statusCode < 300;
                     } catch (Exception ignored) {
                     }
 
-                    if (!success) {
-                        Messages.showErrorDialog(parentComponent, "Failed submitting your report!", "Error Report");
-                        return;
-                    }
-
-                    Messages.showInfoMessage(parentComponent, "Thank you for submitting your report!", "Error Report");
                     consumer.consume(new SubmittedReportInfo(SubmittedReportInfo.SubmissionStatus.NEW_ISSUE));
                 });
             }
