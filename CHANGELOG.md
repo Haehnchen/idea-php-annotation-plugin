@@ -13,6 +13,11 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 11.1.0
+*   Use direct interface for "com.jetbrains.php.lang.psi.stubs.PhpStubElementType phpDocTag" access to fix member field issue (EAP) (Daniel Espendiller)
+*   Submit error with final success feedback (Daniel Espendiller)
+*   Remove magic GUI form builder code and use inline code; activate settings forms again (Daniel Espendiller)
+
 ## 11.0.3
 * 2024.2 build and fixes (Daniel Espendiller)
 
