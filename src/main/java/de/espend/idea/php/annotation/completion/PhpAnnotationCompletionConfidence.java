@@ -6,6 +6,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.ThreeState;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
+import com.jetbrains.php.lang.documentation.phpdoc.parser.BasicPhpDocStubElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.patterns.PhpPatterns;
@@ -52,7 +53,7 @@ public class PhpAnnotationCompletionConfidence extends CompletionConfidence {
             }
 
             // @<|>
-            if(PhpPatterns.psiElement(PhpDocElementTypes.phpDocTag).accepts(context)) {
+            if(PhpPatterns.psiElement(BasicPhpDocStubElementTypes.phpDocTag).accepts(context)) {
                 return ThreeState.NO;
             }
 
