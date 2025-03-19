@@ -13,10 +13,15 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 11.2.0
+* [#322](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/322) Add OpenAPI Attributes namespace as default aliases (Daniel Espendiller)
+* [#324](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/324) Incompatibility with PhpStorm 2025.1: Replace BasicPhpDocStubElementTypes => PhpDocStubElementTypes (Daniel Espendiller)
+* Add alias for sunrise router (Anatoly Nekhay)
+
 ## 11.1.0
-*   Use direct interface for "com.jetbrains.php.lang.psi.stubs.PhpStubElementType phpDocTag" access to fix member field issue (EAP) (Daniel Espendiller)
-*   Submit error with final success feedback (Daniel Espendiller)
-*   Remove magic GUI form builder code and use inline code; activate settings forms again (Daniel Espendiller)
+* Use direct interface for "com.jetbrains.php.lang.psi.stubs.PhpStubElementType phpDocTag" access to fix member field issue (EAP) (Daniel Espendiller)
+* Submit error with final success feedback (Daniel Espendiller)
+* Remove magic GUI form builder code and use inline code; activate settings forms again (Daniel Espendiller)
 
 ## 11.0.3
 * 2024.2 build and fixes (Daniel Espendiller)
