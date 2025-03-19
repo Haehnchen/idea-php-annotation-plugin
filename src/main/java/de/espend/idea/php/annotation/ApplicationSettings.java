@@ -57,6 +57,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
         options.add(new UseAliasOption("FOS\\RestBundle\\Controller\\Annotations", "Rest", true));
         options.add(new UseAliasOption("Swagger\\Annotations", "SWG", true));
         options.add(new UseAliasOption("OpenApi\\Annotations", "OA", true));
+        options.add(new UseAliasOption("Sunrise\\Http\\Router\\Annotation", "Routing", true));
 
         for (PhpAnnotationUseAlias extensions: AnnotationUtil.EP_USE_ALIASES.getExtensions()) {
             options.addAll(
