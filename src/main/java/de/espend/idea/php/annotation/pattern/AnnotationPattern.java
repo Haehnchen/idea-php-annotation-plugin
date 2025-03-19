@@ -9,8 +9,8 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes;
-import com.jetbrains.php.lang.documentation.phpdoc.parser.BasicPhpDocStubElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes;
+import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocStubElementTypes;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocPsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -76,7 +76,7 @@ public class AnnotationPattern {
 
             )
             .inside(PlatformPatterns
-                .psiElement(BasicPhpDocStubElementTypes.phpDocTag)
+                .psiElement(PhpDocStubElementTypes.phpDocTag)
             )
             .withLanguage(PhpLanguage.INSTANCE);
     }
@@ -104,7 +104,7 @@ public class AnnotationPattern {
                 .withParent(PlatformPatterns
                     .psiElement(PhpDocElementTypes.phpDocAttributeList)
                     .withParent(PlatformPatterns
-                        .psiElement(BasicPhpDocStubElementTypes.phpDocTag)
+                        .psiElement(PhpDocStubElementTypes.phpDocTag)
                     )
                 )
             );
@@ -146,7 +146,7 @@ public class AnnotationPattern {
             .withParent(PlatformPatterns.psiElement(StringLiteralExpression.class).withParent(PlatformPatterns
                 .psiElement(PhpDocElementTypes.phpDocAttributeList)
                 .withParent(PlatformPatterns
-                    .psiElement(BasicPhpDocStubElementTypes.phpDocTag)
+                    .psiElement(PhpDocStubElementTypes.phpDocTag)
                 )
             ))
             .withLanguage(PhpLanguage.INSTANCE);
@@ -164,7 +164,7 @@ public class AnnotationPattern {
              .withParent(PlatformPatterns
                  .psiElement(PhpDocElementTypes.phpDocAttributeList)
                  .withParent(PlatformPatterns
-                     .psiElement(BasicPhpDocStubElementTypes.phpDocTag)
+                     .psiElement(PhpDocStubElementTypes.phpDocTag)
                  )
              )
              .withLanguage(PhpLanguage.INSTANCE);
@@ -182,7 +182,7 @@ public class AnnotationPattern {
                 .withParent(PlatformPatterns
                         .psiElement(PhpDocElementTypes.phpDocAttributeList)
                         .withParent(PlatformPatterns
-                                .psiElement(BasicPhpDocStubElementTypes.phpDocTag)
+                                .psiElement(PhpDocStubElementTypes.phpDocTag)
                         )
                 )
                 .withLanguage(PhpLanguage.INSTANCE);
