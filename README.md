@@ -63,7 +63,7 @@ class Foo {}
 
 #### Class LineMarker
 
-LineMarker which provide navigation to annotation class usages
+LineMarker which provides navigation to annotation class usages
 
 ```php
 namespace Doctrine\ORM\Mapping;
@@ -145,7 +145,7 @@ class Foobar {}
 
 ### Annotation Target Detection
 
-`@Target` is used to attach annotation, if non provided its added to "ALL list"
+`@Target` is used to attach annotation, if none provided it is added to "ALL list"
 
 ```php
 /**
