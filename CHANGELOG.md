@@ -1,7 +1,8 @@
 # Changelog
 
 ## Versions
-* 11.x: PhpStorm 2024.2+
+* 12.x: PhpStorm 2025.1+
+* 11.x: PhpStorm 2024.2+ (no support)
 * 10.x: PhpStorm 2023.1+ (no support)
 * 9.x: PhpStorm 2022.3+ (no support)
 * 8.x: PhpStorm 2020.3+ (no support)
@@ -12,6 +13,9 @@
 * 3.x: PhpStorm 2016.1+ (no support)
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
+
+## 12.0.0
+* 2025.1 build
 
 ## 11.2.0
 * [#322](https://github.com/Haehnchen/idea-php-annotation-plugin/issues/322) Add OpenAPI Attributes namespace as default aliases (Daniel Espendiller)
