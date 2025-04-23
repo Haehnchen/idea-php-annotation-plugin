@@ -13,7 +13,7 @@ To build the plugin, execute the gradle task `buildPlugin`.
 ./gradlew clean buildPlugin
 ```
 
-The artifact zip can then be found in `build/distrubutions`. This is the
+The artifact zip can then be found in `build/distributions`. This is the
 final result which can be uploaded to the JetBrains repository.
 
 The checklist for a new release should be the following:
@@ -24,7 +24,7 @@ The checklist for a new release should be the following:
 * prepare the changelog:
   * execute `./prepare-release.sh` to write the changelog to disk
   * manually copy the relevant parts to `CHANGELOG.md`
-* commit the changed files (preferrable with a meaningful commit message 
+* commit the changed files (preferable with a meaningful commit message
   `Prepare release 0.16.xxx`)
 * tag a release (`git tag 0.x.xxx`)
 * push the changed code and the tag to the remote (`git push && git push --tags`)
