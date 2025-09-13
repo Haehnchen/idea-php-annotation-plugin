@@ -158,7 +158,7 @@ public class PhpElementsUtil {
     }
 
     @Nullable
-    private static String getStringValue(@Nullable PsiElement psiElement) {
+    public static String getStringValue(@Nullable PsiElement psiElement) {
         return getStringValue(psiElement, 0);
     }
 
