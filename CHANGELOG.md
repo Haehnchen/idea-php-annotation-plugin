@@ -15,7 +15,7 @@
 * 1.x: PhpStorm8 (no support)
 
 ## 12.0.1
-* 2025.1 Add support for Doctrine types via "\Doctrine\DBAL\Types\Types" const (Daniel Espendiller)
+* Add support for Doctrine types via "\Doctrine\DBAL\Types\Types" const (Daniel Espendiller)
 
 ## 12.0.0
 * 2025.1 build
