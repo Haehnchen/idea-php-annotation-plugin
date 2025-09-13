@@ -168,6 +168,7 @@ public class DoctrineUtil {
             return true;
         });
 
+        // Doctrine <= 2
         for (PhpClass phpClass : phpClasses) {
             String name = PhpElementsUtil.getMethodReturnAsString(phpClass, "getName");
             if(name != null) {
@@ -176,6 +177,23 @@ public class DoctrineUtil {
             }
         }
 
+        // Doctrine >= 3.0
+        for (PhpClass phpClass : PhpIndex.getInstance(project).getClassesByFQN("\\Doctrine\\DBAL\\Types\\Types")) {
+            for (Field ownField : phpClass.getOwnFields()) {
+                if (ownField.isConstant() && ownField.getModifier().isPublic()) {
+                    PsiElement defaultValue = ownField.getDefaultValue();
+                    if (defaultValue != null) {
+                        String name = PhpElementsUtil.getStringValue(defaultValue);
+                        if(name != null) {
+                            found.add(name);
+                            visitor.visit(name, phpClass, defaultValue);
+                        }
+                    }
+                }
+            }
+        }
+
+        // static fallback
         Stream.of("id", "string", "integer", "smallint", "bigint", "boolean", "decimal", "date", "time", "datetime", "text", "array", "float")
             .filter(s -> !found.contains(s))
             .forEach(s -> visitor.visit(s, null, null));
