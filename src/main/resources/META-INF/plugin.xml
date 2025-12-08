@@ -167,14 +167,12 @@
           <language>PHP</language>
           <className>de.espend.idea.php.annotation.doctrine.intention.DoctrineOrmFieldIntention</className>
           <category>PHP</category>
-          <descriptionDirectoryName>DoctrineOrmFieldIntention</descriptionDirectoryName>
       </intentionAction>
 
       <intentionAction>
           <language>PHP</language>
           <className>de.espend.idea.php.annotation.doctrine.intention.DoctrineOrmRepositoryIntention</className>
           <category>PHP</category>
-          <descriptionDirectoryName>DoctrineOrmRepositoryIntention</descriptionDirectoryName>
       </intentionAction>
 
       <internalFileTemplate name="Doctrine Entity Repository"/>

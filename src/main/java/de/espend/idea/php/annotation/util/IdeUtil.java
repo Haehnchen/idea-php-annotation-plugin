@@ -71,7 +71,6 @@ public class IdeUtil {
             try {
                 psiFile.getVirtualFile().setBinaryContent(content.getBytes());
             } catch (IOException e) {
-                e.printStackTrace();
             }
         }
 

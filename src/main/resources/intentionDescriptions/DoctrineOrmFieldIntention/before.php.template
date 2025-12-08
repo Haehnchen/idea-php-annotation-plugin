@@ -1,0 +1,13 @@
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ */
+class Product
+{
+    private $id;
+
+    private $name;
+
+    private $price;
+}

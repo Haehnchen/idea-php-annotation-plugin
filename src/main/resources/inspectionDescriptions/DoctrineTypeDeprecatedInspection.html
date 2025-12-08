@@ -1,7 +1,34 @@
 <html>
 <body>
-<p>Reports deprecations of the type Doctrine\ORM\Mapping\Column::type based on the underlying type class</p>
+Reports deprecated Doctrine column types in <code>#[ORM\Column]</code> annotations.
 <!-- tooltip end -->
-<p>[Annotation]Reports deprecations of Doctrine\ORM\Mapping\Column::type </p>
+<p>
+This inspection detects when a Doctrine column type specified in the <code>type</code> parameter
+of an <code>@ORM\Column</code> annotation or attribute is deprecated.
+</p>
+<p>
+<strong>Example:</strong>
+</p>
+<pre>
+/**
+ * @ORM\Column(type=<strong>"json_array"</strong>)
+ */
+private $data;
+</pre>
+<p>
+The inspection will highlight deprecated type values such as:
+</p>
+<ul>
+<li><code>"json_array"</code> (deprecated in favor of <code>"json"</code>)</li>
+<li><code>"simple_array"</code> (deprecated)</li>
+<li>Other types whose underlying implementation classes are marked as deprecated</li>
+</ul>
+<p>
+This helps you migrate to the current recommended Doctrine column types and avoid using
+deprecated functionality that may be removed in future versions.
+</p>
+<p>
+Works with both <code>@ORM\Column</code> annotations and <code>#[ORM\Column]</code> attributes.
+</p>
 </body>
 </html>
