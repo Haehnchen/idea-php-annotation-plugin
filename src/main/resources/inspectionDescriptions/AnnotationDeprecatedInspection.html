@@ -1,8 +1,24 @@
 <html>
 <body>
-<p>Doc block annotation class found, but it is deprecated</p>
+Reports deprecated annotation classes in DocBlocks.
 <!-- tooltip end -->
-<br>
-You should migrate to a current alternative annotation
+<p>
+This inspection detects when an annotation class itself is marked as <code>@deprecated</code>.
+</p>
+<p>
+<strong>Example:</strong>
+</p>
+<pre>
+/**
+ * <strong>@Template</strong>()
+ */
+public function indexAction()
+{
+}
+</pre>
+<p>
+If the <code>@Template</code> annotation class is deprecated,
+the inspection will highlight the annotation name with a strikethrough style.
+</p>
 </body>
 </html>

@@ -1,7 +1,24 @@
 <html>
 <body>
-Create EntityRepository tied to the entity
+Creates a Doctrine repository class and links it to the entity.
 <!-- tooltip end -->
-Creates an entity repository based on the current entity.
+<p>
+This intention action creates a new repository class for the current Doctrine entity and automatically
+adds the <code>repositoryClass</code> parameter to the <code>@ORM\Entity</code> annotation or attribute.
+</p>
+<p>
+The repository class will be created in an appropriate namespace based on your project structure:
+</p>
+<ul>
+<li><code>Foo\Entity\Product</code> → <code>Foo\Repository\ProductRepository</code></li>
+<li><code>App\Entity\User\Profile</code> → <code>App\Repository\User\ProfileRepository</code></li>
+</ul>
+<p>
+The repository will extend either <code>ServiceEntityRepository</code> (Symfony) or <code>EntityRepository</code>
+(standalone Doctrine) depending on your project dependencies.
+</p>
+<p>
+Works with both DocBlock annotations and PHP 8 attributes.
+</p>
 </body>
 </html>

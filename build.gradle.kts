@@ -5,8 +5,8 @@ fun properties(key: String) = project.findProperty(key).toString()
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "2.0.0"
-    id("org.jetbrains.intellij.platform") version "2.4.0"
+    id("org.jetbrains.kotlin.jvm") version "2.2.21"
+    id("org.jetbrains.intellij.platform") version "2.10.4"
     id("org.jetbrains.changelog") version "1.3.1"
     id("org.jetbrains.qodana") version "0.1.13"
 }
@@ -27,27 +27,46 @@ dependencies {
     intellijPlatform {
         val version = providers.gradleProperty("platformVersion")
         val type = providers.gradleProperty("platformType")
-        create(type, version, useInstaller = false)
+        create(type, version) {
+            useInstaller = false
+            useCache = true
+        }
 
-        bundledPlugins(properties("platformBundledPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
-        plugins(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
+        bundledPlugins("com.intellij.java", "com.jetbrains.plugins.webDeployment")
 
+        compatiblePlugins(
+            "com.jetbrains.php",
+            "com.jetbrains.twig",
+            "com.intellij.modules.json",
+            "de.espend.idea.php.toolbox"
+        )
         testFramework(TestFrameworkType.Platform)
         testFramework(TestFrameworkType.Plugin.Java)
     }
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.11.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellijPlatform {
+    val version = providers.gradleProperty("platformVersion")
+    val type = providers.gradleProperty("platformType")
+
     pluginConfiguration {
         name = properties("pluginName")
     }
-    instrumentCode = false
-    buildSearchableOptions = false
+
+    pluginVerification {
+        ides {
+            create(type, version) {
+                useInstaller = false
+                useCache = true
+            }
+        }
+    }
 }
 
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
@@ -72,7 +91,9 @@ tasks {
             targetCompatibility = it
         }
         withType<KotlinCompile> {
-            kotlinOptions.jvmTarget = it
+            compilerOptions {
+                jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(it))
+            }
         }
     }
 
@@ -85,31 +106,6 @@ tasks {
         sinceBuild.set(properties("pluginSinceBuild"))
         untilBuild.set(properties("pluginUntilBuild"))
         changeNotes.set(file("src/main/resources/META-INF/change-notes.html").readText().replace("<html>", "").replace("</html>", ""))
-
-        // Get the latest available change notes from the changelog file
-        // changeNotes.set(provider {
-        //     changelog.run {
-        //         getOrNull(properties("pluginVersion")) ?: getLatest()
-        //     }.toHTML()
-        // })
-    }
-
-    // Configure UI tests plugin
-    // Read more: https://github.com/JetBrains/intellij-ui-test-robot
-    intellijPlatformTesting.runIde.registering {
-        task {
-            jvmArgumentProviders += CommandLineArgumentProvider {
-                listOf(
-                    "-Drobot-server.port=8082",
-                    "-Dide.mac.message.dialogs.as.sheets=false",
-                    "-Djb.privacy.policy.text=<!--999.999-->",
-                    "-Djb.consents.confirmation.enabled=false",
-                )
-            }
-        }
-        plugins {
-            robotServerPlugin()
-        }
     }
 
     signPlugin {
@@ -119,18 +115,13 @@ tasks {
     }
 
     publishPlugin {
-        // dependsOn("patchChangelog")
-        token.set(System.getenv("PUBLISH_TOKEN"))
-        // pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
-        // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
-        // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
-        // channels.set(listOf(properties("pluginVersion").split('-').getOrElse(1) { "default" }.split('.').listIterator()))
+         token.set(System.getenv("PUBLISH_TOKEN"))
     }
 
     test {
         // Support "setUp" like "BasePlatformTestCase::setUp" as valid test structure
         useJUnitPlatform {
-            includeEngines("junit-vintage")
+            includeEngines("junit-vintage", "junit-jupiter")
         }
     }
 }

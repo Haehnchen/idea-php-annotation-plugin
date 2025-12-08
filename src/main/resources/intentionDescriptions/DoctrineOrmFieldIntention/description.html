@@ -1,7 +1,18 @@
 <html>
 <body>
-Create @Column annotation.
+Adds a Doctrine ORM <code>#[ORM\Column]</code> annotation to a class property.
 <!-- tooltip end -->
-Add annotation for class property field for Doctrine Orm Entitiy
+<p>
+This intention action adds a <code>@ORM\Column</code> annotation to a class property in a Doctrine entity,
+making it a persistent database column. The annotation will be added with a default type that can be customized.
+</p>
+<p>
+Works with both DocBlock annotations (<code>@ORM\Column</code>) and PHP 8 attributes (<code>#[ORM\Column]</code>).
+</p>
+<p>
+<strong>Example:</strong><br>
+Before: <code>private $name;</code><br>
+After: <code>/** @ORM\Column(type="string") */ private $name;</code>
+</p>
 </body>
 </html>

@@ -1,8 +1,31 @@
 <html>
 <body>
-Doc block annotation class found, but its missing in use statement
+Reports annotations that are missing a <code>use</code> import statement.
 <!-- tooltip end -->
-<br>
-You should import the class as <i>use</i> statement
+<p>
+This inspection detects when an annotation class is used in a DocBlock but has not been imported
+with a <code>use</code> statement at the top of the file.
+</p>
+<p>
+<strong>Example problem:</strong>
+</p>
+<pre>
+/**
+ * <strong>@Route</strong>("/api/users")
+ */
+class UserController
+{
+}
+</pre>
+<p>
+The inspection will highlight <code>@Route</code> and offer a quick fix to add:
+</p>
+<pre>
+use Symfony\Component\Routing\Annotation\Route;
+</pre>
+<p>
+This helps ensure proper namespace resolution and follows PHP best practices.
+If multiple possible import candidates exist, the quick fix will present all options.
+</p>
 </body>
 </html>

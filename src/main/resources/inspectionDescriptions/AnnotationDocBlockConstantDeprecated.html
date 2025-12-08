@@ -1,8 +1,19 @@
 <html>
 <body>
-<p>Constant in class found, but it is deprecated</p>
+Reports deprecated class constants and class references in annotations.
 <!-- tooltip end -->
-<br>
-You should migrate to a current alternative annotation
+<p>
+This inspection detects when a class constant (including <code>::class</code>) referenced within
+an annotation property is marked as deprecated.
+</p>
+<p>
+<strong>Examples:</strong>
+</p>
+<pre>
+/**
+ * @SomeAnnotation(targetClass=DeprecatedClass<strong>::class</strong>)
+ * @OtherAnnotation(version=SomeClass<strong>::VERSION</strong>)
+ */
+</pre>
 </body>
 </html>

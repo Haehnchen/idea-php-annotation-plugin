@@ -25,7 +25,7 @@ public class AttributeAliasInsertHandler implements InsertHandler<LookupElement>
 
     public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement lookupElement) {
         // "ORM\Entity"
-        if (lookupElement instanceof PhpClassAnnotationLookupElement lookupElement1 && ((PhpClassAnnotationLookupElement) lookupElement).getAlias() != null) {
+        if (lookupElement instanceof PhpClassAnnotationLookupElement lookupElement1 && lookupElement1.getAlias() != null) {
             PsiElement element = PsiUtilCore.getElementAtOffset(context.getFile(), context.getStartOffset());
             PhpPsiElement scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(element);
 

@@ -1,6 +1,7 @@
 package de.espend.idea.php.annotation.completion;
 
 import com.intellij.codeInsight.completion.CompletionConfidence;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 public class PhpAnnotationCompletionConfidence extends CompletionConfidence {
     @NotNull
     @Override
-    public ThreeState shouldSkipAutopopup(@NotNull PsiElement contextElement, @NotNull PsiFile psiFile, int offset) {
+    public ThreeState shouldSkipAutopopup(@NotNull Editor editor, @NotNull PsiElement contextElement, @NotNull PsiFile psiFile, int offset) {
 
         if(!(psiFile instanceof PhpFile)) {
             return ThreeState.UNSURE;

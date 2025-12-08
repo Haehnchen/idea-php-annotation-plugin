@@ -1,6 +1,21 @@
 <html>
 <body>
-Class in class constant of DocBlock context not found
+Reports unresolved class references in annotation class constants.
 <!-- tooltip end -->
+<p>
+This inspection detects when a class referenced using the <code>::class</code> notation within an annotation
+does not exist or cannot be resolved.
+</p>
+<p>
+<strong>Example:</strong>
+</p>
+<pre>
+/**
+ * @Route(name="home", defaults={"_controller"=NonExistent<strong>::class</strong>})
+ */
+</pre>
+<p>
+The inspection will highlight <code>::class</code> if the <code>NonExistent</code> class cannot be found.
+</p>
 </body>
 </html>
