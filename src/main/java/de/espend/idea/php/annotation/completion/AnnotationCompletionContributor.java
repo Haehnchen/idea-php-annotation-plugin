@@ -3,6 +3,7 @@ package de.espend.idea.php.annotation.completion;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
@@ -45,6 +46,9 @@ import java.util.stream.Collectors;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class AnnotationCompletionContributor extends CompletionContributor {
+
+    private static final ElementPattern<PsiElement> DOC_IDENTIFIER_PATTERN =
+        PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER);
 
     public AnnotationCompletionContributor() {
 
@@ -309,7 +313,7 @@ public class AnnotationCompletionContributor extends CompletionContributor {
                 return;
             }
 
-            PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(phpDocString, PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER));
+            PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(phpDocString, DOC_IDENTIFIER_PATTERN);
             if(propertyName == null) {
                 return;
             }

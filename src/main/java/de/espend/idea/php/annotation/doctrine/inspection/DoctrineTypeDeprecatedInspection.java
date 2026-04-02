@@ -3,6 +3,7 @@ package de.espend.idea.php.annotation.doctrine.inspection;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -34,6 +35,10 @@ import org.jetbrains.annotations.Nullable;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class DoctrineTypeDeprecatedInspection extends LocalInspectionTool {
+
+    private static final ElementPattern<PsiElement> DOC_IDENTIFIER_PATTERN =
+        PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER);
+
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
@@ -87,7 +92,7 @@ public class DoctrineTypeDeprecatedInspection extends LocalInspectionTool {
                 }
             }
         } else if (stringLiteralExpression.getNode().getElementType() == PhpDocElementTypes.phpDocString) {
-            PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(stringLiteralExpression, PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER));
+            PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(stringLiteralExpression, DOC_IDENTIFIER_PATTERN);
             if (propertyName != null && property.equals(propertyName.getText())) {
                 PhpDocTag phpDocTag = PsiTreeUtil.getParentOfType(stringLiteralExpression, PhpDocTag.class);
                 if (phpDocTag != null) {

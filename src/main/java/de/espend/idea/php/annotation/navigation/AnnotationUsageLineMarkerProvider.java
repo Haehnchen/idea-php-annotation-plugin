@@ -79,8 +79,8 @@ public class AnnotationUsageLineMarkerProvider implements LineMarkerProvider {
     /**
      * class "Foo" extends
      */
-    private static PsiElementPattern.Capture<PsiElement> getClassNamePattern() {
-        return PlatformPatterns
+    private static final PsiElementPattern.Capture<PsiElement> CLASS_NAME_PATTERN =
+        PlatformPatterns
             .psiElement(PhpTokenTypes.IDENTIFIER)
             .afterLeafSkipping(
                 PlatformPatterns.psiElement(PsiWhiteSpace.class),
@@ -88,5 +88,8 @@ public class AnnotationUsageLineMarkerProvider implements LineMarkerProvider {
             )
             .withParent(PhpClass.class)
             .withLanguage(PhpLanguage.INSTANCE);
+
+    private static PsiElementPattern.Capture<PsiElement> getClassNamePattern() {
+        return CLASS_NAME_PATTERN;
     }
 }

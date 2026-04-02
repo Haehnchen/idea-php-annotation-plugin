@@ -3,6 +3,7 @@ package de.espend.idea.php.annotation.navigation;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.PsiElement;
@@ -31,6 +32,14 @@ import java.util.List;
  */
 public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler {
 
+    // <@Test>, <@Test\Test>
+    private static final ElementPattern<PsiElement> DOC_TAG_NAME_PATTERN =
+        PlatformPatterns.psiElement(PhpDocElementTypes.DOC_TAG_NAME).withText(StandardPatterns.string().startsWith("@")).withLanguage(PhpLanguage.INSTANCE);
+
+    // @Route(name=<ClassName>::FOO)
+    private static final ElementPattern<PsiElement> DOC_IDENTIFIER_BEFORE_STATIC_PATTERN =
+        PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).beforeLeaf(AnnotationPattern.getDocStaticPattern()).withLanguage(PhpLanguage.INSTANCE);
+
     @Nullable
     @Override
     public PsiElement[] getGotoDeclarationTargets(PsiElement psiElement, int i, Editor editor) {
@@ -42,12 +51,12 @@ public class AnnotationGoToDeclarationHandler implements GotoDeclarationHandler 
 
         // <@Test>
         // <@Test\Test>
-        if (PlatformPatterns.psiElement(PhpDocElementTypes.DOC_TAG_NAME).withText(StandardPatterns.string().startsWith("@")).withLanguage(PhpLanguage.INSTANCE).accepts(psiElement)) {
+        if (DOC_TAG_NAME_PATTERN.accepts(psiElement)) {
             this.addDocTagNameGoto(psiElement, psiElements);
         }
 
         // @Route(name=<ClassName>::FOO)
-        if (PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER).beforeLeaf(AnnotationPattern.getDocStaticPattern()).withLanguage(PhpLanguage.INSTANCE).accepts(psiElement)) {
+        if (DOC_IDENTIFIER_BEFORE_STATIC_PATTERN.accepts(psiElement)) {
             this.addStaticClassTargets(psiElement, psiElements);
         }
 

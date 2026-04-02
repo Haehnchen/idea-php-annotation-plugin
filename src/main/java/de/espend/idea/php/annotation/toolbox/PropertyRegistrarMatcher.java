@@ -1,6 +1,7 @@
 package de.espend.idea.php.annotation.toolbox;
 
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -25,6 +26,10 @@ import java.util.List;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class PropertyRegistrarMatcher implements LanguageRegistrarMatcherInterface {
+
+    private static final ElementPattern<PsiElement> DOC_IDENTIFIER_PATTERN =
+        PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER);
+
     @Override
     public boolean matches(@NotNull LanguageMatcherParameter parameter) {
 
@@ -48,7 +53,7 @@ public class PropertyRegistrarMatcher implements LanguageRegistrarMatcherInterfa
 
         PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(
             phpDocString,
-            PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
+            DOC_IDENTIFIER_PATTERN
         );
 
         if(propertyName == null) {

@@ -4,6 +4,7 @@ import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.actions.CodeInsightAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -19,6 +20,12 @@ import org.jetbrains.annotations.Nullable;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class DoctrineAddRepositoryGenerateAction extends CodeInsightAction {
+
+    private static final ElementPattern<PsiElement> INSIDE_PHP_CLASS_PATTERN =
+        PlatformPatterns.psiElement().inside(PhpClass.class);
+    private static final ElementPattern<PsiElement> INSIDE_PHP_DOC_COMMENT_PATTERN =
+        PlatformPatterns.psiElement().inside(PhpDocComment.class);
+
     @NotNull
     @Override
     protected CodeInsightActionHandler getHandler() {
@@ -63,12 +70,12 @@ public class DoctrineAddRepositoryGenerateAction extends CodeInsightAction {
         }
 
         // attribute and direct hit
-        if (PlatformPatterns.psiElement().inside(PhpClass.class).accepts(psiElement)) {
+        if (INSIDE_PHP_CLASS_PATTERN.accepts(psiElement)) {
             return PsiTreeUtil.getParentOfType(psiElement, PhpClass.class);
         }
 
         // docblock are outside the phpclass scope
-        if (PlatformPatterns.psiElement().inside(PhpDocComment.class).accepts(psiElement)) {
+        if (INSIDE_PHP_DOC_COMMENT_PATTERN.accepts(psiElement)) {
             PhpDocComment parentOfType = PsiTreeUtil.getParentOfType(psiElement, PhpDocComment.class);
             if (parentOfType != null) {
                 PhpPsiElement nextPsiSibling = parentOfType.getNextPsiSibling();

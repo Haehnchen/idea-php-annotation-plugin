@@ -33,6 +33,19 @@ import java.util.Set;
  */
 public class PhpElementsUtil {
 
+    private static final ElementPattern<PsiElement> CLASS_FIELDS_PATTERN =
+        PlatformPatterns.psiElement(PhpElementTypes.CLASS_FIELDS);
+
+    private static final ElementPattern<PhpExpression> METHOD_RETURN_PATTERN =
+        PlatformPatterns.or(
+                PlatformPatterns.psiElement(StringLiteralExpression.class)
+                        .withParent(PlatformPatterns.psiElement(PhpReturn.class).inside(Method.class))
+                        .withLanguage(PhpLanguage.INSTANCE),
+                PlatformPatterns.psiElement(ClassConstantReference.class)
+                        .withParent(PlatformPatterns.psiElement(PhpReturn.class).inside(Method.class))
+                        .withLanguage(PhpLanguage.INSTANCE)
+        );
+
     @Nullable
     static public PhpClass getClass(Project project, String className) {
         Collection<PhpClass> classes = PhpIndex.getInstance(project).getClassesByFQN(className);
@@ -49,7 +62,7 @@ public class PhpElementsUtil {
             return AnnotationTarget.METHOD;
         }
 
-        if(PlatformPatterns.psiElement(PhpElementTypes.CLASS_FIELDS).accepts(phpDocComment.getNextPsiSibling())) {
+        if(CLASS_FIELDS_PATTERN.accepts(phpDocComment.getNextPsiSibling())) {
             return AnnotationTarget.PROPERTY;
         }
 
@@ -216,14 +229,7 @@ public class PhpElementsUtil {
      * return 'value' inside class method
      */
     static public ElementPattern<PhpExpression> getMethodReturnPattern() {
-        return PlatformPatterns.or(
-                PlatformPatterns.psiElement(StringLiteralExpression.class)
-                        .withParent(PlatformPatterns.psiElement(PhpReturn.class).inside(Method.class))
-                        .withLanguage(PhpLanguage.INSTANCE),
-                PlatformPatterns.psiElement(ClassConstantReference.class)
-                        .withParent(PlatformPatterns.psiElement(PhpReturn.class).inside(Method.class))
-                        .withLanguage(PhpLanguage.INSTANCE)
-        );
+        return METHOD_RETURN_PATTERN;
     }
 
     /**

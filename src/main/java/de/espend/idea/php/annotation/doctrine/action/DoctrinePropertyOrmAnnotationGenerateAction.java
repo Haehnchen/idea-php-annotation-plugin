@@ -4,6 +4,7 @@ import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.actions.CodeInsightAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -21,6 +22,9 @@ import org.jetbrains.annotations.NotNull;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class DoctrinePropertyOrmAnnotationGenerateAction extends CodeInsightAction {
+
+    private static final ElementPattern<PsiElement> INSIDE_PHP_CLASS_PATTERN =
+        PlatformPatterns.psiElement().inside(PhpClass.class);
 
     private final PhpGenerateFieldAccessorHandlerBase myHandler = new PhpGenerateFieldAccessorHandlerBase()
     {
@@ -78,7 +82,7 @@ public class DoctrinePropertyOrmAnnotationGenerateAction extends CodeInsightActi
             return false;
         }
 
-        if (!PlatformPatterns.psiElement().inside(PhpClass.class).accepts(psiElement)) {
+        if (!INSIDE_PHP_CLASS_PATTERN.accepts(psiElement)) {
             return false;
         }
 

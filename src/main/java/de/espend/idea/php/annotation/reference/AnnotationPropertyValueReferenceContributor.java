@@ -1,5 +1,6 @@
 package de.espend.idea.php.annotation.reference;
 
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -28,6 +29,9 @@ import java.util.Arrays;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class AnnotationPropertyValueReferenceContributor extends PsiReferenceContributor {
+
+    private static final ElementPattern<PsiElement> DOC_IDENTIFIER_PATTERN =
+        PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER);
 
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar psiReferenceRegistrar) {
@@ -74,7 +78,7 @@ public class AnnotationPropertyValueReferenceContributor extends PsiReferenceCon
                 return new PsiReference[0];
             }
 
-            PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(psiElement, PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER));
+            PsiElement propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(psiElement, DOC_IDENTIFIER_PATTERN);
             if(propertyName == null) {
                 return new PsiReference[0];
             }
