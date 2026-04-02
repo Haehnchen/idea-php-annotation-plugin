@@ -4,3 +4,7 @@ out/
 /build
 /.gradle
 .intellijPlatform
+/decompiled
+/.junie
+*.hprof
+.mcp.json
