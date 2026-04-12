@@ -4,6 +4,7 @@ import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.actions.CodeInsightAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -21,6 +22,10 @@ import org.jetbrains.annotations.NotNull;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 abstract public class DoctrineClassGeneratorAction extends CodeInsightAction {
+
+    private static final ElementPattern<PsiElement> INSIDE_PHP_CLASS_PATTERN =
+        PlatformPatterns.psiElement().inside(PhpClass.class);
+
     @Override
     protected boolean isValidForFile(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
         if (!(file instanceof PhpFile) || !DoctrineUtil.isDoctrineOrmInVendor(project)) {
@@ -37,7 +42,7 @@ abstract public class DoctrineClassGeneratorAction extends CodeInsightAction {
             return false;
         }
 
-        if (!PlatformPatterns.psiElement().inside(PhpClass.class).accepts(psiElement)) {
+        if (!INSIDE_PHP_CLASS_PATTERN.accepts(psiElement)) {
             return false;
         }
 
@@ -76,7 +81,7 @@ abstract public class DoctrineClassGeneratorAction extends CodeInsightAction {
                     return;
                 }
 
-                if(!PlatformPatterns.psiElement().inside(PhpClass.class).accepts(psiElement)) {
+                if(!INSIDE_PHP_CLASS_PATTERN.accepts(psiElement)) {
                     return;
                 }
 

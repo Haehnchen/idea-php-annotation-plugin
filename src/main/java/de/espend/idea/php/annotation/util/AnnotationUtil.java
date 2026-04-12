@@ -531,8 +531,9 @@ public class AnnotationUtil {
         }
 
         // @Template(template="foobar.html.twig")
+        PsiElementPattern.Capture<StringLiteralExpression> propertyPattern = getPropertyIdentifierValue(property);
         PsiElement psiProperty = Arrays.stream(attributeList.getChildren())
-            .filter(psiElement1 -> getPropertyIdentifierValue(property).accepts(psiElement1))
+            .filter(psiElement1 -> propertyPattern.accepts(psiElement1))
             .findFirst()
             .orElse(null);
 
@@ -612,8 +613,9 @@ public class AnnotationUtil {
             return null;
         }
 
+        PsiElementPattern.Capture<StringLiteralExpression> propertyPattern = getPropertyIdentifierValue(property);
         PsiElement psiProperty = Arrays.stream(attributeList.getChildren())
-            .filter(psiElement1 -> getPropertyIdentifierValue(property).accepts(psiElement1))
+            .filter(psiElement1 -> propertyPattern.accepts(psiElement1))
             .findFirst()
             .orElse(null);
 
@@ -639,8 +641,9 @@ public class AnnotationUtil {
             return null;
         }
 
+        PsiElementPattern.Capture<PsiElement> propertyPattern = getPropertyIdentifierValueAsPsiElement(property);
         return Arrays.stream(attributeList.getChildren())
-            .filter(psiElement1 -> getPropertyIdentifierValueAsPsiElement(property).accepts(psiElement1))
+            .filter(psiElement1 -> propertyPattern.accepts(psiElement1))
             .findFirst()
             .orElse(null);
     }
