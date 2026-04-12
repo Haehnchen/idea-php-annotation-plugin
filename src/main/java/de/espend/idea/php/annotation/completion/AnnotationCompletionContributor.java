@@ -3,10 +3,14 @@ package de.espend.idea.php.annotation.completion;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -46,6 +50,7 @@ import java.util.stream.Collectors;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class AnnotationCompletionContributor extends CompletionContributor {
+    private static final Key<CachedValue<Map<String, Collection<String>>>> ATTRIBUTE_FQNS_BY_NAMESPACE_CACHE = new Key<>("ATTRIBUTE_FQNS_BY_NAMESPACE_CACHE");
 
     private static final ElementPattern<PsiElement> DOC_IDENTIFIER_PATTERN =
         PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER);
@@ -411,36 +416,73 @@ public class AnnotationCompletionContributor extends CompletionContributor {
 
             items.putAll(getUseAsMap(phpAttributesList));
 
-            for (String fqnClass: FileBasedIndex.getInstance().getAllKeys(PhpAttributesFQNsIndex.KEY, project)) {
-                if(!fqnClass.startsWith("\\")) {
-                    fqnClass = "\\" + fqnClass;
+            Map<String, Collection<String>> attributesByNamespace = getAttributeFqnsByNamespace(project);
+
+            for (Map.Entry<String, String> aliasFqn : items.entrySet()) {
+                String namespace = "\\" + StringUtils.stripStart(aliasFqn.getValue(), "\\");
+                Collection<String> fqns = attributesByNamespace.get(namespace);
+                if (fqns == null) {
+                    continue;
                 }
 
-                // attach class also "@ORM\Entity" if there is not import but an alias via settings
-                for (Map.Entry<String, String> aliasFqn : items.entrySet()) {
-                    String className = "\\" + StringUtils.stripStart(aliasFqn.getValue(), "\\") + "\\";
-
-                    if (!fqnClass.startsWith(className)) {
-                        continue;
-                    }
-
-                    String substring = fqnClass.substring(className.length());
-
+                for (String fqnClass : fqns) {
+                    String substring = fqnClass.substring(namespace.length() + 1);
                     String lookupString = aliasFqn.getKey() + "\\" + substring;
 
                     PhpClass underlyingClass = PhpElementsUtil.getClassInterface(project, fqnClass);
-                    if (underlyingClass != null) {
-                        // check if Attribute is target allowed for context
-                        // @see com.jetbrains.php.completion.PhpCompletionContributor.PhpClassRefCompletionProvider.shouldAddElement
-                        List<PhpAttribute> rootAttributes = PhpClassCantBeUsedAsAttributeInspection.rootAttributes(underlyingClass).collect(Collectors.toList());
-                        if (!rootAttributes.isEmpty() && PhpInapplicableAttributeTargetDeclarationInspection.getInapplicableDeclarationName(phpAttributesList.getParent(), rootAttributes) == null) {
-                            PhpClassAnnotationLookupElement phpClassAnnotationLookupElement = new PhpClassAnnotationLookupElement(underlyingClass, new UseAliasOption(aliasFqn.getValue(), aliasFqn.getKey(), true), lookupString);
-                            phpClassAnnotationLookupElement.withInsertHandler(AttributeAliasInsertHandler.getInstance());
-                            completionResultSet.addElement(underlyingClass.isDeprecated() ? PrioritizedLookupElement.withPriority(phpClassAnnotationLookupElement, -1000) : phpClassAnnotationLookupElement);
-                        }
+                    if (underlyingClass == null) {
+                        continue;
+                    }
+
+                    // check if Attribute is target allowed for context
+                    // @see com.jetbrains.php.completion.PhpCompletionContributor.PhpClassRefCompletionProvider.shouldAddElement
+                    List<PhpAttribute> rootAttributes = PhpClassCantBeUsedAsAttributeInspection.rootAttributes(underlyingClass).collect(Collectors.toList());
+                    if (!rootAttributes.isEmpty() && PhpInapplicableAttributeTargetDeclarationInspection.getInapplicableDeclarationName(phpAttributesList.getParent(), rootAttributes) == null) {
+                        PhpClassAnnotationLookupElement phpClassAnnotationLookupElement = new PhpClassAnnotationLookupElement(underlyingClass, new UseAliasOption(aliasFqn.getValue(), aliasFqn.getKey(), true), lookupString);
+                        phpClassAnnotationLookupElement.withInsertHandler(AttributeAliasInsertHandler.getInstance());
+                        completionResultSet.addElement(underlyingClass.isDeprecated() ? PrioritizedLookupElement.withPriority(phpClassAnnotationLookupElement, -1000) : phpClassAnnotationLookupElement);
                     }
                 }
             }
+        }
+
+        /**
+         * Cache attribute FQNs by namespace prefix so alias completion can query only relevant branches.
+         *
+         * Example key: "\Doctrine\ORM\Mapping" => ["\Doctrine\ORM\Mapping\Entity", ...]
+         */
+        @NotNull
+        private static Map<String, Collection<String>> getAttributeFqnsByNamespace(@NotNull Project project) {
+            return CachedValuesManager.getManager(project).getCachedValue(
+                project,
+                ATTRIBUTE_FQNS_BY_NAMESPACE_CACHE,
+                () -> {
+                    Map<String, Collection<String>> items = new HashMap<>();
+
+                    for (String fqnClass : FileBasedIndex.getInstance().getAllKeys(PhpAttributesFQNsIndex.KEY, project)) {
+                        if (!fqnClass.startsWith("\\")) {
+                            fqnClass = "\\" + fqnClass;
+                        }
+
+                        int index = fqnClass.indexOf("\\", 1);
+                        while (index > 0) {
+                            items.computeIfAbsent(fqnClass.substring(0, index), key -> new ArrayList<>()).add(fqnClass);
+                            index = fqnClass.indexOf("\\", index + 1);
+                        }
+                    }
+
+                    Map<String, Collection<String>> immutableItems = new HashMap<>();
+                    for (Map.Entry<String, Collection<String>> entry : items.entrySet()) {
+                        immutableItems.put(entry.getKey(), List.copyOf(entry.getValue()));
+                    }
+
+                    return CachedValueProvider.Result.create(
+                        Collections.unmodifiableMap(immutableItems),
+                        AnnotationUtil.getModificationTrackerForIndexId(project, PhpAttributesFQNsIndex.KEY)
+                    );
+                },
+                false
+            );
         }
 
         private static Map<String, String> getUseAsMap(@NotNull PsiElement phpDocComment) {

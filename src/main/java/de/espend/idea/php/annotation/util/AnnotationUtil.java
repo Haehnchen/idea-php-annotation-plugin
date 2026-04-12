@@ -5,12 +5,17 @@ import com.intellij.codeInsight.completion.StartOnlyMatcher;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.TripleFunction;
@@ -54,6 +59,8 @@ import java.util.stream.Collectors;
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 public class AnnotationUtil {
+    private static final Key<CachedValue<Map<String, PhpAnnotation>>> ANNOTATION_FQN_MAP_CACHE = new Key<>("ANNOTATION_FQN_MAP_CACHE");
+    private static final Pattern ANNOTATION_TARGET_PATTERN = Pattern.compile("\"(\\w+)\"");
 
     public static final ExtensionPointName<PhpAnnotationCompletionProvider> EXTENSION_POINT_COMPLETION = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationCompletionProvider");
     public static final ExtensionPointName<PhpAnnotationReferenceProvider> EXTENSION_POINT_REFERENCES = new ExtensionPointName<>("de.espend.idea.php.annotation.PhpAnnotationReferenceProvider");
@@ -100,30 +107,15 @@ public class AnnotationUtil {
     }};
 
     public static boolean isAnnotationClass(@NotNull PhpClass phpClass) {
-        PhpDocComment phpDocComment = phpClass.getDocComment();
-        if(phpDocComment != null) {
-            PhpDocTag[] annotationDocTags = phpDocComment.getTagElementsByName("@Annotation");
-            return annotationDocTags.length > 0;
-        }
-
-        return false;
+        return getClassAnnotationTargets(phpClass) != null;
     }
 
     public static PhpClass[] getAnnotationsClasses(Project project) {
-        ArrayList<PhpClass> phpClasses = new ArrayList<>();
-
-        CollectProjectUniqueKeys ymlProjectProcessor = new CollectProjectUniqueKeys(project, AnnotationStubIndex.KEY);
-        FileBasedIndex.getInstance().processAllKeys(AnnotationStubIndex.KEY, ymlProjectProcessor, project);
-
-        for(String phpClassName: ymlProjectProcessor.getResult()) {
-            PhpClass phpClass = PhpElementsUtil.getClass(project, phpClassName);
-            if(phpClass != null) {
-                phpClasses.add(phpClass);
-            }
-
-        }
-
-        return phpClasses.toArray(new PhpClass[0]);
+        return getCachedAnnotationsMap(project)
+            .values()
+            .stream()
+            .map(PhpAnnotation::getPhpClass)
+            .toArray(PhpClass[]::new);
     }
 
     /**
@@ -132,51 +124,16 @@ public class AnnotationUtil {
      */
     @Nullable
     public static PhpAnnotation getClassAnnotation(@NotNull PhpClass phpClass) {
-        if(!AnnotationUtil.isAnnotationClass(phpClass)) {
-            return null;
-        }
-
-        PhpDocComment phpDocComment = phpClass.getDocComment();
-        if(phpDocComment == null) {
-            return null;
-        }
-
-        List<AnnotationTarget> targets = new ArrayList<>();
-
-        PhpDocTag[] tagElementsByName = phpDocComment.getTagElementsByName("@Target");
-
-        if(tagElementsByName.length > 0) {
-            for (PhpDocTag phpDocTag : tagElementsByName) {
-                // @Target("PROPERTY", "METHOD")
-                // @Target("CLASS")
-                // @Target("ALL")
-                String text = phpDocTag.getText();
-                Matcher matcher = Pattern.compile("\"(\\w+)\"").matcher(text);
-
-                // regex matched; on invalid we at target to UNKNOWN condition
-                boolean isMatched = false;
-
-                // match enum value
-                while (matcher.find()) {
-                    isMatched = true;
-                    try {
-                        targets.add(AnnotationTarget.valueOf(matcher.group(1).toUpperCase()));
-                    } catch (IllegalArgumentException e) {
-                        targets.add(AnnotationTarget.UNKNOWN);
-                    }
-                }
-
-                // regex failed provide UNKNOWN target
-                if(!isMatched) {
-                    targets.add(AnnotationTarget.UNKNOWN);
-                }
+        String fqn = StringUtils.stripStart(phpClass.getFQN(), "\\");
+        if (StringUtils.isNotBlank(fqn)) {
+            PhpAnnotation cached = getCachedAnnotationsMap(phpClass.getProject()).get(fqn);
+            if (cached != null) {
+                return cached;
             }
-        } else {
-            // no target attribute so UNDEFINED target
-            targets.add(AnnotationTarget.UNDEFINED);
         }
 
-        if(targets.isEmpty()) {
+        List<AnnotationTarget> targets = getClassAnnotationTargets(phpClass);
+        if (targets == null || targets.isEmpty()) {
             return null;
         }
 
@@ -185,24 +142,57 @@ public class AnnotationUtil {
 
     @NotNull
     public static Map<String, PhpAnnotation> getAnnotationsOnTargetMap(@NotNull Project project, AnnotationTarget... targets) {
-
         Map<String, PhpAnnotation> phpAnnotations = new HashMap<>();
 
-        for(PhpClass phpClass: AnnotationUtil.getAnnotationsClasses(project)) {
-            PhpAnnotation phpAnnotation = AnnotationUtil.getClassAnnotation(phpClass);
-            if(phpAnnotation != null && phpAnnotation.hasTarget(targets)) {
-                String fqn = phpClass.getFQN();
-                if(fqn.startsWith("\\")) {
-                    fqn = fqn.substring(1);
-                }
-
+        for (Map.Entry<String, PhpAnnotation> entry : getCachedAnnotationsMap(project).entrySet()) {
+            PhpAnnotation phpAnnotation = entry.getValue();
+            if (phpAnnotation.hasTarget(targets)) {
+                String fqn = entry.getKey();
                 phpAnnotations.put(fqn, phpAnnotation);
             }
-
         }
 
         return phpAnnotations;
+    }
 
+    /**
+     * Build a cached map of all indexed annotation classes keyed by normalized FQN.
+     */
+    @NotNull
+    public static Map<String, PhpAnnotation> getCachedAnnotationsMap(@NotNull Project project) {
+        return CachedValuesManager.getManager(project).getCachedValue(
+            project,
+            ANNOTATION_FQN_MAP_CACHE,
+            () -> {
+                Map<String, PhpAnnotation> phpAnnotations = new HashMap<>();
+                GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+
+                FileBasedIndex.getInstance().processAllKeys(AnnotationStubIndex.KEY, fqn -> {
+                    if (StringUtils.isBlank(fqn)) {
+                        return true;
+                    }
+
+                    PhpClass phpClass = PhpElementsUtil.getClass(project, fqn);
+                    if (phpClass == null) {
+                        return true;
+                    }
+
+                    List<String> values = FileBasedIndex.getInstance().getValues(AnnotationStubIndex.KEY, fqn, scope);
+                    if (values.isEmpty()) {
+                        return true;
+                    }
+
+                    phpAnnotations.put(fqn, new PhpAnnotation(phpClass, getAnnotationTargetsFromSerializedValue(values.get(0))));
+                    return true;
+                }, project);
+
+                return CachedValueProvider.Result.create(
+                    Collections.unmodifiableMap(phpAnnotations),
+                    getModificationTrackerForIndexId(project, AnnotationStubIndex.KEY)
+                );
+            },
+            false
+        );
     }
 
     /**
@@ -697,6 +687,42 @@ public class AnnotationUtil {
         return psiElements;
     }
 
+    /**
+     * Serialize parsed annotation targets for storage in the file index.
+     *
+     * @return comma-separated enum names or null if the class is not an annotation
+     */
+    @Nullable
+    public static String getSerializedAnnotationTargets(@NotNull PhpClass phpClass) {
+        List<AnnotationTarget> targets = getClassAnnotationTargets(phpClass);
+        if (targets == null || targets.isEmpty()) {
+            return null;
+        }
+
+        return serializeAnnotationTargets(targets);
+    }
+
+    /**
+     * Restore annotation targets from the file index value.
+     */
+    @NotNull
+    public static List<AnnotationTarget> getAnnotationTargetsFromSerializedValue(@NotNull String serializedValue) {
+        if (StringUtils.isBlank(serializedValue)) {
+            return Collections.singletonList(AnnotationTarget.UNDEFINED);
+        }
+
+        List<AnnotationTarget> targets = new ArrayList<>();
+        for (String value : StringUtils.split(serializedValue, ',')) {
+            try {
+                targets.add(AnnotationTarget.valueOf(value));
+            } catch (IllegalArgumentException ignored) {
+                targets.add(AnnotationTarget.UNKNOWN);
+            }
+        }
+
+        return targets.isEmpty() ? Collections.singletonList(AnnotationTarget.UNDEFINED) : targets;
+    }
+
     @NotNull
     public static Collection<UseAliasOption> getActiveImportsAliasesFromSettings() {
         Collection<UseAliasOption> useAliasOptions = ApplicationSettings.getUseAliasOptionsWithDefaultFallback();
@@ -748,6 +774,61 @@ public class AnnotationUtil {
                 }
             }
         }
+    }
+
+    /**
+     * Parse annotation targets directly from the class docblock.
+     *
+     * Returns null when the class is not marked as an annotation.
+     */
+    @Nullable
+    private static List<AnnotationTarget> getClassAnnotationTargets(@NotNull PhpClass phpClass) {
+        PhpDocComment phpDocComment = phpClass.getDocComment();
+        if (phpDocComment == null || phpDocComment.getTagElementsByName("@Annotation").length == 0) {
+            return null;
+        }
+
+        List<AnnotationTarget> targets = new ArrayList<>();
+        PhpDocTag[] tagElementsByName = phpDocComment.getTagElementsByName("@Target");
+
+        if (tagElementsByName.length > 0) {
+            for (PhpDocTag phpDocTag : tagElementsByName) {
+                Matcher matcher = ANNOTATION_TARGET_PATTERN.matcher(phpDocTag.getText());
+                boolean isMatched = false;
+
+                while (matcher.find()) {
+                    isMatched = true;
+                    try {
+                        targets.add(AnnotationTarget.valueOf(matcher.group(1).toUpperCase()));
+                    } catch (IllegalArgumentException e) {
+                        targets.add(AnnotationTarget.UNKNOWN);
+                    }
+                }
+
+                if (!isMatched) {
+                    targets.add(AnnotationTarget.UNKNOWN);
+                }
+            }
+        } else {
+            targets.add(AnnotationTarget.UNDEFINED);
+        }
+
+        return targets.isEmpty() ? null : targets;
+    }
+
+    @NotNull
+    private static String serializeAnnotationTargets(@NotNull List<AnnotationTarget> targets) {
+        return targets.stream().map(Enum::name).collect(Collectors.joining(","));
+    }
+
+    /**
+     * Provide a modification tracker for a concrete file index.
+     *
+     * This is used by project-level caches that derive their content from indexed values.
+     */
+    @NotNull
+    public static ModificationTracker getModificationTrackerForIndexId(@NotNull Project project, @NotNull final ID<?, ?> id) {
+        return () -> FileBasedIndex.getInstance().getIndexModificationStamp(id, project);
     }
 
 
@@ -934,5 +1015,3 @@ public class AnnotationUtil {
         return PhpLanguageLevel.current(file.getProject()).hasFeature(PhpLanguageFeature.ATTRIBUTES);
     }
 }
-
-
