@@ -14,6 +14,11 @@
 * 2.x: PhpStorm9, 10 (no support)
 * 1.x: PhpStorm8 (no support)
 
+## 12.1.0
+* Optimize annotation and attribute lookup paths with index-backed caches (Daniel Espendiller)
+* Refactor annotation patterns to static constants for performance (Daniel Espendiller)
+* Update build tools, platform version (Daniel Espendiller)
+
 ## 12.0.2
 * Upgrade Gradle and plugins, update configurations (Daniel Espendiller)
 
