@@ -1,81 +1,102 @@
 package de.espend.idea.php.annotation.ui;
 
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.ValidationInfo;
+import com.intellij.util.ui.FormBuilder;
+import com.intellij.util.ui.JBUI;
+import com.intellij.ui.components.JBCheckBox;
+import com.intellij.ui.components.JBTextField;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.refactoring.PhpNameUtil;
 import de.espend.idea.php.annotation.dict.UseAliasOption;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
-public class UseAliasForm extends JDialog {
+public class UseAliasForm extends DialogWrapper {
 
     @NotNull
     private final UseAliasOption useAliasOption;
 
     @NotNull
     private final Callback callback;
-    private JPanel contentPane;
-    private JButton buttonOK;
-    private JButton buttonCancel;
-    private JTextField textClassName;
-    private JTextField textAlias;
-    private JCheckBox checkStatus;
 
-    public UseAliasForm(@NotNull UseAliasOption useAliasOption, @NotNull Callback callback) {
+    private final JBTextField textClassName = new JBTextField();
+    private final JBTextField textAlias = new JBTextField();
+    private final JBCheckBox checkStatus = new JBCheckBox("Enabled");
+    private final JPanel contentPane;
+
+    public UseAliasForm(@Nullable Component component, @NotNull UseAliasOption useAliasOption, @NotNull Callback callback) {
+        super(component, true);
         this.useAliasOption = useAliasOption;
         this.callback = callback;
-
-        setContentPane(contentPane);
-        setModal(true);
-        getRootPane().setDefaultButton(buttonOK);
+        this.contentPane = createPanel();
 
         textClassName.setText(useAliasOption.getClassName());
         textAlias.setText(useAliasOption.getAlias());
         checkStatus.setSelected(useAliasOption.isEnabled());
 
-        buttonOK.addActionListener(e -> onOK());
-
-        buttonCancel.addActionListener(e -> onCancel());
-
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                onCancel();
-            }
-        });
-
-        contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        setTitle("Use Alias");
+        init();
     }
 
-    private void onOK() {
-        String classText = StringUtils.strip(textClassName.getText(), "\\");
-        if(!PhpNameUtil.isValidNamespaceFullName(classText, PhpLanguageLevel.DEFAULT)) {
-            JOptionPane.showMessageDialog(this, "Invalid class name");
-            return;
+    private JPanel createPanel() {
+        JPanel panel = FormBuilder.createFormBuilder()
+            .addLabeledComponent("Class (Doctrine\\ORM\\Mapping)", textClassName, 1, false)
+            .addLabeledComponent("Alias (ORM)", textAlias, 1, false)
+            .addComponent(checkStatus, JBUI.scale(8))
+            .getPanel();
+
+        panel.setBorder(JBUI.Borders.empty(8));
+        panel.setPreferredSize(JBUI.size(400, panel.getPreferredSize().height));
+
+        return panel;
+    }
+
+    @Override
+    protected @Nullable JComponent createCenterPanel() {
+        return contentPane;
+    }
+
+    @Override
+    public @Nullable JComponent getPreferredFocusedComponent() {
+        return textClassName;
+    }
+
+    @Override
+    protected @Nullable ValidationInfo doValidate() {
+        String classText = getNormalizedClassName();
+        if (!PhpNameUtil.isValidNamespaceFullName(classText, PhpLanguageLevel.DEFAULT)) {
+            return new ValidationInfo("Invalid class name", textClassName);
         }
 
         String alias = textAlias.getText();
-        if(!PhpNameUtil.isValidNamespaceFullName(alias, PhpLanguageLevel.DEFAULT)) {
-            JOptionPane.showMessageDialog(this, "Invalid alias");
-            return;
+        if (!PhpNameUtil.isValidNamespaceFullName(alias, PhpLanguageLevel.DEFAULT)) {
+            return new ValidationInfo("Invalid alias", textAlias);
         }
 
-        this.useAliasOption.setClassName(classText);
-        this.useAliasOption.setAlias(alias);
+        return null;
+    }
+
+    @Override
+    protected void doOKAction() {
+        this.useAliasOption.setClassName(getNormalizedClassName());
+        this.useAliasOption.setAlias(textAlias.getText());
         this.useAliasOption.setEnabled(checkStatus.isSelected());
 
         this.callback.ok(this.useAliasOption);
-        dispose();
+        super.doOKAction();
     }
 
-    private void onCancel() {
-        dispose();
+    @NotNull
+    private String getNormalizedClassName() {
+        return StringUtils.strip(textClassName.getText(), "\\");
     }
 
     public static void create(@NotNull Component component, @NotNull Callback callback) {
@@ -83,12 +104,7 @@ public class UseAliasForm extends JDialog {
     }
 
     public static void create(@NotNull Component component, @NotNull UseAliasOption option, @NotNull Callback callback) {
-        UseAliasForm dialog = new UseAliasForm(option, callback);
-        dialog.setMinimumSize(new Dimension(400, 0));
-        dialog.pack();
-        dialog.setTitle("Use Alias");
-        dialog.setLocationRelativeTo(component);
-        dialog.setVisible(true);
+        new UseAliasForm(component, option, callback).show();
     }
 
     public interface Callback {
