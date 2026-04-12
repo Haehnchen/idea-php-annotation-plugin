@@ -57,4 +57,23 @@ public class AnnotationUsageLineMarkerProviderTest extends AnnotationLightCodeIn
             "}"
         ));
     }
+
+    public void testThatNonAnnotationClassDoesNotAbortFollowingAnnotationClass() {
+        assertLineMarker(PhpPsiElementFactory.createPsiFileFromText(getProject(), "<?php\n" +
+            "namespace Doctrine\\ORM\\Mapping;\n" +
+            "" +
+            "{\n" +
+            "   class PlainClass\n" +
+            "   {\n" +
+            "   }\n" +
+            "\n" +
+            "   /**\n" +
+            "   * @Annotation\n" +
+            "   */\n" +
+            "   class Embedded\n" +
+            "   {\n" +
+            "   }\n" +
+            "}"
+        ), new LineMarker.ToolTipEqualsAssert("Navigate to implementations"));
+    }
 }

@@ -51,7 +51,7 @@ public class AnnotationUsageLineMarkerProvider implements LineMarkerProvider {
                 || !phpClass.getAttributes("\\Attribute").isEmpty();
 
             if (!isAnnotationOrAttribute) {
-                return;
+                continue;
             }
 
             String fqn = StringUtils.stripStart(phpClass.getFQN(), "\\");

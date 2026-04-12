@@ -5,7 +5,6 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import com.intellij.util.io.VoidDataExternalizer;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
@@ -19,21 +18,21 @@ import java.util.Map;
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
-public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
-    public static final ID<String, Void> KEY = ID.create("espend.php.annotation.classes");
+public class AnnotationStubIndex extends FileBasedIndexExtension<String, String> {
+    public static final ID<String, String> KEY = ID.create("espend.php.annotation.classes");
     private final KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();
 
     @NotNull
     @Override
-    public ID<String, Void> getName() {
+    public ID<String, String> getName() {
         return KEY;
     }
 
     @NotNull
     @Override
-    public DataIndexer<String, Void, FileContent> getIndexer() {
+    public DataIndexer<String, String, FileContent> getIndexer() {
         return inputData -> {
-            final Map<String, Void> map = new HashMap<>();
+            final Map<String, String> map = new HashMap<>();
 
             PsiFile psiFile = inputData.getPsiFile();
             if (!(psiFile instanceof PhpFile)) {
@@ -54,8 +53,11 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
                     // doctrine has many tests: Doctrine\Tests\Common\Annotations\Fixtures
                     // we are on index process, project is not fully loaded here, so filter name based tests
                     // e.g. PhpUnitUtil.isTestClass not possible
-                    if (!fqn.contains("\\Tests\\") && !fqn.contains("\\Fixtures\\") && AnnotationUtil.isAnnotationClass(phpClass)) {
-                        map.put(fqn, null);
+                    if (!fqn.contains("\\Tests\\") && !fqn.contains("\\Fixtures\\")) {
+                        String serializedTargets = AnnotationUtil.getSerializedAnnotationTargets(phpClass);
+                        if (serializedTargets != null) {
+                            map.put(fqn, serializedTargets);
+                        }
                     }
                 }
             }
@@ -72,8 +74,8 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
 
     @NotNull
     @Override
-    public DataExternalizer<Void> getValueExternalizer() {
-        return VoidDataExternalizer.INSTANCE;
+    public DataExternalizer<String> getValueExternalizer() {
+        return EnumeratorStringDescriptor.INSTANCE;
     }
 
     @NotNull
@@ -89,6 +91,6 @@ public class AnnotationStubIndex extends FileBasedIndexExtension<String, Void> {
 
     @Override
     public int getVersion() {
-        return 2;
+        return 3;
     }
 }

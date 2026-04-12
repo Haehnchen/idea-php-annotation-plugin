@@ -223,6 +223,18 @@ public class AnnotationUtilTest extends AnnotationLightCodeInsightFixtureTestCas
         assertNull(possibleImportClasses.get("\\Doctrine\\ORM\\Mapping"));
     }
 
+    public void testGetAnnotationsOnTargetMapUsesIndexedTargets() {
+        myFixture.copyFileToProject("classes_targets.php");
+
+        Map<String, PhpAnnotation> propertyAnnotations = AnnotationUtil.getAnnotationsOnTargetMap(getProject(), AnnotationTarget.PROPERTY);
+        assertContainsElements(propertyAnnotations.keySet(), "My\\Annotations\\PropertyOnly");
+        assertDoesntContain(propertyAnnotations.keySet(), "My\\Annotations\\MethodAndAll");
+
+        Map<String, PhpAnnotation> methodAnnotations = AnnotationUtil.getAnnotationsOnTargetMap(getProject(), AnnotationTarget.METHOD);
+        assertContainsElements(methodAnnotations.keySet(), "My\\Annotations\\MethodAndAll");
+        assertDoesntContain(methodAnnotations.keySet(), "My\\Annotations\\PropertyOnly");
+    }
+
     public void testThatImportForClassIsSuggestedForAliasImportClass() {
         myFixture.copyFileToProject("doctrine.php");
 
