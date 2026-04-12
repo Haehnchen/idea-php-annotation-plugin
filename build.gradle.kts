@@ -6,7 +6,7 @@ fun properties(key: String) = project.findProperty(key).toString()
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "2.3.20"
-    id("org.jetbrains.intellij.platform") version "2.13.1"
+    id("org.jetbrains.intellij.platform") version "2.14.0"
     id("org.jetbrains.changelog") version "2.5.0"
 }
 
@@ -27,8 +27,8 @@ dependencies {
         val version = providers.gradleProperty("platformVersion")
         val type = providers.gradleProperty("platformType")
         create(type, version) {
-            useInstaller = false
-            useCache = true
+            useInstaller.set(true)
+            useCache.set(true)
         }
 
         bundledPlugins("com.intellij.java", "com.jetbrains.plugins.webDeployment")
@@ -61,8 +61,8 @@ intellijPlatform {
     pluginVerification {
         ides {
             create(type, version) {
-                useInstaller = false
-                useCache = true
+                useInstaller.set(true)
+                useCache.set(true)
             }
         }
     }
