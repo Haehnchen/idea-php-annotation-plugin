@@ -59,6 +59,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
         options.add(new UseAliasOption("OpenApi\\Annotations", "OA", true));
         options.add(new UseAliasOption("OpenApi\\Attributes", "OA", true));
         options.add(new UseAliasOption("Sunrise\\Http\\Router\\Annotation", "Routing", true));
+        options.add(new UseAliasOption("Sunrise\\Symfony\\OpenApi\\Annotation", "OpenApi", true));
 
         for (PhpAnnotationUseAlias extensions: AnnotationUtil.EP_USE_ALIASES.getExtensions()) {
             options.addAll(
