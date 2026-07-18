@@ -5,9 +5,9 @@ fun properties(key: String) = project.findProperty(key).toString()
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "2.3.20"
-    id("org.jetbrains.intellij.platform") version "2.14.0"
+    id("org.jetbrains.intellij.platform") version "2.18.1"
     id("org.jetbrains.changelog") version "2.5.0"
+    kotlin("jvm")
 }
 
 group = properties("pluginGroup")
@@ -95,7 +95,6 @@ tasks {
     patchPluginXml {
         version = properties("pluginVersion")
         sinceBuild.set(properties("pluginSinceBuild"))
-        untilBuild.set(properties("pluginUntilBuild"))
         changeNotes.set(file("src/main/resources/META-INF/change-notes.html").readText().replace("<html>", "").replace("</html>", ""))
     }
 
@@ -115,4 +114,8 @@ tasks {
             includeEngines("junit-vintage", "junit-jupiter")
         }
     }
+}
+
+kotlin {
+    jvmToolchain(25)
 }

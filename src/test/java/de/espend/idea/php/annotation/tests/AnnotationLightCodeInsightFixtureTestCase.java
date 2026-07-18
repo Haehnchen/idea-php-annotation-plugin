@@ -50,6 +50,14 @@ import java.util.*;
  */
 public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJavaCodeInsightFixtureTestCase {
 
+    // These external inspections are incompatible with the legacy light-test traversal below.
+    private static final Set<String> UNSUPPORTED_LIGHT_TEST_INSPECTIONS = Set.of(
+        "com.intellij.clouds.docker.gateway.json.inspections.DevcontainerFolderInspection",
+        "com.intellij.lang.javascript.inspections.JSInspection",
+        "org.editorconfig.language.codeinsight.inspections.EditorConfigVerifyByCoreInspection",
+        "org.jetbrains.qodana.staticAnalysis.inspections.sanity.QodanaSanity"
+    );
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -493,6 +501,21 @@ public abstract class AnnotationLightCodeInsightFixtureTestCase extends LightJav
         for (LocalInspectionEP localInspectionEP : LocalInspectionEP.LOCAL_INSPECTION.getExtensions()) {
             Object object = localInspectionEP.getInstance();
             if(!(object instanceof LocalInspectionTool)) {
+                continue;
+            }
+
+            Class<?> inspectionClass = object.getClass();
+            boolean unsupportedInspection = false;
+            while(inspectionClass != null) {
+                if(UNSUPPORTED_LIGHT_TEST_INSPECTIONS.contains(inspectionClass.getName())) {
+                    unsupportedInspection = true;
+                    break;
+                }
+
+                inspectionClass = inspectionClass.getSuperclass();
+            }
+
+            if(unsupportedInspection) {
                 continue;
             }
 

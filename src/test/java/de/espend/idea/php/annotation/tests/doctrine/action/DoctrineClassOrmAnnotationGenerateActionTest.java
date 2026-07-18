@@ -21,6 +21,11 @@ public class DoctrineClassOrmAnnotationGenerateActionTest extends AnnotationLigh
     public void testThatThatEntityClassIsGeneratedForAnnotations() {
         myFixture.configureByText(PhpFileType.INSTANCE, "<?php\n" +
             "\n" +
+            "/**\n" +
+            " * @\\Doctrine\\ORM\\Mapping\\Entity\n" +
+            " */\n" +
+            "class Existing {}\n" +
+            "\n" +
             "class Foobar\n" +
             "{\n" +
             "   public $id;<caret>\n" +
@@ -32,6 +37,11 @@ public class DoctrineClassOrmAnnotationGenerateActionTest extends AnnotationLigh
         myFixture.checkResult("<?php\n" +
             "\n" +
             "use Doctrine\\ORM\\Mapping as ORM;\n" +
+            "\n" +
+            "/**\n" +
+            " * @\\Doctrine\\ORM\\Mapping\\Entity\n" +
+            " */\n" +
+            "class Existing {}\n" +
             "\n" +
             "/**\n" +
             " * @ORM\\Entity\n" +

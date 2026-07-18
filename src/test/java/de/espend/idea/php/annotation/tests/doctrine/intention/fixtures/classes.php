@@ -14,6 +14,9 @@ namespace Doctrine\ORM\Mapping
     {
     }
 
+    /**
+     * @Annotation
+     */
     class Entity
     {
     }
