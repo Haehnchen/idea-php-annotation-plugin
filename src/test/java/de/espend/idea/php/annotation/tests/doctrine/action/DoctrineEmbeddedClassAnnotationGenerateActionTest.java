@@ -20,6 +20,11 @@ public class DoctrineEmbeddedClassAnnotationGenerateActionTest extends Annotatio
     public void testThatThatEmbeddableClassIsGeneratedForAnnotations() {
         myFixture.configureByText(PhpFileType.INSTANCE, "<?php\n" +
             "\n" +
+            "/**\n" +
+            " * @\\Doctrine\\ORM\\Mapping\\Entity\n" +
+            " */\n" +
+            "class Existing {}\n" +
+            "\n" +
             "class Foobar\n" +
             "{\n" +
             "<caret>" +
@@ -31,6 +36,11 @@ public class DoctrineEmbeddedClassAnnotationGenerateActionTest extends Annotatio
         myFixture.checkResult("<?php\n" +
             "\n" +
             "use Doctrine\\ORM\\Mapping as ORM;\n" +
+            "\n" +
+            "/**\n" +
+            " * @\\Doctrine\\ORM\\Mapping\\Entity\n" +
+            " */\n" +
+            "class Existing {}\n" +
             "\n" +
             "/**\n" +
             " * @ORM\\Embeddable\n" +

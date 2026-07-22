@@ -31,6 +31,11 @@ public class DoctrineOrmFieldIntentionTest extends AnnotationLightCodeInsightFix
     public void testThatAddDoctrineColumnIsAvailableIsInvokedWithResult() {
         myFixture.configureByText(PhpFileType.INSTANCE, "<?php\n" +
             "\n" +
+            "/**\n" +
+            " * @\\Doctrine\\ORM\\Mapping\\Entity\n" +
+            " */\n" +
+            "class Existing {}\n" +
+            "\n" +
             "class Foobar\n" +
             "{\n" +
             "   public $i<caret>d;\n" +
@@ -42,6 +47,11 @@ public class DoctrineOrmFieldIntentionTest extends AnnotationLightCodeInsightFix
         myFixture.checkResult("<?php\n" +
             "\n" +
             "use Doctrine\\ORM\\Mapping as ORM;\n" +
+            "\n" +
+            "/**\n" +
+            " * @\\Doctrine\\ORM\\Mapping\\Entity\n" +
+            " */\n" +
+            "class Existing {}\n" +
             "\n" +
             "class Foobar\n" +
             "{\n" +
@@ -57,6 +67,11 @@ public class DoctrineOrmFieldIntentionTest extends AnnotationLightCodeInsightFix
     public void testThatAddDoctrineColumnIsAvailableIsInvokedWithResultForNullable() {
         myFixture.configureByText(PhpFileType.INSTANCE, "<?php\n" +
             "\n" +
+            "/**\n" +
+            " * @\\Doctrine\\ORM\\Mapping\\Entity\n" +
+            " */\n" +
+            "class Existing {}\n" +
+            "\n" +
             "class Foobar\n" +
             "{\n" +
             "   public ?int $foo<caret>bar;\n" +
@@ -68,6 +83,11 @@ public class DoctrineOrmFieldIntentionTest extends AnnotationLightCodeInsightFix
         myFixture.checkResult("<?php\n" +
             "\n" +
             "use Doctrine\\ORM\\Mapping as ORM;\n" +
+            "\n" +
+            "/**\n" +
+            " * @\\Doctrine\\ORM\\Mapping\\Entity\n" +
+            " */\n" +
+            "class Existing {}\n" +
             "\n" +
             "class Foobar\n" +
             "{\n" +
