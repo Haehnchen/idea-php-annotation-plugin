@@ -16,7 +16,8 @@ class AnnotationDeprecatedInspectionTest : AnnotationLightCodeInsightFixtureTest
     fun testThatInspectionIsDisplayedForAnnotationClasses() {
         assertLocalInspectionContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Doctrine\ORM\Mapping as ORM;
 
                 /**
@@ -31,7 +32,8 @@ class AnnotationDeprecatedInspectionTest : AnnotationLightCodeInsightFixtureTest
 
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Doctrine\ORM\Mapping as ORM;
 
                 /**

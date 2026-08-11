@@ -20,7 +20,8 @@ class AnnotationDocBlockClassConstantNotFoundInspectionTest : AnnotationLightCod
     fun testThatClassConstantProvideMissingUseHighlight() {
         assertLocalInspectionContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Foo;
                 /**
                  * @Foobar(type=Foo\Unknown::cl<caret>ass)
@@ -34,7 +35,8 @@ class AnnotationDocBlockClassConstantNotFoundInspectionTest : AnnotationLightCod
 
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 /**
                  * @Foobar(type=\Foobar\Bar\FooBar::cl<caret>ass)
                  */
@@ -47,7 +49,8 @@ class AnnotationDocBlockClassConstantNotFoundInspectionTest : AnnotationLightCod
 
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Foobar\Bar\FooBar;
                 /**
                  * @Foobar(type=FooBar::cl<caret>ass)
@@ -61,7 +64,8 @@ class AnnotationDocBlockClassConstantNotFoundInspectionTest : AnnotationLightCod
 
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Foobar\Bar;
                 /**
                  * @Foobar(type=FooBar\FooBar::cl<caret>ass)

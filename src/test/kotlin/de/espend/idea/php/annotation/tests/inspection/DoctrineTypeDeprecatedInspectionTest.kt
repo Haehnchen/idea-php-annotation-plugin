@@ -20,7 +20,8 @@ class DoctrineTypeDeprecatedInspectionTest : AnnotationLightCodeInsightFixtureTe
     fun testThatDeprecatedInspectionIsDisplayedDoctrineColumnTypes() {
         assertLocalInspectionContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Doctrine\ORM\Mapping as ORM;
 
                 /**
@@ -35,7 +36,8 @@ class DoctrineTypeDeprecatedInspectionTest : AnnotationLightCodeInsightFixtureTe
 
         assertLocalInspectionIsEmpty(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Doctrine\ORM\Mapping as ORM;
 
                 /**
@@ -51,7 +53,8 @@ class DoctrineTypeDeprecatedInspectionTest : AnnotationLightCodeInsightFixtureTe
     fun testThatDeprecatedInspectionIsDisplayedDoctrineColumnTypesForAttribute() {
         assertLocalInspectionContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Doctrine\ORM\Mapping as ORM;
 
                 #[ORM\Column(type: 'json<caret>_array')]
@@ -64,7 +67,8 @@ class DoctrineTypeDeprecatedInspectionTest : AnnotationLightCodeInsightFixtureTe
 
         assertLocalInspectionIsEmpty(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Doctrine\ORM\Mapping as ORM;
 
                 #[ORM\Foobar(type: 'json<caret>_array')]

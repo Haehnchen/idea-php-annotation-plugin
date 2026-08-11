@@ -20,7 +20,8 @@ class RepositoryClassInspectionTest : AnnotationLightCodeInsightFixtureTestCase(
     fun testThatInspectionForMissingClassIsProvided() {
         assertLocalInspectionContains(
             "test.php",
-            """<?php
+            """
+                <?php
 
                 use Doctrine\ORM\Mapping as ORM;
 
@@ -36,7 +37,8 @@ class RepositoryClassInspectionTest : AnnotationLightCodeInsightFixtureTestCase(
 
         assertLocalInspectionContains(
             "test.php",
-            """<?php
+            """
+                <?php
 
                 use Doctrine\ORM\Mapping as ORM;
 
@@ -54,7 +56,8 @@ class RepositoryClassInspectionTest : AnnotationLightCodeInsightFixtureTestCase(
     fun testThatExistingClassIsNotHighlighted() {
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
 
                 use Doctrine\ORM\Mapping as ORM;
 
@@ -72,7 +75,8 @@ class RepositoryClassInspectionTest : AnnotationLightCodeInsightFixtureTestCase(
     fun testThatExistingClassInSameNamespaceIsNotHighlighted() {
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
 
                 namespace Foobar;use Doctrine\ORM\Mapping as ORM;
 
