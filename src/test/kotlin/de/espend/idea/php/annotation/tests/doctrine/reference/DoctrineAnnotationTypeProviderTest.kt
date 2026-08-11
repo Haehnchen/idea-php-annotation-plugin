@@ -27,4 +27,18 @@ class DoctrineAnnotationTypeProviderTest : AnnotationLightCodeInsightFixtureTest
             PlatformPatterns.psiElement(PhpClass::class.java).withName("UserRepository"),
         )
     }
+
+    fun testEntityRepositoryClassProvidesCompletion() {
+        assertCompletionContains(
+            PhpFileType.INSTANCE,
+            """
+                <?php
+                use Doctrine\ORM\Mapping as ORM;
+
+                /** @ORM\Entity(repositoryClass="<caret>") */
+                class User {}
+            """.trimIndent(),
+            "App\\Repository\\UserRepository",
+        )
+    }
 }
