@@ -23,7 +23,7 @@ class AnnotationPropertyValueReferenceContributorTest : AnnotationLightCodeInsig
     }
 
     override fun getTestDataPath(): String =
-        "src/test/java/de/espend/idea/php/annotation/tests/completion/fixtures"
+        "src/test/kotlin/de/espend/idea/php/annotation/tests/completion/fixtures"
 
     fun testDelegatesNamedAnnotationPropertyToExtensions() {
         myFixture.configureByText(

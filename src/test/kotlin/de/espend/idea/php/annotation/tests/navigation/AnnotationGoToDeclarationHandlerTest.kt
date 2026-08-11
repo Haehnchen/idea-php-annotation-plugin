@@ -19,7 +19,7 @@ class AnnotationGoToDeclarationHandlerTest : AnnotationLightCodeInsightFixtureTe
     }
 
     override fun getTestDataPath(): String =
-        "src/test/java/de/espend/idea/php/annotation/tests/navigation/fixtures"
+        "src/test/kotlin/de/espend/idea/php/annotation/tests/navigation/fixtures"
 
     fun testThatPhpDocOfNamespaceProvidesNavigation() {
         assertNavigationMatch(
