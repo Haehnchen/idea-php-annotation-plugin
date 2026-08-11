@@ -20,7 +20,8 @@ class AnnotationDocBlockConstantDeprecatedInspectionTest : AnnotationLightCodeIn
     fun testTheClassConstantProvidesNotificationForDeprecatedClassUsage() {
         assertLocalInspectionContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Foobar\Bar\FooBarDeprecated;
                 /**
                  * @Foobar(type=FooBarDeprecated::cl<caret>ass)
@@ -34,7 +35,8 @@ class AnnotationDocBlockConstantDeprecatedInspectionTest : AnnotationLightCodeIn
 
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Foobar\Bar\FooBar;
                 /**
                  * @Foobar(type=FooBarDeprecated::cl<caret>ass)
@@ -50,7 +52,8 @@ class AnnotationDocBlockConstantDeprecatedInspectionTest : AnnotationLightCodeIn
     fun testTheConstantProvidesNotificationForDeprecatedUsage() {
         assertLocalInspectionContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Foobar\Bar\FooBarDeprecated;
                 /**
                  * @Foobar(type=FooBarDeprecated::I_AM_DEP<caret>RECATED)
@@ -64,7 +67,8 @@ class AnnotationDocBlockConstantDeprecatedInspectionTest : AnnotationLightCodeIn
 
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Foobar\Bar\FooBarDeprecated;
                 /**
                  * @Foobar(type=FooBarDeprecated::I_AM_NOT_DEPRECATED)

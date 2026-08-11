@@ -20,7 +20,8 @@ class AnnotationMissingUseInspectionTest : AnnotationLightCodeInsightFixtureTest
     fun testThatInspectionIsDisplayedForAnnotationClasses() {
         assertLocalInspectionContains(
             "test.php",
-            """<?php
+            """
+                <?php
 
 
                 /**
@@ -35,7 +36,8 @@ class AnnotationMissingUseInspectionTest : AnnotationLightCodeInsightFixtureTest
 
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Foo\Entity;
 
                 /**
@@ -50,7 +52,8 @@ class AnnotationMissingUseInspectionTest : AnnotationLightCodeInsightFixtureTest
 
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
 
                 /**
                  * @\E<caret>ntity()
@@ -66,7 +69,8 @@ class AnnotationMissingUseInspectionTest : AnnotationLightCodeInsightFixtureTest
     fun testThatInspectionIsNotDisplayedForClassesWhichDoesNotHaveAValidImportPath() {
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Foo\Entity;
 
                 /**
@@ -85,7 +89,8 @@ class AnnotationMissingUseInspectionTest : AnnotationLightCodeInsightFixtureTest
     fun testThatInspectionIsDisplayedForAnnotationClassesWithAlias() {
         assertLocalInspectionContains(
             "test.php",
-            """<?php
+            """
+                <?php
 
 
                 /**
@@ -100,7 +105,8 @@ class AnnotationMissingUseInspectionTest : AnnotationLightCodeInsightFixtureTest
 
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
                 use Foo\Bar as ORM;
 
                 /**
@@ -117,7 +123,8 @@ class AnnotationMissingUseInspectionTest : AnnotationLightCodeInsightFixtureTest
     fun testThatBlacklistedAnnotationDoesNotProvideInpsectionMessage() {
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
 
 
                 /**
@@ -132,7 +139,8 @@ class AnnotationMissingUseInspectionTest : AnnotationLightCodeInsightFixtureTest
 
         assertLocalInspectionContainsNotContains(
             "test.php",
-            """<?php
+            """
+                <?php
 
 
                 /**
