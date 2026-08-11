@@ -12,8 +12,6 @@ import com.jetbrains.php.lang.PhpLanguage
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
-import com.jetbrains.php.lang.psi.elements.Field
-import com.jetbrains.php.lang.psi.elements.PhpClass
 import de.espend.idea.php.annotation.extension.parameter.AnnotationDocTagGotoHandlerParameter
 import de.espend.idea.php.annotation.extension.parameter.AnnotationVirtualPropertyTargetsParameter
 import de.espend.idea.php.annotation.pattern.AnnotationPattern
@@ -37,7 +35,8 @@ class AnnotationGoToDeclarationHandler : GotoDeclarationHandler {
             addPropertyGoto(psiElement, targets)
         }
 
-        // <@Test>, <@Test\Test>
+        // <@Test>
+        // <@Test\Test>
         if (DOC_TAG_NAME_PATTERN.accepts(psiElement)) {
             addDocTagNameGoto(psiElement, targets)
         }
@@ -55,6 +54,12 @@ class AnnotationGoToDeclarationHandler : GotoDeclarationHandler {
         return targets.toTypedArray()
     }
 
+    /**
+     * Add goto for DocTag itself which should be the PhpClass and provide Extension
+     *
+     * @param psiElement origin DOC_TAG_NAME psi element
+     * @param targets Goto targets
+     */
     private fun addDocTagNameGoto(psiElement: PsiElement, targets: MutableList<PsiElement>) {
         val phpDocTag = psiElement.context
         if (phpDocTag !is PhpDocTag) {
@@ -70,6 +75,12 @@ class AnnotationGoToDeclarationHandler : GotoDeclarationHandler {
         }
     }
 
+    /**
+     * Add goto for property value which are Fields inside PhpClass
+     *
+     * @param psiElement origin DOC_IDENTIFIER psi element
+     * @param targets Goto targets
+     */
     private fun addPropertyGoto(psiElement: PsiElement, targets: MutableList<PsiElement>) {
         val phpDocTag = PsiTreeUtil.getParentOfType(psiElement, PhpDocTag::class.java) ?: return
         val phpClass = AnnotationUtil.getAnnotationReference(phpDocTag) ?: return
@@ -85,6 +96,7 @@ class AnnotationGoToDeclarationHandler : GotoDeclarationHandler {
             null
         }
 
+        // extension point to provide virtual properties / fields targets
         var parameter: AnnotationVirtualPropertyTargetsParameter? = null
         for (extension in AnnotationUtil.EP_VIRTUAL_PROPERTIES.extensions) {
             if (parameter == null) {
@@ -93,13 +105,28 @@ class AnnotationGoToDeclarationHandler : GotoDeclarationHandler {
             extension.getTargets(parameter)
         }
 
-        parameter?.let { targets.addAll(it.targets) }
+        if (parameter != null) {
+            targets.addAll(parameter.targets)
+        }
     }
 
+    /**
+     * Add class targets @Route(name=<ClassName>::FOO)
+     *
+     * @param psiElement DOC_IDENTIFIER
+     * @param targets Goto targets
+     */
     private fun addStaticClassTargets(psiElement: PsiElement, targets: MutableList<PsiElement>) {
-        AnnotationUtil.getClassFromDocIdentifier(psiElement)?.let { targets.add(it) }
+        val phpClass = AnnotationUtil.getClassFromDocIdentifier(psiElement) ?: return
+        targets.add(phpClass)
     }
 
+    /**
+     * Add static field targets for @Route(name=ClassName::<FOO>)
+     *
+     * @param psiElement DOC_IDENTIFIER after DOC_STATIC
+     * @param targets Goto targets
+     */
     private fun addStaticClassConstTargets(psiElement: PsiElement, targets: MutableList<PsiElement>) {
         val phpClass = AnnotationUtil.getClassFromConstant(psiElement) ?: return
         val constName = psiElement.text
@@ -109,20 +136,22 @@ class AnnotationGoToDeclarationHandler : GotoDeclarationHandler {
             return
         }
 
-        phpClass.findFieldByName(constName, true)?.let { targets.add(it) }
+        val field = phpClass.findFieldByName(constName, true) ?: return
+        targets.add(field)
     }
 
     override fun getActionText(context: DataContext): String? = null
 
-    private companion object {
-        val DOC_TAG_NAME_PATTERN: ElementPattern<PsiElement> =
-            PlatformPatterns.psiElement(PhpDocElementTypes.DOC_TAG_NAME)
-                .withText(StandardPatterns.string().startsWith("@"))
-                .withLanguage(PhpLanguage.INSTANCE)
-
-        val DOC_IDENTIFIER_BEFORE_STATIC_PATTERN: ElementPattern<PsiElement> =
-            PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
-                .beforeLeaf(AnnotationPattern.getDocStaticPattern())
-                .withLanguage(PhpLanguage.INSTANCE)
-    }
 }
+
+// <@Test>, <@Test\Test>
+private val DOC_TAG_NAME_PATTERN: ElementPattern<PsiElement> =
+    PlatformPatterns.psiElement(PhpDocElementTypes.DOC_TAG_NAME)
+        .withText(StandardPatterns.string().startsWith("@"))
+        .withLanguage(PhpLanguage.INSTANCE)
+
+// @Route(name=<ClassName>::FOO)
+private val DOC_IDENTIFIER_BEFORE_STATIC_PATTERN: ElementPattern<PsiElement> =
+    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
+        .beforeLeaf(AnnotationPattern.getDocStaticPattern())
+        .withLanguage(PhpLanguage.INSTANCE)

@@ -14,15 +14,22 @@ import de.espend.idea.php.annotation.completion.lookupelements.PhpClassAnnotatio
 class AttributeAliasInsertHandler private constructor() : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, lookupElement: LookupElement) {
         val alias = (lookupElement as? PhpClassAnnotationLookupElement)?.alias
+
+        // "ORM\Entity"
         if (alias != null) {
             if (!insertAliasUse(context, alias)) {
                 return
             }
         } else {
+            // find alias in settings "\Foo\Bar as Car" for given PhpClass insertion context
             AnnotationTagInsertHandler.preAliasInsertion(context, lookupElement)
+
+            // reuse jetbrains "use importer": this is private only so we need some workaround
+            // to not implement your own algo for that
             PhpReferenceInsertHandler.getInstance().handleInsert(context, lookupElement)
         }
 
+        // force "#[Foo]" => "#[Foo(<caret>)]"
         if (
             ApplicationSettings.getInstance().appendRoundBracket &&
             !PhpInsertHandlerUtil.isStringAtCaret(context.editor, "(")

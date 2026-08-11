@@ -3,7 +3,6 @@ package de.espend.idea.php.annotation.doctrine.inspection
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.util.Condition
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElement
@@ -23,6 +22,9 @@ import de.espend.idea.php.annotation.pattern.AnnotationPattern
 import de.espend.idea.php.annotation.util.AnnotationUtil
 import de.espend.idea.php.annotation.util.PhpElementsUtil
 
+private val DOC_IDENTIFIER_PATTERN: ElementPattern<PsiElement> =
+    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
+
 /**
  * Check for underlay class deprecations of Column type class from Doctrine
  *
@@ -32,9 +34,8 @@ import de.espend.idea.php.annotation.util.PhpElementsUtil
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 open class DoctrineTypeDeprecatedInspection : LocalInspectionTool() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return DoctrineTypePropertyVisitor(holder)
-    }
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
+        DoctrineTypePropertyVisitor(holder)
 
     private class DoctrineTypePropertyVisitor(
         private val holder: ProblemsHolder,
@@ -57,7 +58,7 @@ open class DoctrineTypeDeprecatedInspection : LocalInspectionTool() {
                     holder.registerProblem(
                         element,
                         "[Annotations] " + (
-                            deprecationMessage ?: String.format("Field '%s' is deprecated", contents)
+                            deprecationMessage ?: "Field '$contents' is deprecated"
                         ),
                         ProblemHighlightType.LIKE_DEPRECATED,
                     )
@@ -69,55 +70,48 @@ open class DoctrineTypeDeprecatedInspection : LocalInspectionTool() {
             super.visitElement(element)
         }
     }
+}
 
-    companion object {
-        private val DOC_IDENTIFIER_PATTERN: ElementPattern<PsiElement> =
-            PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
+private fun getContentIfTypeValid(
+    stringLiteralExpression: StringLiteralExpression,
+    clazz: String,
+    property: String,
+): String? {
+    if (AnnotationPattern.getAttributesValueReferencesPattern().accepts(stringLiteralExpression)) {
+        val attributeNamePsi = PhpPsiUtil.getPrevSibling(
+            stringLiteralExpression,
+            { it is PsiWhiteSpace || it.node.elementType === PhpTokenTypes.opCOLON },
+        )
 
-        private fun getContentIfTypeValid(
-            stringLiteralExpression: StringLiteralExpression,
-            clazz: String,
-            property: String,
-        ): String? {
-            if (AnnotationPattern.getAttributesValueReferencesPattern().accepts(stringLiteralExpression)) {
-                val attributeNamePsi = PhpPsiUtil.getPrevSibling(
-                    stringLiteralExpression,
-                    Condition<PsiElement> {
-                        it is PsiWhiteSpace || it.node.elementType === PhpTokenTypes.opCOLON
-                    },
-                )
+        if (
+            attributeNamePsi != null &&
+            attributeNamePsi.node.elementType === PhpTokenTypes.IDENTIFIER &&
+            property == attributeNamePsi.text
+        ) {
+            val phpAttribute = PsiTreeUtil.getParentOfType(stringLiteralExpression, PhpAttribute::class.java)
+            if (phpAttribute != null && PhpLangUtil.equalsClassNames(clazz, phpAttribute.fqn)) {
+                return stringLiteralExpression.contents
+            }
+        }
+    } else if (stringLiteralExpression.node.elementType === PhpDocElementTypes.phpDocString) {
+        val propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(
+            stringLiteralExpression,
+            DOC_IDENTIFIER_PATTERN,
+        )
 
+        if (propertyName != null && property == propertyName.text) {
+            val phpDocTag = PsiTreeUtil.getParentOfType(stringLiteralExpression, PhpDocTag::class.java)
+            if (phpDocTag != null) {
+                val phpDocAnnotationContainer = AnnotationUtil.getPhpDocAnnotationContainer(phpDocTag)
                 if (
-                    attributeNamePsi != null &&
-                    attributeNamePsi.node.elementType === PhpTokenTypes.IDENTIFIER &&
-                    property == attributeNamePsi.text
+                    phpDocAnnotationContainer != null &&
+                    PhpLangUtil.equalsClassNames(phpDocAnnotationContainer.phpClass.fqn, clazz)
                 ) {
-                    val phpAttribute = PsiTreeUtil.getParentOfType(stringLiteralExpression, PhpAttribute::class.java)
-                    if (phpAttribute != null && PhpLangUtil.equalsClassNames(clazz, phpAttribute.fqn)) {
-                        return stringLiteralExpression.contents
-                    }
-                }
-            } else if (stringLiteralExpression.node.elementType === PhpDocElementTypes.phpDocString) {
-                val propertyName = PhpElementsUtil.getPrevSiblingOfPatternMatch(
-                    stringLiteralExpression,
-                    DOC_IDENTIFIER_PATTERN,
-                )
-
-                if (propertyName != null && property == propertyName.text) {
-                    val phpDocTag = PsiTreeUtil.getParentOfType(stringLiteralExpression, PhpDocTag::class.java)
-                    if (phpDocTag != null) {
-                        val phpDocAnnotationContainer = AnnotationUtil.getPhpDocAnnotationContainer(phpDocTag)
-                        if (
-                            phpDocAnnotationContainer != null &&
-                            PhpLangUtil.equalsClassNames(phpDocAnnotationContainer.phpClass.fqn, clazz)
-                        ) {
-                            return stringLiteralExpression.contents
-                        }
-                    }
+                    return stringLiteralExpression.contents
                 }
             }
-
-            return null
         }
     }
+
+    return null
 }

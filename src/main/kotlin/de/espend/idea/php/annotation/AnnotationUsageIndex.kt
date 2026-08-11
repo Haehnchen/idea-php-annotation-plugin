@@ -70,6 +70,8 @@ class AnnotationUsageIndex : FileBasedIndexExtension<String, Set<String>>() {
         }
     }
 
+    // KEY must remain a Java-accessible static field for AnnotationUtil.
+    @Suppress("CompanionObjectInExtension")
     companion object {
         @JvmField
         val KEY: ID<String, Set<String>> = ID.create("espend.php.annotation.usage")

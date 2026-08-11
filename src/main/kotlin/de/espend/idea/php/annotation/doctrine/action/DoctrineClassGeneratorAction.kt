@@ -20,21 +20,11 @@ import org.apache.commons.lang3.StringUtils
  */
 abstract class DoctrineClassGeneratorAction : CodeInsightAction() {
     override fun isValidForFile(project: Project, editor: Editor, file: PsiFile): Boolean {
-        if (file !is PhpFile || !DoctrineUtil.isDoctrineOrmInVendor(project)) {
+        if (!DoctrineUtil.isDoctrineOrmInVendor(project)) {
             return false
         }
 
-        val offset = editor.caretModel.offset
-        if (offset <= 0) {
-            return false
-        }
-
-        val psiElement = file.findElementAt(offset) ?: return false
-        if (!INSIDE_PHP_CLASS_PATTERN.accepts(psiElement)) {
-            return false
-        }
-
-        val phpClass = PsiTreeUtil.getParentOfType(psiElement, PhpClass::class.java) ?: return false
+        val phpClass = getPhpClassOnValidScope(editor, file) ?: return false
         val docComment = phpClass.docComment
         if (docComment != null) {
             val container = AnnotationUtil.getPhpDocCommentAnnotationContainer(docComment)
@@ -47,20 +37,13 @@ abstract class DoctrineClassGeneratorAction : CodeInsightAction() {
         return phpClass.getAttributes(supportedClass).isEmpty()
     }
 
+    @Suppress("UsagesOfObsoleteApi") // CodeInsightAction still declares this obsolete method abstract.
     override fun getHandler(): CodeInsightActionHandler {
         return object : CodeInsightActionHandler {
             override fun invoke(project: Project, editor: Editor, file: PsiFile) {
-                val offset = editor.caretModel.offset
-                if (offset <= 0) {
-                    return
-                }
+                val phpClass = getPhpClassOnValidScope(editor, file) ?: return
 
-                val psiElement = file.findElementAt(offset) ?: return
-                if (!INSIDE_PHP_CLASS_PATTERN.accepts(psiElement)) {
-                    return
-                }
-
-                val phpClass = PsiTreeUtil.getParentOfType(psiElement, PhpClass::class.java) ?: return
+                // insert ORM alias
                 execute(editor, phpClass, file)
             }
 
@@ -71,12 +54,29 @@ abstract class DoctrineClassGeneratorAction : CodeInsightAction() {
     protected abstract fun execute(editor: Editor, phpClass: PhpClass, psiFile: PsiFile)
 
     /**
-     * Class supported by this action. If it is already inside the DocBlock, do not provide an action.
+     * Class supported by this action. if already inside DocBlock dont provide an action
      */
     protected abstract fun supportedClass(): String
 
-    private companion object {
-        val INSIDE_PHP_CLASS_PATTERN: ElementPattern<PsiElement> =
-            PlatformPatterns.psiElement().inside(PhpClass::class.java)
+}
+
+private val INSIDE_PHP_CLASS_PATTERN: ElementPattern<PsiElement> =
+    PlatformPatterns.psiElement().inside(PhpClass::class.java)
+
+private fun getPhpClassOnValidScope(editor: Editor, file: PsiFile): PhpClass? {
+    if (file !is PhpFile) {
+        return null
     }
+
+    val offset = editor.caretModel.offset
+    if (offset <= 0) {
+        return null
+    }
+
+    val psiElement = file.findElementAt(offset) ?: return null
+    if (!INSIDE_PHP_CLASS_PATTERN.accepts(psiElement)) {
+        return null
+    }
+
+    return PsiTreeUtil.getParentOfType(psiElement, PhpClass::class.java)
 }

@@ -16,6 +16,7 @@ class DoctrineClassOrmAnnotationGenerateAction : DoctrineClassGeneratorAction() 
     override fun supportedClass(): String = "Doctrine\\ORM\\Mapping\\Table"
 
     override fun execute(editor: Editor, phpClass: PhpClass, psiFile: PsiFile) {
+        // insert ORM alias
         val scopeForUseOperator = PhpCodeInsightUtil.findScopeForUseOperator(phpClass.firstChild)
         if (scopeForUseOperator != null) {
             PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, DoctrineUtil.DOCTRINE_ORM_MAPPING, "ORM")

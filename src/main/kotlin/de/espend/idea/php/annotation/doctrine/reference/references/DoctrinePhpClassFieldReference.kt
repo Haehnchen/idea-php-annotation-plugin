@@ -53,14 +53,17 @@ class DoctrinePhpClassFieldReference(
         var result = lookupElement
         val matchForeignType = entity != null && fieldMatchesEntity(field.project, field, entity.fqn)
 
+        // get some more presentable completion information
         val docBlock = field.docComment
         if (docBlock != null) {
             val annotationContainer = AnnotationUtil.getPhpDocCommentAnnotationContainer(docBlock) ?: return result
 
+            // search column type
             annotationContainer.getPhpDocBlock("Doctrine\\ORM\\Mapping\\Column")
                 ?.getPropertyValue("type")
                 ?.let { value -> result = result.withTypeText(value, true) }
 
+            // search for relations
             val relation = annotationContainer.getFirstPhpDocBlock(*DoctrineUtil.DOCTRINE_RELATION_FIELDS)
             if (relation != null) {
                 result = attachRelationInformation(result, relation, matchForeignType)

@@ -2,7 +2,6 @@ package de.espend.idea.php.annotation.reference
 
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns
-import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceContributor
@@ -38,16 +37,24 @@ class AnnotationPropertyValueReferenceContributor : PsiReferenceContributor() {
             AnnotationPattern.getPropertyValueString(),
             PropertyValueReferences(),
         )
+
+        // #[Route('/path', name: '<caret>')]
         registrar.registerReferenceProvider(
             AnnotationPattern.getAttributesValueReferencesPattern(),
             AttributeValueReferences(),
         )
+
+        // #[Route('<caret>')]
         registrar.registerReferenceProvider(
             AnnotationPattern.getAttributesDefaultPattern(),
             AttributeDefaultReferences(),
         )
     }
 
+    /**
+     * '@Template("foo.twig.html")'
+     * '@Service("foo")'
+     */
     private inner class PropertyValueDefaultReferences : PsiReferenceProvider() {
         override fun getReferencesByElement(
             element: PsiElement,
@@ -59,6 +66,9 @@ class AnnotationPropertyValueReferenceContributor : PsiReferenceContributor() {
         }
     }
 
+    /**
+     * '@Template(name="foo.twig.html")'
+     */
     private inner class PropertyValueReferences : PsiReferenceProvider() {
         override fun getReferencesByElement(
             element: PsiElement,
@@ -77,21 +87,18 @@ class AnnotationPropertyValueReferenceContributor : PsiReferenceContributor() {
         }
     }
 
+    /**
+     * `#[Route('/path', name: '<caret>')]`
+     */
     private inner class AttributeValueReferences : PsiReferenceProvider() {
         override fun getReferencesByElement(
             element: PsiElement,
             context: ProcessingContext,
         ): Array<PsiReference> {
-            if (element !is StringLiteralExpression) {
-                return emptyArray()
-            }
-
-            val phpAttribute = PsiTreeUtil.getParentOfType(element, PhpAttribute::class.java) ?: return emptyArray()
-            val fqn = phpAttribute.fqn ?: return emptyArray()
-            val phpClass = PhpElementsUtil.getClassInterface(element.project, fqn) ?: return emptyArray()
+            val phpClass = getAttributeClass(element) ?: return emptyArray()
             val attributeNamePsi = PhpPsiUtil.getPrevSibling(
                 element,
-                Condition<PsiElement> { sibling ->
+                { sibling ->
                     sibling is PsiWhiteSpace || sibling.node.elementType === PhpTokenTypes.opCOLON
                 },
             )
@@ -114,18 +121,15 @@ class AnnotationPropertyValueReferenceContributor : PsiReferenceContributor() {
         }
     }
 
+    /**
+     * `#[Route('<caret>')]`
+     */
     private inner class AttributeDefaultReferences : PsiReferenceProvider() {
         override fun getReferencesByElement(
             element: PsiElement,
             context: ProcessingContext,
         ): Array<PsiReference> {
-            if (element !is StringLiteralExpression) {
-                return emptyArray()
-            }
-
-            val phpAttribute = PsiTreeUtil.getParentOfType(element, PhpAttribute::class.java) ?: return emptyArray()
-            val fqn = phpAttribute.fqn ?: return emptyArray()
-            val phpClass = PhpElementsUtil.getClassInterface(element.project, fqn) ?: return emptyArray()
+            val phpClass = getAttributeClass(element) ?: return emptyArray()
             val property = AnnotationPropertyParameter(element, phpClass, AnnotationPropertyParameter.Type.DEFAULT)
             return addPsiReferences(element, context, property)
         }
@@ -154,8 +158,17 @@ class AnnotationPropertyValueReferenceContributor : PsiReferenceContributor() {
         return references.toTypedArray()
     }
 
-    private companion object {
-        val DOC_IDENTIFIER_PATTERN: ElementPattern<PsiElement> =
-            PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
+}
+
+private val DOC_IDENTIFIER_PATTERN: ElementPattern<PsiElement> =
+    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
+
+private fun getAttributeClass(element: PsiElement): PhpClass? {
+    if (element !is StringLiteralExpression) {
+        return null
     }
+
+    val phpAttribute = PsiTreeUtil.getParentOfType(element, PhpAttribute::class.java) ?: return null
+    val fqn = phpAttribute.fqn ?: return null
+    return PhpElementsUtil.getClassInterface(element.project, fqn)
 }

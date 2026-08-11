@@ -11,6 +11,7 @@ import com.intellij.ide.fileTemplates.FileTemplateUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiDirectory
@@ -35,7 +36,6 @@ import de.espend.idea.php.annotation.util.PhpElementsUtil
 import de.espend.idea.php.annotation.util.PhpPsiAttributesUtil
 import org.apache.commons.lang3.StringUtils
 import org.jetbrains.annotations.Nls
-import java.util.Arrays
 import java.util.Properties
 import javax.swing.Icon
 
@@ -60,13 +60,14 @@ open class DoctrineOrmRepositoryIntention :
     @Throws(IncorrectOperationException::class)
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
         val phpClass = getScopedPhpClass(element) ?: return
+        val currentEditor = editor ?: FileEditorManager.getInstance(project).selectedTextEditor ?: return
 
         // skip for preview
         val containingDirectory = phpClass.containingFile.containingDirectory ?: return
         val fqn = phpClass.fqn
         val sameNamespace = fqn + "Repository"
         if (PhpElementsUtil.getClass(project, sameNamespace) != null) {
-            insertRepositoryClass(editor!!, element, phpClass, sameNamespace)
+            insertRepositoryClass(currentEditor, element, phpClass, sameNamespace)
             return
         }
 
@@ -75,10 +76,10 @@ open class DoctrineOrmRepositoryIntention :
         // Foo\Entity\Foobar => Foo\Repository\FoobarRepository
         if (split.size > 2) {
             val repoNamespace = "\\" +
-                StringUtils.join(Arrays.copyOfRange(split, 0, split.size - 2), "\\") +
+                split.copyOfRange(0, split.size - 2).joinToString("\\") +
                 "\\Repository\\" + split[split.size - 1] + "Repository"
             if (PhpElementsUtil.getClass(project, repoNamespace) != null) {
-                insertRepositoryClass(editor!!, element, phpClass, repoNamespace)
+                insertRepositoryClass(currentEditor, element, phpClass, repoNamespace)
                 return
             }
         }
@@ -92,7 +93,7 @@ open class DoctrineOrmRepositoryIntention :
                 .toString()
 
             if (PhpElementsUtil.getClass(project, repoNamespace) != null) {
-                insertRepositoryClass(editor!!, element, phpClass, repoNamespace)
+                insertRepositoryClass(currentEditor, element, phpClass, repoNamespace)
                 return
             }
         }
@@ -105,7 +106,7 @@ open class DoctrineOrmRepositoryIntention :
                 .toString() + "Repository"
 
             if (PhpElementsUtil.getClass(project, repoNamespace) != null) {
-                insertRepositoryClass(editor!!, element, phpClass, repoNamespace)
+                insertRepositoryClass(currentEditor, element, phpClass, repoNamespace)
                 return
             }
         }
@@ -122,7 +123,8 @@ open class DoctrineOrmRepositoryIntention :
 
         if (repositoryDir == null) {
             if (!ApplicationManager.getApplication().isHeadlessEnvironment) {
-                HintManager.getInstance().showErrorHint(editor!!, "Repository directory structure can not be created")
+                HintManager.getInstance()
+                    .showErrorHint(currentEditor, "Repository directory structure can not be created")
             }
 
             return
@@ -130,7 +132,7 @@ open class DoctrineOrmRepositoryIntention :
 
         if (repositoryDir.findFile(fileName) != null) {
             if (!ApplicationManager.getApplication().isHeadlessEnvironment) {
-                HintManager.getInstance().showErrorHint(editor!!, "Repository file already exists")
+                HintManager.getInstance().showErrorHint(currentEditor, "Repository file already exists")
             }
 
             return
@@ -153,12 +155,12 @@ open class DoctrineOrmRepositoryIntention :
 
         // Foo\Entity\Foobar => Foo\Repository\FoobarRepository
         val repoClass = "\\" +
-            StringUtils.join(Arrays.copyOfRange(split, 0, split.size - 2), "\\") +
+            split.copyOfRange(0, split.size - 2).joinToString("\\") +
             "\\Repository\\" + split[split.size - 1] + "Repository"
 
         properties.setProperty(
             "NAMESPACE",
-            StringUtils.stripStart(repoClass.substring(0, repoClass.lastIndexOf("\\")), "\\"),
+            StringUtils.stripStart(repoClass.take(repoClass.lastIndexOf("\\")), "\\"),
         )
         properties.setProperty("NAME", phpClass.name + "Repository")
         properties.setProperty("ENTITY_NAMESPACE", DoctrineUtil.trimBlackSlashes(phpClass.namespaceName))
@@ -170,7 +172,7 @@ open class DoctrineOrmRepositoryIntention :
             return
         }
 
-        insertRepositoryClass(editor!!, element, phpClass, repoClass)
+        insertRepositoryClass(currentEditor, element, phpClass, repoClass)
         OpenFileDescriptor(project, newElement.containingFile.virtualFile, 0).navigate(true)
     }
 
@@ -210,13 +212,9 @@ open class DoctrineOrmRepositoryIntention :
     }
 
     @Nls(capitalization = Nls.Capitalization.Sentence)
-    override fun getName(): String {
-        return text
-    }
+    override fun getName(): String = text
 
-    override fun getFamilyName(): String {
-        return "PhpAnnotations"
-    }
+    override fun getFamilyName(): String = "PhpAnnotations"
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val psiElement = descriptor.psiElement ?: return
@@ -224,58 +222,50 @@ open class DoctrineOrmRepositoryIntention :
         invoke(project, null, containingFile)
     }
 
-    override fun getText(): String {
-        return "Add Doctrine repository"
+    override fun getText(): String = "Add Doctrine repository"
+
+    override fun getIcon(flags: Int): Icon = PhpAnnotationIcons.DOCTRINE
+
+    override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo =
+        IntentionPreviewInfo.EMPTY
+
+    override fun generatePreview(project: Project, previewDescriptor: ProblemDescriptor): IntentionPreviewInfo =
+        IntentionPreviewInfo.EMPTY
+}
+
+private fun insertRepositoryClass(
+    editor: Editor,
+    element: PsiElement,
+    phpClass: PhpClass,
+    repoClass: String,
+) {
+    val scopeForUseOperator: PhpPsiElement = PhpCodeInsightUtil.findScopeForUseOperator(element) ?: return
+
+    PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, repoClass, null)
+    PsiDocumentManager.getInstance(element.project)
+        .doPostponedOperationsAndUnblockDocument(editor.document)
+
+    val phpDocTagName = PhpDocUtil.getQualifiedName(phpClass, repoClass)
+    val ormEntityPhpDocBlock: PhpDocTagAnnotation? = DoctrineUtil.getOrmEntityPhpDocBlock(phpClass)
+    if (ormEntityPhpDocBlock != null) {
+        AnnotationUtil.insertNamedArgumentForAnnotation(
+            editor,
+            ormEntityPhpDocBlock.phpDocTag,
+            "repositoryClass",
+            "$phpDocTagName::class",
+        )
+
+        return
     }
 
-    override fun getIcon(flags: Int): Icon {
-        return PhpAnnotationIcons.DOCTRINE
-    }
-
-    override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
-        return IntentionPreviewInfo.EMPTY
-    }
-
-    override fun generatePreview(project: Project, previewDescriptor: ProblemDescriptor): IntentionPreviewInfo {
-        return IntentionPreviewInfo.EMPTY
-    }
-
-    private companion object {
-        private fun insertRepositoryClass(
-            editor: Editor,
-            element: PsiElement,
-            phpClass: PhpClass,
-            repoClass: String,
-        ) {
-            val scopeForUseOperator: PhpPsiElement = PhpCodeInsightUtil.findScopeForUseOperator(element) ?: return
-
-            PhpElementsUtil.insertUseIfNecessary(scopeForUseOperator, repoClass, null)
-            PsiDocumentManager.getInstance(element.project)
-                .doPostponedOperationsAndUnblockDocument(editor.document)
-
-            val phpDocTagName = PhpDocUtil.getQualifiedName(phpClass, repoClass)
-            val ormEntityPhpDocBlock: PhpDocTagAnnotation? = DoctrineUtil.getOrmEntityPhpDocBlock(phpClass)
-            if (ormEntityPhpDocBlock != null) {
-                AnnotationUtil.insertNamedArgumentForAnnotation(
-                    editor,
-                    ormEntityPhpDocBlock.phpDocTag,
-                    "repositoryClass",
-                    "$phpDocTagName::class",
-                )
-
-                return
-            }
-
-            val attributes: Collection<PhpAttribute> =
-                phpClass.getAttributes("\\Doctrine\\ORM\\Mapping\\Entity")
-            if (attributes.isNotEmpty()) {
-                PhpPsiAttributesUtil.insertNamedArgumentForAttribute(
-                    editor,
-                    attributes.iterator().next(),
-                    "repositoryClass",
-                    "$phpDocTagName::class",
-                )
-            }
-        }
+    val attributes: Collection<PhpAttribute> =
+        phpClass.getAttributes("\\Doctrine\\ORM\\Mapping\\Entity")
+    if (attributes.isNotEmpty()) {
+        PhpPsiAttributesUtil.insertNamedArgumentForAttribute(
+            editor,
+            attributes.iterator().next(),
+            "repositoryClass",
+            "$phpDocTagName::class",
+        )
     }
 }

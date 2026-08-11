@@ -82,7 +82,6 @@
 
   <extensions defaultExtensionNs="com.intellij">
 
-      <projectService serviceImplementation="de.espend.idea.php.annotation.Settings"/>
       <fileBasedIndex implementation="de.espend.idea.php.annotation.AnnotationStubIndex"/>
       <fileBasedIndex implementation="de.espend.idea.php.annotation.AnnotationUsageIndex"/>
 
