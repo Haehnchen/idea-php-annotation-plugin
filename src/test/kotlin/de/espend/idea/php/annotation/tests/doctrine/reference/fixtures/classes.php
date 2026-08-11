@@ -56,7 +56,14 @@ namespace My\FooClass
 
 namespace App\Repository
 {
-    class UserRepository
+    class UserRepository implements \Doctrine\Common\Persistence\ObjectRepository
+    {
+    }
+}
+
+namespace Doctrine\Common\Persistence
+{
+    interface ObjectRepository
     {
     }
 }

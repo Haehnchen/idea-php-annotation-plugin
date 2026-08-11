@@ -1,6 +1,8 @@
 package de.espend.idea.php.annotation.tests.doctrine.reference
 
+import com.intellij.patterns.PlatformPatterns
 import com.jetbrains.php.lang.PhpFileType
+import com.jetbrains.php.lang.psi.elements.Field
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase
 
 /**
@@ -85,6 +87,23 @@ class DoctrineAnnotationFieldProviderTest : AnnotationLightCodeInsightFixtureTes
                     "   private \$foobar;\n" +
                     "}",
             "foobar"
+        )
+    }
+
+    fun testThatDoctrineRelationPropertyProvidesFieldReference() {
+        assertReferenceMatchOnParent(
+            PhpFileType.INSTANCE,
+            """
+                <?php
+                use Doctrine\ORM\Mapping as ORM;
+
+                class Foo
+                {
+                    /** @ORM\ManyToMany(targetEntity="My\FooClass\Bar", mappedBy="b<caret>ar") */
+                    protected ${'$'}logo;
+                }
+            """.trimIndent(),
+            PlatformPatterns.psiElement(Field::class.java).withName("bar"),
         )
     }
 }
