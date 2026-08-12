@@ -53,6 +53,8 @@ class AnnotationUsageLineMarkerProvider : LineMarkerProvider {
                 hashSetOf(fqn),
                 Processor { _: VirtualFile ->
                     processed[0] = true
+
+                    // stop on first match
                     false
                 },
                 GlobalSearchScope.getScopeRestrictedByFileTypes(

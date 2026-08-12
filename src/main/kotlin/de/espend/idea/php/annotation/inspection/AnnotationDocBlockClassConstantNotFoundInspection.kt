@@ -17,9 +17,10 @@ import de.espend.idea.php.annotation.util.PhpElementsUtil
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 open class AnnotationDocBlockClassConstantNotFoundInspection : LocalInspectionTool() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return PhpDocTagWithUsePsiElementVisitor(holder, ::visitAnnotationDocTag)
-    }
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
+        PhpDocTagWithUsePsiElementVisitor(holder) { phpDocTag, problemsHolder, resolver ->
+            visitAnnotationDocTag(phpDocTag, problemsHolder, resolver)
+        }
 
     private fun visitAnnotationDocTag(
         phpDocTag: PhpDocTag,
@@ -56,9 +57,7 @@ open class AnnotationDocBlockClassConstantNotFoundInspection : LocalInspectionTo
         }
     }
 
-    override fun runForWholeFile(): Boolean {
-        return true
-    }
+    override fun runForWholeFile(): Boolean = true
 
     companion object {
         const val MESSAGE = "[Annotations] Class not found"

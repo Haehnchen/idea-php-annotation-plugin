@@ -8,7 +8,6 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Key
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns
@@ -30,10 +29,8 @@ import com.jetbrains.php.lang.inspections.attributes.PhpInapplicableAttributeTar
 import com.jetbrains.php.lang.lexer.PhpTokenTypes
 import com.jetbrains.php.lang.psi.PhpPsiUtil
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression
-import com.jetbrains.php.lang.psi.elements.Field
 import com.jetbrains.php.lang.psi.elements.PhpAttribute
 import com.jetbrains.php.lang.psi.elements.PhpAttributesList
-import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement
 import com.jetbrains.php.lang.psi.elements.PhpUse
 import com.jetbrains.php.lang.psi.elements.PhpUseList
@@ -64,7 +61,8 @@ import java.util.Collections
  */
 class AnnotationCompletionContributor : CompletionContributor() {
     init {
-        // @<caret>, * @<caret>
+        // @<caret>
+        // * @<caret>
         extend(CompletionType.BASIC, AnnotationPattern.getDocBlockTag(), PhpDocBlockTagAnnotations())
 
         // #[<caret>] but only provide alias feature
@@ -130,6 +128,9 @@ class AnnotationCompletionContributor : CompletionContributor() {
         }
     }
 
+    /**
+     * "@FOO(property={"FOO", "FOO"})"
+     */
     private inner class PhpDocArrayPropertyCompletion : CompletionProvider<CompletionParameters>() {
         override fun addCompletions(
             parameters: CompletionParameters,
@@ -167,35 +168,14 @@ class AnnotationCompletionContributor : CompletionContributor() {
             }
 
             val array = PsiTreeUtil.getParentOfType(position, ArrayCreationExpression::class.java) ?: return
-            val attributeNamePsi = PhpPsiUtil.getPrevSibling(
-                array,
-                Condition<PsiElement> { sibling ->
-                    sibling is PsiWhiteSpace || sibling.node.elementType === PhpTokenTypes.opCOLON
-                },
-            )
-            if (attributeNamePsi == null || attributeNamePsi.node.elementType !== PhpTokenTypes.IDENTIFIER) {
-                return
-            }
-
-            val attributeName = attributeNamePsi.text
-            if (StringUtils.isBlank(attributeName)) {
-                return
-            }
-
-            val phpAttribute = PsiTreeUtil.getParentOfType(position, PhpAttribute::class.java) ?: return
-            val fqn = phpAttribute.fqn ?: return
-            val phpClass = PhpElementsUtil.getClassInterface(position.project, fqn) ?: return
-            val completionParameter = AnnotationCompletionProviderParameter(parameters, context, result)
-            val property = AnnotationPropertyParameter(
+            addAttributePropertyCompletions(
                 position,
-                phpClass,
-                attributeName,
+                array,
                 AnnotationPropertyParameter.Type.PROPERTY_ARRAY,
+                parameters,
+                context,
+                result,
             )
-
-            for (extension in AnnotationUtil.EXTENSION_POINT_COMPLETION.extensions) {
-                extension.getPropertyValueCompletions(property, completionParameter)
-            }
         }
     }
 
@@ -211,35 +191,14 @@ class AnnotationCompletionContributor : CompletionContributor() {
                 return
             }
 
-            val attributeNamePsi = PhpPsiUtil.getPrevSibling(
-                parent,
-                Condition<PsiElement> { sibling ->
-                    sibling is PsiWhiteSpace || sibling.node.elementType === PhpTokenTypes.opCOLON
-                },
-            )
-            if (attributeNamePsi == null || attributeNamePsi.node.elementType !== PhpTokenTypes.IDENTIFIER) {
-                return
-            }
-
-            val attributeName = attributeNamePsi.text
-            if (StringUtils.isBlank(attributeName)) {
-                return
-            }
-
-            val phpAttribute = PsiTreeUtil.getParentOfType(position, PhpAttribute::class.java) ?: return
-            val fqn = phpAttribute.fqn ?: return
-            val phpClass = PhpElementsUtil.getClassInterface(position.project, fqn) ?: return
-            val completionParameter = AnnotationCompletionProviderParameter(parameters, context, result)
-            val property = AnnotationPropertyParameter(
+            addAttributePropertyCompletions(
                 position,
-                phpClass,
-                attributeName,
+                parent,
                 AnnotationPropertyParameter.Type.PROPERTY_VALUE,
+                parameters,
+                context,
+                result,
             )
-
-            for (extension in AnnotationUtil.EXTENSION_POINT_COMPLETION.extensions) {
-                extension.getPropertyValueCompletions(property, completionParameter)
-            }
         }
     }
 
@@ -281,6 +240,12 @@ class AnnotationCompletionContributor : CompletionContributor() {
         }
     }
 
+    /**
+     * Provides attribute so field properties of annotation
+     *
+     * "@Foo(<caret>)" => @Foo(name=)
+     * "@Foo("foo", <caret>)" => "@Foo("foo", name=)"
+     */
     private class PhpDocAttributeList : CompletionProvider<CompletionParameters>() {
         override fun addCompletions(
             parameters: CompletionParameters,
@@ -300,6 +265,7 @@ class AnnotationCompletionContributor : CompletionContributor() {
                 null
             }
 
+            // extension point for virtual properties
             var virtualPropertyParameter: AnnotationVirtualPropertyCompletionParameter? = null
             var completionParameter: AnnotationCompletionProviderParameter? = null
 
@@ -320,6 +286,9 @@ class AnnotationCompletionContributor : CompletionContributor() {
         }
     }
 
+    /**
+     * Extends attribute completion, but only for alias
+     */
     private class PhpAttributeAlias : CompletionProvider<CompletionParameters>() {
         override fun addCompletions(
             parameters: CompletionParameters,
@@ -344,14 +313,16 @@ class AnnotationCompletionContributor : CompletionContributor() {
             }
             items.putAll(getUseAsMap(attributesList))
 
-            val attributesByNamespace = getAttributeFqnsByNamespace(project)
+            val attributesByNamespace = getAttributeClassesByNamespace(project)
             for ((alias, aliasFqn) in items) {
                 val namespace = "\\" + StringUtils.stripStart(aliasFqn, "\\")
-                val fqns = attributesByNamespace[namespace] ?: continue
+                val classNames = attributesByNamespace[namespace] ?: continue
 
-                for (fqnClass in fqns) {
+                for (fqnClass in classNames) {
                     val lookupString = alias + "\\" + fqnClass.substring(namespace.length + 1)
                     val underlyingClass = PhpElementsUtil.getClassInterface(project, fqnClass) ?: continue
+                    // check if Attribute is target allowed for context
+                    // @see com.jetbrains.php.completion.PhpCompletionContributor.PhpClassRefCompletionProvider.shouldAddElement
                     val rootAttributes = PhpClassCantBeUsedAsAttributeInspection.rootAttributes(underlyingClass).toList()
                     if (
                         rootAttributes.isNotEmpty() &&
@@ -414,6 +385,7 @@ class AnnotationCompletionContributor : CompletionContributor() {
                     }
                 }
 
+                // attach class also "@ORM\Entity" if there is not import but an alias via settings
                 for (option in ApplicationSettings.getUseAliasOptionsWithDefaultFallback()) {
                     val className = option.className ?: continue
                     val alias = option.alias ?: continue
@@ -451,6 +423,7 @@ class AnnotationCompletionContributor : CompletionContributor() {
             project: Project,
             target: AnnotationTarget,
         ): Collection<PhpAnnotation> {
+            // @TODO: how handle unknown types
             return AnnotationUtil.getAnnotationsOnTargetMap(
                 project,
                 target,
@@ -485,12 +458,14 @@ class AnnotationCompletionContributor : CompletionContributor() {
 
             val importMap = AnnotationUtil.getUseImportMap(phpDocTag as PsiElement)
             var namespace = importMap[name] ?: return
+            // find annotation scope, to filter classes
             var annotationTarget = PhpElementsUtil.findAnnotationTarget(
                 PsiTreeUtil.getParentOfType(position, PhpDocComment::class.java),
             )
             if (annotationTarget == null) {
                 annotationTarget = AnnotationTarget.UNKNOWN
             }
+            // force trailing backslash on namespace
             if (!namespace.startsWith("\\")) {
                 namespace = "\\$namespace"
             }
@@ -527,6 +502,9 @@ class AnnotationCompletionContributor : CompletionContributor() {
         }
     }
 
+    /**
+     * Completion for const fields inside phpdoc @Route(name=ClassName::<FOO>)
+     */
     private class PhpDocClassConstantCompletion : CompletionProvider<CompletionParameters>() {
         override fun addCompletions(
             parameters: CompletionParameters,
@@ -548,56 +526,92 @@ class AnnotationCompletionContributor : CompletionContributor() {
         }
     }
 
-    private companion object {
-        val ATTRIBUTE_FQNS_BY_NAMESPACE_CACHE: Key<CachedValue<Map<String, Collection<String>>>> =
-            Key.create("ATTRIBUTE_FQNS_BY_NAMESPACE_CACHE")
+}
 
-        val DOC_IDENTIFIER_PATTERN: ElementPattern<PsiElement> =
-            PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
+private val ATTRIBUTE_CLASSES_BY_NAMESPACE_CACHE: Key<CachedValue<Map<String, Collection<String>>>> =
+    Key.create("ATTRIBUTE_CLASSES_BY_NAMESPACE_CACHE")
 
-        fun getAttributeFqnsByNamespace(project: Project): Map<String, Collection<String>> {
-            return CachedValuesManager.getManager(project).getCachedValue(
-                project,
-                ATTRIBUTE_FQNS_BY_NAMESPACE_CACHE,
-                {
-                    val items = HashMap<String, MutableList<String>>()
-                    for (indexedFqn in FileBasedIndex.getInstance().getAllKeys(PhpAttributesFQNsIndex.KEY, project)) {
-                        var fqnClass = indexedFqn
-                        if (!fqnClass.startsWith("\\")) {
-                            fqnClass = "\\$fqnClass"
-                        }
+private val DOC_IDENTIFIER_PATTERN: ElementPattern<PsiElement> =
+    PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_IDENTIFIER)
 
-                        var index = fqnClass.indexOf("\\", 1)
-                        while (index > 0) {
-                            items.computeIfAbsent(fqnClass.substring(0, index)) { ArrayList() }.add(fqnClass)
-                            index = fqnClass.indexOf("\\", index + 1)
-                        }
-                    }
+private fun addAttributePropertyCompletions(
+    position: PsiElement,
+    attributeNameOwner: PsiElement,
+    type: AnnotationPropertyParameter.Type,
+    parameters: CompletionParameters,
+    context: ProcessingContext,
+    result: CompletionResultSet,
+) {
+    val attributeNamePsi = PhpPsiUtil.getPrevSibling(
+        attributeNameOwner,
+        { sibling -> sibling is PsiWhiteSpace || sibling.node.elementType === PhpTokenTypes.opCOLON },
+    )
+    if (attributeNamePsi == null || attributeNamePsi.node.elementType !== PhpTokenTypes.IDENTIFIER) {
+        return
+    }
 
-                    val immutableItems = HashMap<String, Collection<String>>()
-                    for ((namespace, fqns) in items) {
-                        immutableItems[namespace] = Collections.unmodifiableList(ArrayList(fqns))
-                    }
+    val attributeName = attributeNamePsi.text
+    if (StringUtils.isBlank(attributeName)) {
+        return
+    }
 
-                    CachedValueProvider.Result.create(
-                        Collections.unmodifiableMap(immutableItems),
-                        AnnotationUtil.getModificationTrackerForIndexId(project, PhpAttributesFQNsIndex.KEY),
-                    )
-                },
-                false,
-            )
-        }
+    val phpAttribute = PsiTreeUtil.getParentOfType(position, PhpAttribute::class.java) ?: return
+    val fqn = phpAttribute.fqn ?: return
+    val phpClass = PhpElementsUtil.getClassInterface(position.project, fqn) ?: return
+    val completionParameter = AnnotationCompletionProviderParameter(parameters, context, result)
+    val property = AnnotationPropertyParameter(position, phpClass, attributeName, type)
 
-        fun getUseAsMap(element: PsiElement): Map<String, String> {
-            val scope: PhpPsiElement = PhpCodeInsightUtil.findScopeForUseOperator(element) ?: return emptyMap()
-            val imports = HashMap<String, String>()
-            for (useList: PhpUseList in PhpCodeInsightUtil.collectImports(scope)) {
-                for (use: PhpUse in useList.declarations) {
-                    val alias = use.aliasName ?: continue
-                    imports[alias] = use.fqn
+    for (extension in AnnotationUtil.EXTENSION_POINT_COMPLETION.extensions) {
+        extension.getPropertyValueCompletions(property, completionParameter)
+    }
+}
+
+/**
+ * Cache attribute FQNs by namespace prefix so alias completion can query only relevant branches.
+ *
+ * Example key: `"\Doctrine\ORM\Mapping"` => [`"\Doctrine\ORM\Mapping\Entity"`, ...]
+ */
+private fun getAttributeClassesByNamespace(project: Project): Map<String, Collection<String>> {
+    return CachedValuesManager.getManager(project).getCachedValue(
+        project,
+        ATTRIBUTE_CLASSES_BY_NAMESPACE_CACHE,
+        {
+            val items = HashMap<String, MutableList<String>>()
+            for (indexedFqn in FileBasedIndex.getInstance().getAllKeys(PhpAttributesFQNsIndex.KEY, project)) {
+                var fqnClass = indexedFqn
+                if (!fqnClass.startsWith("\\")) {
+                    fqnClass = "\\$fqnClass"
+                }
+
+                var index = fqnClass.indexOf("\\", 1)
+                while (index > 0) {
+                    items.computeIfAbsent(fqnClass.take(index)) { ArrayList() }.add(fqnClass)
+                    index = fqnClass.indexOf("\\", index + 1)
                 }
             }
-            return imports
+
+            val immutableItems = HashMap<String, Collection<String>>()
+            for ((namespace, classNames) in items) {
+                immutableItems[namespace] = Collections.unmodifiableList(ArrayList(classNames))
+            }
+
+            CachedValueProvider.Result.create(
+                Collections.unmodifiableMap(immutableItems),
+                AnnotationUtil.getModificationTrackerForIndexId(project, PhpAttributesFQNsIndex.KEY),
+            )
+        },
+        false,
+    )
+}
+
+private fun getUseAsMap(element: PsiElement): Map<String, String> {
+    val scope: PhpPsiElement = PhpCodeInsightUtil.findScopeForUseOperator(element) ?: return emptyMap()
+    val imports = HashMap<String, String>()
+    for (useList: PhpUseList in PhpCodeInsightUtil.collectImports(scope)) {
+        for (use: PhpUse in useList.declarations) {
+            val alias = use.aliasName ?: continue
+            imports[alias] = use.fqn
         }
     }
+    return imports
 }

@@ -33,15 +33,22 @@ internal fun insertAliasUse(context: InsertionContext, alias: UseAliasOption): B
 class AnnotationTagInsertHandler private constructor() : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, lookupElement: LookupElement) {
         val alias = (lookupElement as? PhpClassAnnotationLookupElement)?.alias
+
+        // "ORM\Entity"
         if (alias != null) {
             if (!insertAliasUse(context, alias)) {
                 return
             }
         } else {
+            // find alias in settings "\Foo\Bar as Car" for given PhpClass insertion context
             preAliasInsertion(context, lookupElement)
+
+            // reuse jetbrains "use importer": this is private only so we need some workaround
+            // to not implement your own algo for that
             PhpReferenceInsertHandler.getInstance().handleInsert(context, lookupElement)
         }
 
+        // force "@Foo" => "@Foo(<caret>)"
         if (
             ApplicationSettings.getInstance().appendRoundBracket &&
             !PhpInsertHandlerUtil.isStringAtCaret(context.editor, "(")
@@ -50,6 +57,7 @@ class AnnotationTagInsertHandler private constructor() : InsertHandler<LookupEle
             context.editor.caretModel.moveCaretRelatively(-1, 0, false, false, true)
         }
 
+        // "@" is not provide by lookupelements element because its remove by auto import so attach it if necessary
         val element = PsiUtilCore.getElementAtOffset(context.file, context.startOffset)
         if (!element.text.startsWith("@")) {
             context.document.insertString(context.startOffset, "@")
@@ -61,7 +69,9 @@ class AnnotationTagInsertHandler private constructor() : InsertHandler<LookupEle
 
         fun getInstance(): AnnotationTagInsertHandler = INSTANCE
 
-        /** Insert a configured class alias before PhpStorm imports the completed class. */
+        /**
+         * Insert class alias before PhpStorm tries to import a new use statement "\Foo\Bar as Car"
+         */
         fun preAliasInsertion(context: InsertionContext, lookupElement: LookupElement) {
             val importsAliases = AnnotationUtil.getActiveImportsAliasesFromSettings()
             if (importsAliases.isEmpty()) {

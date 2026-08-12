@@ -4,6 +4,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.jetbrains.php.lang.PhpFileType
 import de.espend.idea.php.annotation.ApplicationSettings.Companion.getInstance
 import de.espend.idea.php.annotation.dict.UseAliasOption
+import de.espend.idea.php.annotation.pattern.AnnotationPattern
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase
 
 /**

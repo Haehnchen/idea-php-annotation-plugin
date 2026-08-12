@@ -20,7 +20,7 @@ class ApplicationSettings : PersistentStateComponent<ApplicationSettings> {
     var useAliasOptions: MutableList<UseAliasOption> = ArrayList()
 
     /**
-     * First user change, so that defaults can be provided.
+     * First user change, so that can provide defaults
      */
     @JvmField
     var provideDefaults = true
@@ -32,11 +32,9 @@ class ApplicationSettings : PersistentStateComponent<ApplicationSettings> {
     }
 
     companion object {
-        @JvmStatic
         fun getInstance(): ApplicationSettings =
             ApplicationManager.getApplication().getService(ApplicationSettings::class.java)
 
-        @JvmStatic
         fun getDefaultUseAliasOption(): Collection<UseAliasOption> {
             val options = ArrayList<UseAliasOption>()
             options.add(UseAliasOption("Symfony\\Component\\Validator\\Constraints", "Assert", true))
@@ -53,11 +51,9 @@ class ApplicationSettings : PersistentStateComponent<ApplicationSettings> {
             options.add(UseAliasOption("Sunrise\\Symfony\\OpenApi\\Annotation", "OpenApi", true))
 
             for (extension in AnnotationUtil.EP_USE_ALIASES.extensions) {
-                options.addAll(
-                    extension.aliases.map { (alias, className) ->
-                        UseAliasOption(className, alias, true)
-                    },
-                )
+                extension.aliases.mapTo(options) { (alias, className) ->
+                    UseAliasOption(className, alias, true)
+                }
             }
 
             return options

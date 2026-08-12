@@ -1,21 +1,22 @@
 package de.espend.idea.php.annotation.tests.doctrine.action
 
 import com.jetbrains.php.lang.PhpFileType
+import de.espend.idea.php.annotation.doctrine.action.DoctrineClassGeneratorAction
 import de.espend.idea.php.annotation.tests.AnnotationLightCodeInsightFixtureTestCase
 
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
+ * @see DoctrineClassGeneratorAction
  * @see de.espend.idea.php.annotation.doctrine.action.DoctrineClassOrmAnnotationGenerateAction
  */
 class DoctrineClassOrmAnnotationGenerateActionTest : AnnotationLightCodeInsightFixtureTestCase() {
-    public override fun setUp() {
+    override fun setUp() {
         super.setUp()
         myFixture.copyFileToProject("classes.php")
     }
 
-    override fun getTestDataPath(): String {
-        return "src/test/kotlin/de/espend/idea/php/annotation/tests/doctrine/action/fixtures"
-    }
+    override fun getTestDataPath(): String =
+        "src/test/kotlin/de/espend/idea/php/annotation/tests/doctrine/action/fixtures"
 
     fun testThatThatEntityClassIsGeneratedForAnnotations() {
         myFixture.configureByText(

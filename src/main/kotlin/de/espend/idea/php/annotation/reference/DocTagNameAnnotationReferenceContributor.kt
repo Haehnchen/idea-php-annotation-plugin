@@ -29,6 +29,12 @@ import org.apache.commons.lang3.StringUtils
  */
 class DocTagNameAnnotationReferenceContributor : PsiReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
+        /*
+         * Our main reference provider to attach DocBlocTag to their use declaration
+         * This one resolve the "Optimize Usage" issues
+         *
+         * "@Template()", "@ORM\PostPersist()"
+         */
         registrar.registerReferenceProvider(
             PlatformPatterns.psiElement(PhpDocTag::class.java),
             object : PsiReferenceProvider() {
@@ -44,6 +50,12 @@ class DocTagNameAnnotationReferenceContributor : PsiReferenceContributor() {
             },
         )
 
+        /*
+         * Collects static identifier elements on the first element and search them inside the use statements or global namespace
+         *
+         * - @Foo(F<caret>OO::BAR)
+         * - @Foo(Fo<caret>o\FOO::BAR)
+         */
         registrar.registerReferenceProvider(
             PlatformPatterns.psiElement(PhpDocToken::class.java),
             object : PsiReferenceProvider() {
@@ -64,10 +76,12 @@ class DocTagNameAnnotationReferenceContributor : PsiReferenceContributor() {
                         return emptyArray()
                     }
 
+                    // We must be at first namespace part: "F<caret>oo\Bar::class"
                     PhpDocUtil.getNamespaceForDocIdentifierAtStart(element) ?: return emptyArray()
                     val docTag: PhpDocTag? =
                         PhpPsiUtil.getParentByCondition(element, true, PhpDocTag.INSTANCEOF, null)
                     docTag ?: return emptyArray()
+                    // Find any import which is related here: "use Foo" => "F<caret>oo\Bar::class"
                     val fqn = AnnotationUtil.getClassFromDocIdentifierAsString(element) ?: return emptyArray()
 
                     return arrayOf(PhpDocIdentifierReference(element, fqn))
@@ -78,17 +92,27 @@ class DocTagNameAnnotationReferenceContributor : PsiReferenceContributor() {
 
     private class PhpDocTagReference(element: PhpDocTag) : PsiPolyVariantReferenceBase<PhpDocTag>(element) {
         override fun isReferenceTo(element: PsiElement): Boolean {
+            // eg for "Optimize Imports"
+            // attach reference to @Template()
+            // reference can also point to a namespace e.g. @Annotation\Exclude()
+
+            // use Doctrine\ORM\Mapping as "ORM";
             if (element is PhpUse) {
                 if (element.name == getDocBlockName()) {
                     return true
                 }
             }
 
+            // class "Zend\Form\Annotation\Exclude" imported via namespace and has "subclass" annotation
+            // use Zend\Form\Annotation;
+            // @Annotation\Exclude
             if (element is PhpNamespace) {
                 val phpClass = AnnotationUtil.getAnnotationReference(this.element)
                 return phpClass != null && phpClass.fqn.startsWith(element.fqn)
             }
 
+            // direct class match
+            // Zend\Form\Annotation => @Annotation
             if (element is PhpClass) {
                 val phpClass = AnnotationUtil.getAnnotationReference(this.element)
                 return phpClass != null && phpClass.fqn == element.fqn
@@ -97,17 +121,26 @@ class DocTagNameAnnotationReferenceContributor : PsiReferenceContributor() {
             return false
         }
 
+        /**
+         * We need to strip @ char before DocTag @Test, @Test\Foo
+         *
+         * @return TextRange of DocTag without @ char
+         */
         override fun getRangeInElement(): TextRange {
             var tagName = element.name
             var rangeStart = 0
             var rangeEnd = tagName.length
 
+            // remove DocTag "@" char
+            // it should always be true, check for security reason
             if (tagName.startsWith("@")) {
                 rangeStart = 1
                 tagName = tagName.substring(1)
             }
 
-            if (tagName.contains("\\")) {
+            // "@ORM\PostPersist()"
+            // only on alias and namespace use main ns
+            if ("\\" in tagName) {
                 rangeEnd = tagName.indexOf("\\") + rangeStart
             }
 
@@ -121,18 +154,25 @@ class DocTagNameAnnotationReferenceContributor : PsiReferenceContributor() {
 
         override fun getVariants(): Array<Any> = emptyArray()
 
+        /**
+         * Get the class alias
+         *
+         * "@Template()"
+         * "@ORM\PostPersist()"
+         */
         private fun getDocBlockName(): String {
             var name = element.name
             if (name.startsWith("@")) {
                 name = name.substring(1)
             }
-            if (name.contains("\\")) {
-                name = name.substring(0, name.indexOf("\\"))
-            }
+            name = name.substringBefore("\\")
             return name
         }
     }
 
+    /**
+     * Adds support for references of "@Foobar(name=Fo<caret>oBar::Const)"
+     */
     private class PhpDocIdentifierReference(
         element: PsiElement,
         private val fqn: String,
@@ -141,25 +181,23 @@ class DocTagNameAnnotationReferenceContributor : PsiReferenceContributor() {
 
         override fun resolve(): PsiElement? = null
 
+        /**
+         * Attach element identify name to class of "use" usage
+         *
+         * @param psiElement PhpClass used in "use" statement
+         */
         override fun isReferenceTo(psiElement: PsiElement): Boolean {
             if (psiElement !is PhpNamedElement) {
                 return false
             }
 
             val text = element.text
-            if (StringUtils.isBlank(text)) {
-                return false
-            }
-
-            val classByContext = AnnotationUtil.getUseImportMap(element)[text]
-            if (classByContext != null) {
-                return StringUtils.stripStart(psiElement.fqn, "\\").equals(
+            return StringUtils.isNotBlank(text) &&
+                text in AnnotationUtil.getUseImportMap(element) &&
+                StringUtils.stripStart(psiElement.fqn, "\\").equals(
                     StringUtils.stripStart(fqn, "\\"),
                     ignoreCase = true,
                 )
-            }
-
-            return false
         }
 
         override fun getVariants(): Array<Any> = emptyArray()

@@ -4,7 +4,6 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
@@ -36,20 +35,17 @@ open class DoctrineOrmFieldIntention : PsiElementBaseIntentionAction(), Iconable
 
     @Throws(IncorrectOperationException::class)
     override fun invoke(project: Project, editor: Editor?, psiElement: PsiElement) {
+        val document = editor?.document ?: return
         val context = getFieldContext(psiElement)
         if (context != null) {
             DoctrineUtil.importOrmUseAliasIfNotExists(context)
-            PhpDocUtil.addPropertyOrmDocs(context, editor!!.document, psiElement.containingFile)
+            PhpDocUtil.addPropertyOrmDocs(context, document, psiElement.containingFile)
         }
     }
 
-    override fun getFamilyName(): String {
-        return "PhpAnnotations"
-    }
+    override fun getFamilyName(): String = "PhpAnnotations"
 
-    override fun getText(): String {
-        return "Add Doctrine column"
-    }
+    override fun getText(): String = "Add Doctrine column"
 
     private fun getFieldContext(element: PsiElement): Field? {
         var context: Field? = null
@@ -58,12 +54,9 @@ open class DoctrineOrmFieldIntention : PsiElementBaseIntentionAction(), Iconable
         } else {
             // direct field context
             // public $foo;
-            val firstParent = PsiTreeUtil.findFirstParent(
-                element,
-                Condition<PsiElement> {
-                    it.node?.elementType === PhpElementTypes.CLASS_FIELDS
-                },
-            )
+            val firstParent = PsiTreeUtil.findFirstParent(element) {
+                it.node?.elementType === PhpElementTypes.CLASS_FIELDS
+            }
             if (firstParent is PhpPsiElement) {
                 context = PsiTreeUtil.getChildOfType(firstParent, Field::class.java)
             }
@@ -94,7 +87,5 @@ open class DoctrineOrmFieldIntention : PsiElementBaseIntentionAction(), Iconable
         return context
     }
 
-    override fun getIcon(flags: Int): Icon {
-        return PhpAnnotationIcons.DOCTRINE
-    }
+    override fun getIcon(flags: Int): Icon = PhpAnnotationIcons.DOCTRINE
 }

@@ -36,9 +36,7 @@ open class AnnotationDeprecatedInspection : LocalInspectionTool() {
         holder.registerProblem(firstChild, MESSAGE, ProblemHighlightType.LIKE_DEPRECATED)
     }
 
-    override fun runForWholeFile(): Boolean {
-        return true
-    }
+    override fun runForWholeFile(): Boolean = true
 
     companion object {
         const val MESSAGE = "[Annotations] Annotation is deprecated"

@@ -35,9 +35,10 @@ class AnnotationStubIndex : FileBasedIndexExtension<String, String>() {
 
             val fqn = topLevelElement.fqn.removePrefix("\\")
 
-            // Doctrine has many tests: Doctrine\Tests\Common\Annotations\Fixtures.
-            // Indexing runs before the project is fully loaded, so PhpUnitUtil.isTestClass is unavailable.
-            if (fqn.contains("\\Tests\\") || fqn.contains("\\Fixtures\\")) {
+            // doctrine has many tests: Doctrine\Tests\Common\Annotations\Fixtures
+            // we are on index process, project is not fully loaded here, so filter name based tests
+            // e.g. PhpUnitUtil.isTestClass not possible
+            if ("\\Tests\\" in fqn || "\\Fixtures\\" in fqn) {
                 continue
             }
 
@@ -60,6 +61,7 @@ class AnnotationStubIndex : FileBasedIndexExtension<String, String>() {
 
     override fun getVersion(): Int = 3
 
+    @Suppress("CompanionObjectInExtension") // KEY must remain a Java-accessible static field for AnnotationUtil.
     companion object {
         @JvmField
         val KEY: ID<String, String> = ID.create("espend.php.annotation.classes")

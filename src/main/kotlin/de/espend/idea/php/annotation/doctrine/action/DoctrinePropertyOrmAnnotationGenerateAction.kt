@@ -17,6 +17,9 @@ import com.jetbrains.php.lang.psi.elements.PhpClass
 import de.espend.idea.php.annotation.doctrine.util.DoctrineUtil
 import de.espend.idea.php.annotation.util.PhpDocUtil
 
+private val INSIDE_PHP_CLASS_PATTERN: ElementPattern<PsiElement> =
+    PlatformPatterns.psiElement().inside(PhpClass::class.java)
+
 /**
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
@@ -40,9 +43,8 @@ class DoctrinePropertyOrmAnnotationGenerateAction : CodeInsightAction() {
             return emptyArray()
         }
 
-        override fun isSelectable(phpClass: PhpClass, field: Field): Boolean {
-            return !DoctrineUtil.isOrmColumnProperty(field)
-        }
+        override fun isSelectable(phpClass: PhpClass, field: Field): Boolean =
+            !DoctrineUtil.isOrmColumnProperty(field)
 
         override fun getErrorMessage(): String = "No possible orm property found"
 
@@ -68,10 +70,6 @@ class DoctrinePropertyOrmAnnotationGenerateAction : CodeInsightAction() {
         return phpClass.ownFields.isNotEmpty()
     }
 
+    @Suppress("UsagesOfObsoleteApi") // CodeInsightAction still declares this obsolete method abstract.
     override fun getHandler(): CodeInsightActionHandler = myHandler
-
-    private companion object {
-        val INSIDE_PHP_CLASS_PATTERN: ElementPattern<PsiElement> =
-            PlatformPatterns.psiElement().inside(PhpClass::class.java)
-    }
 }

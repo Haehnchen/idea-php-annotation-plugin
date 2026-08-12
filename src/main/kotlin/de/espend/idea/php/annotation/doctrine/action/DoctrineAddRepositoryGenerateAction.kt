@@ -17,6 +17,7 @@ import de.espend.idea.php.annotation.doctrine.intention.DoctrineOrmRepositoryInt
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 class DoctrineAddRepositoryGenerateAction : CodeInsightAction() {
+    @Suppress("UsagesOfObsoleteApi") // CodeInsightAction still declares this obsolete method abstract.
     override fun getHandler(): CodeInsightActionHandler {
         return object : CodeInsightActionHandler {
             override fun invoke(project: Project, editor: Editor, file: PsiFile) {
@@ -33,35 +34,35 @@ class DoctrineAddRepositoryGenerateAction : CodeInsightAction() {
         return DoctrineOrmRepositoryIntention().isAvailable(project, editor, phpClass.firstChild)
     }
 
-    private companion object {
-        val INSIDE_PHP_CLASS_PATTERN: ElementPattern<PsiElement> =
-            PlatformPatterns.psiElement().inside(PhpClass::class.java)
-        val INSIDE_PHP_DOC_COMMENT_PATTERN: ElementPattern<PsiElement> =
-            PlatformPatterns.psiElement().inside(PhpDocComment::class.java)
+}
 
-        fun getPhpClassOnValidScope(editor: Editor, file: PsiFile): PhpClass? {
-            val offset = editor.caretModel.offset
-            if (offset <= 0) {
-                return null
-            }
+private val INSIDE_PHP_CLASS_PATTERN: ElementPattern<PsiElement> =
+    PlatformPatterns.psiElement().inside(PhpClass::class.java)
 
-            val psiElement = file.findElementAt(offset) ?: return null
+private val INSIDE_PHP_DOC_COMMENT_PATTERN: ElementPattern<PsiElement> =
+    PlatformPatterns.psiElement().inside(PhpDocComment::class.java)
 
-            // attribute and direct hit
-            if (INSIDE_PHP_CLASS_PATTERN.accepts(psiElement)) {
-                return PsiTreeUtil.getParentOfType(psiElement, PhpClass::class.java)
-            }
+private fun getPhpClassOnValidScope(editor: Editor, file: PsiFile): PhpClass? {
+    val offset = editor.caretModel.offset
+    if (offset <= 0) {
+        return null
+    }
 
-            // docblocks are outside the PhpClass scope
-            if (INSIDE_PHP_DOC_COMMENT_PATTERN.accepts(psiElement)) {
-                val docComment = PsiTreeUtil.getParentOfType(psiElement, PhpDocComment::class.java)
-                val nextSibling = docComment?.nextPsiSibling
-                if (nextSibling is PhpClass) {
-                    return nextSibling
-                }
-            }
+    val psiElement = file.findElementAt(offset) ?: return null
 
-            return PsiTreeUtil.getParentOfType(psiElement, PhpClass::class.java)
+    // attribute and direct hit
+    if (INSIDE_PHP_CLASS_PATTERN.accepts(psiElement)) {
+        return PsiTreeUtil.getParentOfType(psiElement, PhpClass::class.java)
+    }
+
+    // docblock are outside the phpclass scope
+    if (INSIDE_PHP_DOC_COMMENT_PATTERN.accepts(psiElement)) {
+        val docComment = PsiTreeUtil.getParentOfType(psiElement, PhpDocComment::class.java)
+        val nextSibling = docComment?.nextPsiSibling
+        if (nextSibling is PhpClass) {
+            return nextSibling
         }
     }
+
+    return PsiTreeUtil.getParentOfType(psiElement, PhpClass::class.java)
 }

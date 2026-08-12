@@ -10,7 +10,9 @@ import de.espend.idea.php.annotation.AnnotationUsageIndex
  */
 class PluginUtil private constructor() {
     companion object {
-        /** Force a rebuild of all plugin-owned file indexes. */
+        /**
+         * Force reindex of all internal file indexes
+         */
         fun forceReindex() {
             val indexIds: Array<ID<*, *>> = arrayOf(AnnotationStubIndex.KEY, AnnotationUsageIndex.KEY)
             for (id in indexIds) {

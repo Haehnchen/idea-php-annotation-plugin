@@ -24,6 +24,8 @@ import java.awt.Component
  * @author Daniel Espendiller <daniel@espendiller.net>
  */
 class PluginErrorReporterSubmitter : ErrorReportSubmitter() {
+    // The callback API preserves the user's additional report information, which the replacement API omits.
+    @Suppress("UsagesOfObsoleteApi", "UastIncorrectHttpHeaderInspection")
     override fun submit(
         events: Array<out IdeaLoggingEvent>,
         additionalInfo: String?,
@@ -33,7 +35,7 @@ class PluginErrorReporterSubmitter : ErrorReportSubmitter() {
         val context = DataManager.getInstance().getDataContext(parentComponent)
         val project = CommonDataKeys.PROJECT.getData(context)
 
-        object : Task.Backgroundable(project, "Sending Error Report") {
+        object : Task.Backgroundable(project, "Sending error report") {
             override fun run(indicator: ProgressIndicator) {
                 val jsonObject = JsonObject()
                 val pluginDescriptor = this@PluginErrorReporterSubmitter.pluginDescriptor
@@ -72,7 +74,7 @@ class PluginErrorReporterSubmitter : ErrorReportSubmitter() {
                     jsonObject.add("events", jsonElements)
                 }
 
-                val body = jsonObject.toString()
+                val body = "$jsonObject"
                 ApplicationManager.getApplication().invokeLater {
                     val httpClient = HttpClientBuilder.create().build()
 
@@ -83,6 +85,7 @@ class PluginErrorReporterSubmitter : ErrorReportSubmitter() {
                                 URLEncodedUtils.format(nameValuePairs, "utf-8"),
                         )
                         request.addHeader("content-type", "application/json")
+                        // Custom header understood by the plugin's report endpoint.
                         request.addHeader("x-plugin-version", pluginVersion)
                         request.entity = StringEntity(body)
 
@@ -99,5 +102,7 @@ class PluginErrorReporterSubmitter : ErrorReportSubmitter() {
         return true
     }
 
+    // Keep the domain's canonical lowercase spelling in the action label.
+    @Suppress("DialogTitleCapitalization")
     override fun getReportActionText(): String = "Report to espend.de"
 }

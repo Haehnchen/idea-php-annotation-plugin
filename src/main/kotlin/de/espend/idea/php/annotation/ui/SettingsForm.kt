@@ -1,7 +1,6 @@
 package de.espend.idea.php.annotation.ui
 
 import com.intellij.openapi.options.Configurable
-import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.TitledSeparator
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.JBUI
@@ -40,7 +39,7 @@ class SettingsForm : Configurable {
             .panel
 
         val root = JPanel(BorderLayout())
-        root.border = IdeBorderFactory.createEmptyBorder(JBUI.insets(10, 0, 0, 0))
+        root.border = JBUI.Borders.emptyTop(10)
         root.add(content, BorderLayout.NORTH)
 
         return root
@@ -52,9 +51,8 @@ class SettingsForm : Configurable {
 
     override fun createComponent(): JComponent = panel
 
-    override fun isModified(): Boolean {
-        return appendRoundBracket.isSelected != ApplicationSettings.getInstance().appendRoundBracket
-    }
+    override fun isModified(): Boolean =
+        appendRoundBracket.isSelected != ApplicationSettings.getInstance().appendRoundBracket
 
     override fun apply() {
         ApplicationSettings.getInstance().appendRoundBracket = appendRoundBracket.isSelected

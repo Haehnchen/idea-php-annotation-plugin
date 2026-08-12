@@ -12,6 +12,9 @@ import de.espend.idea.php.annotation.dict.AnnotationPropertyEnum
  */
 class AnnotationPropertyInsertHandler private constructor() : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, lookupElement: LookupElement) {
+        // value completion should not fire when already presented:
+        // eng| = "value"
+        // eng|="value"
         if (
             PhpInsertHandlerUtil.isStringAtCaret(context.editor, "=") ||
             PhpInsertHandlerUtil.isStringAtCaret(context.editor, " =")
@@ -20,6 +23,11 @@ class AnnotationPropertyInsertHandler private constructor() : InsertHandler<Look
         }
 
         val property = lookupElement.`object` as? AnnotationProperty
+
+        // append completion text depend on value:
+        // engine="|"
+        // engine={|}
+        // engine=<boolean|integer>
         val textToInsert = when (property?.annotationPropertyEnum) {
             AnnotationPropertyEnum.ARRAY -> "={}"
             AnnotationPropertyEnum.INTEGER,
@@ -30,6 +38,8 @@ class AnnotationPropertyInsertHandler private constructor() : InsertHandler<Look
         }
 
         PhpInsertHandlerUtil.insertStringAtCaret(context.editor, textToInsert)
+
+        // move caret back
         if (property?.annotationPropertyEnum != AnnotationPropertyEnum.INTEGER &&
             property?.annotationPropertyEnum != AnnotationPropertyEnum.BOOLEAN
         ) {
